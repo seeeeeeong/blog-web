@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { postApi } from "../api/post";
-import { Post } from "../types";
+import type { Post } from "../types";
 
 export default function PostDetailPage() {
   const { postId } = useParams<{ postId: string }>();

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { postApi } from "../api/post";
-import { Post } from "../types";
+import type { Post } from "../types";
 import { Link } from "react-router-dom";
 
 export default function HomePage() {

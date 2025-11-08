@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { postApi } from "../api/post";
 import { categoryApi } from "../api/category";
-import { Category } from "../types";
+import type { Category } from "../types";
 
 export default function PostCreatePage() {
   const navigate = useNavigate();

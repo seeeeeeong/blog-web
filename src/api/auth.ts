@@ -1,5 +1,10 @@
 import apiClient from "./client";
-import { LoginRequest, SignupRequest, TokenResponse, User } from "../types";
+import type {
+  LoginRequest,
+  SignupRequest,
+  TokenResponse,
+  User,
+} from "../types";
 
 export const authApi = {
   signup: async (data: SignupRequest): Promise<User> => {
