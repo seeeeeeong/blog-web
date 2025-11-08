@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* Pretendard 폰트 (CDN) */
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
 
 @layer base {
   html {
@@ -86,4 +86,52 @@
 
 .animate-fade-in {
   animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Alert 슬라이드 인 애니메이션 */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in {
+  animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Alert 호버 효과 */
+[role="alert"] {
+  transition: all 0.2s ease;
+}
+
+[role="alert"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.15);
+}
+
+/* 버튼 호버 효과 */
+[role="alert"] button {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[role="alert"] button:active {
+  transform: scale(0.98);
+}
+
+/* 반응형 - 모바일에서는 전체 너비 */
+@media (max-width: 640px) {
+  .fixed.top-6.right-6 {
+    left: 1rem;
+    right: 1rem;
+    top: 1rem;
+  }
+
+  .fixed.top-6.right-6 > div {
+    max-width: 100%;
+  }
 }

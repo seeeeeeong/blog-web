@@ -3,17 +3,17 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import type { AxiosError } from "axios";
 import { authApi } from "../api/auth";
+import { useAlert } from "../contexts/AlertContext";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { showSuccess, showError } = useAlert();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
 
     try {
@@ -24,10 +24,11 @@ export default function LoginPage() {
       localStorage.setItem("userId", String(response.user.id));
       localStorage.setItem("nickname", response.user.nickname);
 
-      navigate("/");
+      showSuccess("로그인에 성공했습니다!");
+      setTimeout(() => navigate("/"), 500);
     } catch (err) {
       const axiosError = err as AxiosError<{ message?: string }>;
-      setError(axiosError.response?.data?.message || "로그인에 실패했습니다.");
+      showError(axiosError.response?.data?.message || "로그인에 실패했습니다.");
     } finally {
       setLoading(false);
     }
@@ -77,13 +78,6 @@ export default function LoginPage() {
                 placeholder="비밀번호를 입력하세요"
               />
             </div>
-
-            {/* Error Message */}
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded text-sm">
-                {error}
-              </div>
-            )}
 
             {/* Submit Button */}
             <button

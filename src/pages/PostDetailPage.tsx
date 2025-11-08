@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { postApi } from "../api/post";
 import type { Post } from "../types";
+import { useAlert } from "../contexts/AlertContext";
 
 export default function PostDetailPage() {
   const { postId } = useParams<{ postId: string }>();
@@ -9,6 +10,7 @@ export default function PostDetailPage() {
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAuthor, setIsAuthor] = useState(false);
+  const { showSuccess, showError, showConfirm } = useAlert();
 
   useEffect(() => {
     loadPost();
@@ -23,7 +25,7 @@ export default function PostDetailPage() {
       setIsAuthor(userId === String(data.userId));
     } catch (error) {
       console.error("게시글 로딩 실패:", error);
-      alert("게시글을 찾을 수 없습니다.");
+      showError("게시글을 찾을 수 없습니다.");
       navigate("/");
     } finally {
       setLoading(false);
@@ -31,15 +33,15 @@ export default function PostDetailPage() {
   };
 
   const handleDelete = async () => {
-    if (!window.confirm("정말 삭제하시겠습니까?")) return;
-
+    const confirmed = await showConfirm("정말 삭제하시겠습니까?");
+    if (!confirmed) return;
     try {
       await postApi.deletePost(Number(postId));
-      alert("삭제되었습니다.");
+      showSuccess("삭제되었습니다.");
       navigate("/");
     } catch (error) {
       console.error("삭제 실패:", error);
-      alert("삭제에 실패했습니다.");
+      showError("삭제에 실패했습니다.");
     }
   };
 
@@ -96,7 +98,7 @@ export default function PostDetailPage() {
             <h1 className="text-4xl font-bold text-gray-900 mb-6 leading-tight">
               {post.title}
             </h1>
-            
+
             <div className="flex items-center gap-4 text-sm text-gray-500">
               <time>
                 {new Date(post.createdAt).toLocaleDateString("ko-KR", {

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import type { AxiosError } from "axios";
 import { authApi } from "../api/auth";
+import { useAlert } from "../contexts/AlertContext";
 
 export default function SignupPage() {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ export default function SignupPage() {
   const [nickname, setNickname] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const { showSuccess, showError } = useAlert();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,11 +21,11 @@ export default function SignupPage() {
 
     try {
       await authApi.signup({ email, password, nickname });
-      alert("회원가입이 완료되었습니다. 로그인해주세요.");
+      showSuccess("회원가입이 완료되었습니다. 로그인해주세요.");
       navigate("/login");
     } catch (err) {
       const axiosError = err as AxiosError<{ message?: string }>;
-      setError(
+      showError(
         axiosError.response?.data?.message || "회원가입에 실패했습니다."
       );
     } finally {

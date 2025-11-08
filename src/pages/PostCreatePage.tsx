@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { postApi } from "../api/post";
 import { categoryApi } from "../api/category";
 import type { Category } from "../types";
+import { useAlert } from "../contexts/AlertContext";
 
 export default function PostCreatePage() {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ export default function PostCreatePage() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
+  const { showSuccess, showError, showWarning } = useAlert();
 
   useEffect(() => {
     loadCategories();
@@ -33,7 +35,7 @@ export default function PostCreatePage() {
     e.preventDefault();
 
     if (!categoryId) {
-      alert("카테고리를 선택해주세요.");
+      showWarning("카테고리를 선택해주세요.");
       return;
     }
 
@@ -45,11 +47,11 @@ export default function PostCreatePage() {
         content,
       });
 
-      alert("게시글이 작성되었습니다.");
+      showSuccess("게시글이 작성되었습니다.");
       navigate(`/posts/${newPost.id}`);
     } catch (error) {
       console.error("작성 실패:", error);
-      alert("게시글 작성에 실패했습니다.");
+      showError("게시글 작성에 실패했습니다.");
     } finally {
       setLoading(false);
     }
