@@ -45,55 +45,41 @@ export default function PostDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="text-center space-y-4">
-          <div className="inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-muted-foreground">로딩 중...</p>
-        </div>
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin"></div>
       </div>
     );
   }
 
   if (!post) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <p className="text-center text-muted-foreground">
-          게시글을 찾을 수 없습니다.
-        </p>
+      <div className="container mx-auto px-4 py-16 max-w-4xl text-center">
+        <p className="text-gray-600 mb-6">게시글을 찾을 수 없습니다.</p>
+        <Link to="/" className="btn-primary">
+          홈으로 돌아가기
+        </Link>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+      <div className="bg-white border-b border-gray-200">
         <div className="container mx-auto px-4 py-4 max-w-4xl">
           <div className="flex justify-between items-center">
             <Link
               to="/"
-              className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2 font-semibold"
+              className="text-gray-600 hover:text-gray-900 transition-colors flex items-center gap-2"
             >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-              돌아가기
+              <span>←</span>
+              <span>목록으로</span>
             </Link>
 
             {isAuthor && (
               <button
                 onClick={handleDelete}
-                className="text-red-600 hover:bg-red-50 px-4 py-2 rounded-lg transition-colors duration-200 font-semibold text-sm"
+                className="text-red-600 hover:text-red-700 text-sm transition-colors"
               >
                 삭제
               </button>
@@ -104,58 +90,40 @@ export default function PostDetailPage() {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-12 max-w-4xl">
-        <article className="bg-card rounded-xl shadow-lg border border-border p-10 space-y-8">
+        <article className="bg-white rounded-lg border border-gray-200 p-8 md:p-12">
           {/* Title Section */}
-          <div className="space-y-4">
-            <h1 className="text-4xl font-bold text-foreground leading-tight">
+          <div className="mb-8 pb-8 border-b border-gray-200">
+            <h1 className="text-4xl font-bold text-gray-900 mb-6 leading-tight">
               {post.title}
             </h1>
-            <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap pt-4 border-t border-border">
-              <span className="inline-flex items-center gap-1.5">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                  />
-                </svg>
-                {post.viewCount}
-              </span>
-              <span>•</span>
-              <span>
+            
+            <div className="flex items-center gap-4 text-sm text-gray-500">
+              <time>
                 {new Date(post.createdAt).toLocaleDateString("ko-KR", {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
                 })}
-              </span>
+              </time>
+              <span>·</span>
+              <span>조회 {post.viewCount}</span>
             </div>
           </div>
 
           {/* Content */}
           <div className="prose prose-lg max-w-none">
-            <p className="whitespace-pre-wrap text-foreground leading-relaxed text-base">
+            <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
               {post.content}
-            </p>
+            </div>
           </div>
         </article>
 
         {/* Comments Section */}
-        <div className="mt-12 bg-card rounded-xl shadow-lg border border-border p-8">
-          <h3 className="text-2xl font-bold text-foreground mb-4">댓글</h3>
-          <p className="text-muted-foreground">댓글 기능은 곧 추가됩니다.</p>
+        <div className="mt-8 bg-white rounded-lg border border-gray-200 p-8">
+          <h3 className="text-xl font-bold text-gray-900 mb-4">댓글</h3>
+          <div className="text-center py-12 bg-gray-50 rounded">
+            <p className="text-gray-500">댓글 기능은 곧 추가됩니다.</p>
+          </div>
         </div>
       </div>
     </div>

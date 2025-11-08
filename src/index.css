@@ -1,70 +1,89 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme inline {
-  --color-primary: #4f46e5;
-  --color-primary-dark: #4338ca;
-  --color-secondary: #ec4899;
-  --color-background: #ffffff;
-  --color-foreground: #0f172a;
-  --color-muted: #f1f5f9;
-  --color-muted-foreground: #64748b;
-  --color-border: #e2e8f0;
-  --color-card: #ffffff;
-  --color-accent: #f59e0b;
-  --font-sans: "Inter", system-ui, sans-serif;
-}
+/* Pretendard 폰트 (CDN) */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
 
-* {
-  @apply transition-colors duration-200;
-}
-
-html {
-  @apply scroll-smooth;
-}
-
-body {
-  @apply bg-background text-foreground;
-}
-
-input:focus,
-textarea:focus,
-select:focus {
-  @apply outline-none ring-2 ring-primary ring-offset-2;
-}
-
-::selection {
-  @apply bg-primary/20 text-foreground;
-}
-
-.prose {
-  @apply text-foreground;
-}
-
-.prose strong {
-  @apply font-bold text-foreground;
-}
-
-.prose p {
-  @apply leading-relaxed;
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -1000px 0;
+@layer base {
+  html {
+    @apply scroll-smooth;
   }
-  100% {
-    background-position: 1000px 0;
+
+  body {
+    @apply bg-white text-gray-900 font-sans antialiased;
+  }
+
+  /* 스크롤바 */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400;
   }
 }
 
-.animate-shimmer {
-  animation: shimmer 2s infinite;
-  background: linear-gradient(
-    to right,
-    rgb(31, 41, 55) 0%,
-    rgb(55, 65, 81) 20%,
-    rgb(31, 41, 55) 40%,
-    rgb(31, 41, 55) 100%
-  );
-  background-size: 1000px 100%;
+@layer components {
+  /* 버튼 */
+  .btn-primary {
+    @apply bg-gray-900 text-white px-5 py-2.5 rounded font-medium hover:bg-gray-800 transition-colors duration-200;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-gray-700 px-5 py-2.5 rounded font-medium border border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-all duration-200;
+  }
+
+  /* 카드 */
+  .card {
+    @apply bg-white rounded-lg border border-gray-200 p-6 transition-all duration-200;
+  }
+
+  .card-hover {
+    @apply card hover:border-gray-300 hover:shadow-sm;
+  }
+
+  /* 입력 필드 */
+  .input-field {
+    @apply w-full px-4 py-2.5 bg-white border border-gray-300 rounded text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-gray-900 focus:ring-1 focus:ring-gray-900 transition-all duration-200;
+  }
+
+  /* 배지 */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium;
+  }
+}
+
+@layer utilities {
+  /* 선택 영역 */
+  ::selection {
+    @apply bg-gray-900 text-white;
+  }
+
+  /* 포커스 스타일 */
+  :focus-visible {
+    @apply outline-none ring-2 ring-gray-900 ring-offset-2;
+  }
+}
+
+/* 간단한 애니메이션 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
 }

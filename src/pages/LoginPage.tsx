@@ -34,35 +34,23 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted to-background flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         {/* Header */}
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-primary/10 mb-4">
-            <svg
-              className="w-7 h-7 text-primary"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 10V3L4 14h7v7l9-11h-7z"
-              />
-            </svg>
-          </div>
-          <h1 className="text-3xl font-bold text-foreground">Welcome Back</h1>
-          <p className="text-muted-foreground mt-2">계정에 로그인하세요</p>
+        <div className="text-center mb-8">
+          <Link to="/" className="inline-block mb-6">
+            <span className="text-2xl font-bold text-gray-900">Blog</span>
+          </Link>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">로그인</h1>
+          <p className="text-gray-600">계정에 로그인하여 계속하세요</p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-card rounded-2xl shadow-xl border border-border p-8 space-y-6">
+        <div className="bg-white rounded-lg border border-gray-200 p-8 space-y-6">
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email Input */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-foreground block">
+              <label className="block text-sm font-medium text-gray-700">
                 이메일
               </label>
               <input
@@ -70,14 +58,14 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-3 bg-muted border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="input-field"
                 placeholder="example@email.com"
               />
             </div>
 
             {/* Password Input */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-foreground block">
+              <label className="block text-sm font-medium text-gray-700">
                 비밀번호
               </label>
               <input
@@ -85,14 +73,14 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-3 bg-muted border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary focus:border-transparent"
-                placeholder="••••••••"
+                className="input-field"
+                placeholder="비밀번호를 입력하세요"
               />
             </div>
 
             {/* Error Message */}
             {error && (
-              <div className="bg-red-50 text-red-700 px-4 py-3 rounded-lg text-sm font-medium border border-red-200">
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded text-sm">
                 {error}
               </div>
             )}
@@ -101,7 +89,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary-dark disabled:bg-muted disabled:text-muted-foreground transition-colors duration-200"
+              className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "로그인 중..." : "로그인"}
             </button>
@@ -110,23 +98,33 @@ export default function LoginPage() {
           {/* Divider */}
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-border"></div>
+              <div className="w-full border-t border-gray-200"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-card text-muted-foreground">또는</span>
+              <span className="px-4 bg-white text-gray-500">또는</span>
             </div>
           </div>
 
           {/* Sign Up Link */}
-          <p className="text-center text-sm text-muted-foreground">
+          <p className="text-center text-sm text-gray-600">
             계정이 없으신가요?{" "}
             <Link
               to="/signup"
-              className="text-primary font-semibold hover:underline"
+              className="text-gray-900 font-medium hover:underline"
             >
               회원가입
             </Link>
           </p>
+        </div>
+
+        {/* Back to Home */}
+        <div className="text-center mt-6">
+          <Link
+            to="/"
+            className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+          >
+            ← 홈으로 돌아가기
+          </Link>
         </div>
       </div>
     </div>
