@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { postApi } from "../api/post";
 import type { Post } from "../types";
