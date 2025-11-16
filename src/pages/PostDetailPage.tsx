@@ -35,6 +35,7 @@ export default function PostDetailPage() {
   const handleDelete = async () => {
     const confirmed = await showConfirm("정말 삭제하시겠습니까?");
     if (!confirmed) return;
+    
     try {
       await postApi.deletePost(Number(postId));
       showSuccess("삭제되었습니다.");
@@ -47,7 +48,7 @@ export default function PostDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="flex justify-center items-center min-h-[60vh]">
         <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin"></div>
       </div>
     );
@@ -55,9 +56,12 @@ export default function PostDetailPage() {
 
   if (!post) {
     return (
-      <div className="container mx-auto px-4 py-16 max-w-4xl text-center">
+      <div className="container mx-auto px-6 py-16 max-w-3xl text-center">
         <p className="text-gray-600 mb-6">게시글을 찾을 수 없습니다.</p>
-        <Link to="/" className="btn-primary">
+        <Link 
+          to="/" 
+          className="text-gray-900 hover:text-gray-600 underline"
+        >
           홈으로 돌아가기
         </Link>
       </div>
@@ -65,65 +69,67 @@ export default function PostDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="container mx-auto px-4 py-4 max-w-4xl">
+      <div className="border-b border-gray-200">
+        <div className="container mx-auto px-6 py-6 max-w-3xl">
           <div className="flex justify-between items-center">
             <Link
               to="/"
-              className="text-gray-600 hover:text-gray-900 transition-colors flex items-center gap-2"
+              className="text-sm text-gray-600 hover:text-gray-900 transition-colors flex items-center gap-2"
             >
               <span>←</span>
-              <span>목록으로</span>
+              <span>Back</span>
             </Link>
 
             {isAuthor && (
               <button
                 onClick={handleDelete}
-                className="text-red-600 hover:text-red-700 text-sm transition-colors"
+                className="text-sm text-red-600 hover:text-red-700 transition-colors"
               >
-                삭제
+                Delete
               </button>
             )}
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="container mx-auto px-4 py-12 max-w-4xl">
-        <article className="bg-white rounded-lg border border-gray-200 p-8 md:p-12">
-          {/* Title Section */}
-          <div className="mb-8 pb-8 border-b border-gray-200">
-            <h1 className="text-4xl font-bold text-gray-900 mb-6 leading-tight">
-              {post.title}
-            </h1>
+      {/* Article */}
+      <article className="container mx-auto px-6 py-16 max-w-3xl">
+        {/* Meta */}
+        <div className="mb-8">
+          <time className="text-sm text-gray-500 font-mono">
+            {new Date(post.createdAt).toLocaleDateString("ko-KR", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </time>
+        </div>
 
-            <div className="flex items-center gap-4 text-sm text-gray-500">
-              <time>
-                {new Date(post.createdAt).toLocaleDateString("ko-KR", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </time>
-              <span>·</span>
-              <span>조회 {post.viewCount}</span>
-            </div>
+        {/* Title */}
+        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-8 leading-tight break-keep">
+          {post.title}
+        </h1>
+
+        {/* Stats */}
+        <div className="flex items-center gap-4 text-sm text-gray-500 mb-12 pb-8 border-b border-gray-200">
+          <span>조회 {post.viewCount}</span>
+        </div>
+
+        {/* Content */}
+        <div className="prose prose-lg max-w-none">
+          <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
+            {post.content}
           </div>
+        </div>
+      </article>
 
-          {/* Content */}
-          <div className="prose prose-lg max-w-none">
-            <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
-              {post.content}
-            </div>
-          </div>
-        </article>
-
-        {/* Comments Section */}
-        <div className="mt-8 bg-white rounded-lg border border-gray-200 p-8">
-          <h3 className="text-xl font-bold text-gray-900 mb-4">댓글</h3>
-          <div className="text-center py-12 bg-gray-50 rounded">
+      {/* Comments Section */}
+      <div className="border-t border-gray-200 bg-gray-50">
+        <div className="container mx-auto px-6 py-16 max-w-3xl">
+          <h3 className="text-xl font-bold text-gray-900 mb-6">댓글</h3>
+          <div className="text-center py-12 bg-white border border-gray-200 rounded">
             <p className="text-gray-500">댓글 기능은 곧 추가됩니다.</p>
           </div>
         </div>

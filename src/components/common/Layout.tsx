@@ -3,15 +3,11 @@ import { useEffect, useState } from "react";
 
 export default function Layout() {
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [nickname, setNickname] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
-    const userNickname = localStorage.getItem("nickname");
-
-    setIsLoggedIn(!!userId);
-    setNickname(userNickname || "");
+    setIsAdmin(!!userId);
   }, []);
 
   const handleLogout = () => {
@@ -19,66 +15,51 @@ export default function Layout() {
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("userId");
     localStorage.removeItem("nickname");
-    setIsLoggedIn(false);
-    navigate("/login");
+    setIsAdmin(false);
+    navigate("/");
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-white">
       {/* 네비게이션 */}
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div className="container mx-auto px-4">
+      <nav className="border-b border-gray-200 sticky top-0 z-50 bg-white/80 backdrop-blur-sm">
+        <div className="container mx-auto px-6 max-w-5xl">
           <div className="flex justify-between items-center h-16">
             {/* 로고 */}
-            <Link to="/" className="flex items-center gap-2">
-              <span className="text-xl font-bold text-gray-900">Blog</span>
+            <Link 
+              to="/" 
+              className="text-xl font-bold text-gray-900 font-mono hover:text-gray-600 transition-colors"
+            >
+              seeeeeeong.log
             </Link>
 
-            {/* 메뉴 */}
-            <div className="flex items-center gap-6">
-              <Link
-                to="/"
-                className="text-gray-700 hover:text-gray-900 font-medium transition-colors"
-              >
-                홈
-              </Link>
+            {/* 메뉴 - 관리자만 보임 */}
+            {isAdmin && (
+              <div className="flex items-center gap-8">
+                <Link
+                  to="/"
+                  className="text-sm text-gray-700 hover:text-gray-900 font-medium transition-colors"
+                >
+                  Posts
+                </Link>
 
-              {isLoggedIn ? (
-                <>
-                  <Link
-                    to="/posts/create"
-                    className="text-gray-700 hover:text-gray-900 font-medium transition-colors"
+                <Link
+                  to="/posts/create"
+                  className="text-sm text-gray-700 hover:text-gray-900 font-medium transition-colors"
+                >
+                  Write
+                </Link>
+                
+                <div className="flex items-center gap-4 pl-4 border-l border-gray-200">
+                  <button
+                    onClick={handleLogout}
+                    className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
                   >
-                    글쓰기
-                  </Link>
-                  
-                  <div className="flex items-center gap-4 pl-6 border-l border-gray-200">
-                    <span className="text-gray-700 font-medium">{nickname}</span>
-                    <button
-                      onClick={handleLogout}
-                      className="text-gray-500 hover:text-gray-700 text-sm transition-colors"
-                    >
-                      로그아웃
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <Link
-                    to="/login"
-                    className="text-gray-700 hover:text-gray-900 font-medium transition-colors"
-                  >
-                    로그인
-                  </Link>
-                  <Link
-                    to="/signup"
-                    className="btn-primary"
-                  >
-                    회원가입
-                  </Link>
-                </>
-              )}
-            </div>
+                    Logout
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </nav>
@@ -89,10 +70,12 @@ export default function Layout() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 mt-auto">
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center text-sm text-gray-500">
-            <p>© 2025 Blog. All rights reserved.</p>
+      <footer className="border-t border-gray-200 mt-auto">
+        <div className="container mx-auto px-6 py-8 max-w-5xl">
+          <div className="text-center">
+            <p className="text-sm text-gray-500 font-mono">
+              © 2025 seeeeeeong.log. All rights reserved.
+            </p>
           </div>
         </div>
       </footer>

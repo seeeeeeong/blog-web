@@ -35,72 +35,74 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center px-6 py-12">
       <div className="w-full max-w-md">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <Link to="/" className="inline-block mb-6">
-            <span className="text-2xl font-bold text-gray-900">Blog</span>
-          </Link>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">로그인</h1>
-          <p className="text-gray-600">계정에 로그인하여 계속하세요</p>
-        </div>
+      {/* Header */}
+      <div className="text-center mb-12">
+        <Link to="/" className="inline-block mb-8">
+          <span className="text-3xl font-bold text-gray-900 font-mono">
+            seeeeeeong.log
+          </span>
+        </Link>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Admin Login</h1>
+        <p className="text-gray-600">관리자 로그인</p>
+      </div>
 
-        {/* Form Card */}
-        <div className="bg-white rounded-lg border border-gray-200 p-8 space-y-6">
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Email Input */}
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                이메일
+        {/* Form */}
+        <div className="bg-white border border-gray-200 rounded-lg p-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Email
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="input-field"
-                placeholder="example@email.com"
+                className="w-full px-4 py-3 bg-white border border-gray-300 rounded text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-gray-900 focus:ring-1 focus:ring-gray-900 transition-all"
+                placeholder="your@email.com"
               />
             </div>
 
-            {/* Password Input */}
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                비밀번호
+            {/* Password */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Password
               </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="input-field"
-                placeholder="비밀번호를 입력하세요"
+                className="w-full px-4 py-3 bg-white border border-gray-300 rounded text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-gray-900 focus:ring-1 focus:ring-gray-900 transition-all"
+                placeholder="••••••••"
               />
             </div>
 
-            {/* Submit Button */}
+            {/* Submit */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3 bg-gray-900 text-white rounded font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "로그인 중..." : "로그인"}
             </button>
           </form>
 
           {/* Divider */}
-          <div className="relative">
+          <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-200"></div>
             </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-gray-500">또는</span>
-            </div>
+            {/* <div className="relative flex justify-center text-sm">
+              <span className="px-4 bg-white text-gray-500">or</span>
+            </div> */}
           </div>
 
           {/* Sign Up Link */}
-          <p className="text-center text-sm text-gray-600">
+          {/* <p className="text-center text-sm text-gray-600">
             계정이 없으신가요?{" "}
             <Link
               to="/signup"
@@ -108,14 +110,14 @@ export default function LoginPage() {
             >
               회원가입
             </Link>
-          </p>
+          </p> */}
         </div>
 
         {/* Back to Home */}
-        <div className="text-center mt-6">
+        <div className="text-center mt-8">
           <Link
             to="/"
-            className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+            className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
           >
             ← 홈으로 돌아가기
           </Link>

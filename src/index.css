@@ -5,6 +5,9 @@
 /* Pretendard 폰트 (CDN) */
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
 
+/* JetBrains Mono 폰트 */
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap");
+
 @layer base {
   html {
     @apply scroll-smooth;
@@ -14,7 +17,7 @@
     @apply bg-white text-gray-900 font-sans antialiased;
   }
 
-  /* 스크롤바 */
+  /* 스크롤바 스타일 */
   ::-webkit-scrollbar {
     width: 8px;
   }
@@ -32,67 +35,78 @@
   }
 }
 
-@layer components {
-  /* 버튼 */
-  .btn-primary {
-    @apply bg-gray-900 text-white px-5 py-2.5 rounded font-medium hover:bg-gray-800 transition-colors duration-200;
-  }
-
-  .btn-secondary {
-    @apply bg-white text-gray-700 px-5 py-2.5 rounded font-medium border border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-all duration-200;
-  }
-
-  /* 카드 */
-  .card {
-    @apply bg-white rounded-lg border border-gray-200 p-6 transition-all duration-200;
-  }
-
-  .card-hover {
-    @apply card hover:border-gray-300 hover:shadow-sm;
-  }
-
-  /* 입력 필드 */
-  .input-field {
-    @apply w-full px-4 py-2.5 bg-white border border-gray-300 rounded text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-gray-900 focus:ring-1 focus:ring-gray-900 transition-all duration-200;
-  }
-
-  /* 배지 */
-  .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium;
-  }
-}
-
 @layer utilities {
-  /* 선택 영역 */
-  ::selection {
-    @apply bg-gray-900 text-white;
-  }
-
-  /* 포커스 스타일 */
-  :focus-visible {
-    @apply outline-none ring-2 ring-gray-900 ring-offset-2;
+  /* 선택 영역 스타일 */
+::selection {
+   @apply bg-gray-900 text-white;
   }
 }
 
-/* 간단한 애니메이션 */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+/* 포커스 스타일 */
+:focus-visible {
+  @apply outline-none ring-2 ring-gray-900 ring-offset-2;
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-in-out;
+/* backdrop blur 지원 */
+.backdrop-blur-sm {
+  backdrop-filter: blur(8px);
+  
+
+.prose {
+  color: #374151;
+  max-width: 65ch;
 }
 
-/* Alert 슬라이드 인 애니메이션 */
+.prose-lg {
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+
+.prose h2 {
+  @apply text-2xl font-bold text-gray-900 mt-12 mb-4;
+}
+
+.prose h3 {
+  @apply text-xl font-bold text-gray-900 mt-8 mb-3;
+}
+
+.prose p {
+  @apply mb-6;
+}
+
+.prose a {
+  @apply text-gray-900 underline hover:text-gray-600 transition-colors;
+}
+
+.prose code {
+  @apply bg-gray-100 text-gray-900 px-1.5 py-0.5 rounded text-sm font-mono;
+}
+
+.prose pre {
+  @apply bg-gray-900 text-gray-100 p-4 rounded overflow-x-auto my-6;
+}
+
+.prose pre code {
+  @apply bg-transparent text-gray-100 p-0;
+}
+
+.prose ul {
+  @apply list-disc list-inside mb-6 space-y-2;
+}
+
+.prose ol {
+  @apply list-decimal list-inside mb-6 space-y-2;
+}
+
+.prose blockquote {
+  @apply border-l-4 border-gray-300 pl-4 italic text-gray-600 my-6;
+}
+
+/* Alert 애니메이션 */
 @keyframes slideInRight {
   from {
     opacity: 0;
-    transform: translateX(100%);
+    transform: translateX(2rem);
   }
   to {
     opacity: 1;
@@ -100,38 +114,45 @@
   }
 }
 
-.animate-fade-in {
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-slide-in {
   animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Alert 호버 효과 */
 [role="alert"] {
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 [role="alert"]:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
-/* 버튼 호버 효과 */
-[role="alert"] button {
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-[role="alert"] button:active {
-  transform: scale(0.98);
-}
-
-/* 반응형 - 모바일에서는 전체 너비 */
+/* 반응형 - 모바일 */
 @media (max-width: 640px) {
-  .fixed.top-6.right-6 {
+  .fixed.bottom-6.right-6 {
     left: 1rem;
     right: 1rem;
-    top: 1rem;
+    bottom: 1rem;
   }
-
-  .fixed.top-6.right-6 > div {
+  
+  [role="alert"] {
     max-width: 100%;
   }
+}
 }

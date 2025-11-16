@@ -36,7 +36,6 @@ export function AlertProvider({ children }: { children: ReactNode }) {
   );
 
   const closeAlert = useCallback((id: number) => {
-    // confirm의 경우 취소로 처리
     const resolver = confirmResolvers.current.get(id);
     if (resolver) {
       resolver(false);
@@ -47,7 +46,10 @@ export function AlertProvider({ children }: { children: ReactNode }) {
 
   const showAlert = useCallback((config: Omit<AlertConfig, "id">) => {
     const id = Date.now();
-    setAlerts((prev) => [...prev, { ...config, id }]);
+    setAlerts((prev) => {
+      const newAlerts = [...prev, { ...config, id }];
+      return newAlerts.slice(-3);
+    });
   }, []);
 
   const showSuccess = useCallback(
@@ -107,39 +109,37 @@ export function AlertProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  return (
-    <AlertContext.Provider
-      value={{
-        showAlert,
-        showSuccess,
-        showError,
-        showWarning,
-        showInfo,
-        showConfirm,
-      }}
-    >
-      {children}
+return (
+  <AlertContext.Provider
+    value={{
+      showAlert,
+      showSuccess,
+      showError,
+      showWarning,
+      showInfo,
+      showConfirm,
+    }}
+  >
+    {children}
 
-      {/* Alert Container - 우측 상단 고정 */}
-      <div className="fixed top-6 right-6 z-50 flex flex-col gap-3 max-w-md pointer-events-none">
-        {alerts.map((alert) => (
-          <div key={alert.id} className="pointer-events-auto">
-            <Alert
-              type={alert.type}
-              message={alert.message}
-              duration={alert.duration}
-              showCloseButton={alert.showCloseButton}
-              onConfirm={alert.onConfirm}
-              onClose={() => closeAlert(alert.id)}
-            />
-          </div>
-        ))}
-      </div>
-    </AlertContext.Provider>
-  );
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3 pointer-events-none">
+      {alerts.map((alert) => (
+        <div key={alert.id} className="pointer-events-auto">
+          <Alert
+            type={alert.type}
+            message={alert.message}
+            duration={alert.duration}
+            showCloseButton={alert.showCloseButton}
+            onConfirm={alert.onConfirm}
+            onClose={() => closeAlert(alert.id)}
+          />
+        </div>
+      ))}
+    </div>
+  </AlertContext.Provider>
+);
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
 export function useAlert() {
   const context = useContext(AlertContext);
   if (!context) {
