@@ -64,7 +64,9 @@ export interface CreatePostRequest {
 export interface Comment {
   id: number;
   postId: number;
-  userId: number;
+  githubId: string;
+  githubUsername: string;
+  githubAvatarUrl: string | null;
   parentId: number | null;
   content: string;
   createdAt: string;

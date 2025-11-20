@@ -4,6 +4,7 @@ import { postApi } from "../api/post";
 import type { Post } from "../types";
 import { useAlert } from "../contexts/AlertContext";
 import MarkdownViewer from "../components/editor/MarkdownViewer";
+import CommentSection from "../components/comment/CommentSection";
 
 export default function PostDetailPage() {
   const { postId } = useParams<{ postId: string }>();
@@ -133,10 +134,7 @@ export default function PostDetailPage() {
       {/* Comments Section */}
       <div className="border-t border-gray-200 bg-gray-50">
         <div className="container mx-auto px-6 py-16 max-w-3xl">
-          <h3 className="text-xl font-bold text-gray-900 mb-6">댓글</h3>
-          <div className="text-center py-12 bg-white border border-gray-200 rounded">
-            <p className="text-gray-500">댓글 기능은 곧 추가됩니다.</p>
-          </div>
+          <CommentSection postId={Number(postId)} />
         </div>
       </div>
     </div>
