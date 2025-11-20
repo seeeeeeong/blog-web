@@ -16,11 +16,11 @@ export default function Alert({
   message,
   onClose,
   onConfirm,
-  duration = 3000,
+  duration,  
   showCloseButton = true,
 }: AlertProps) {
   useEffect(() => {
-    if (type !== "confirm" && duration > 0) {
+    if (type !== "confirm" && duration && duration > 0) {
       const timer = setTimeout(onClose, duration);
       return () => clearTimeout(timer);
     }

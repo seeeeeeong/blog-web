@@ -52,29 +52,29 @@ export function AlertProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  const showSuccess = useCallback(
-    (message: string, duration?: number) =>
-      showAlert({ type: "success", message, duration }),
-    [showAlert]
-  );
+const showSuccess = useCallback(
+  (message: string, duration: number = 3000) =>  
+    showAlert({ type: "success", message, duration }),
+  [showAlert]
+);
 
-  const showError = useCallback(
-    (message: string, duration?: number) =>
-      showAlert({ type: "error", message, duration }),
-    [showAlert]
-  );
+const showError = useCallback(
+  (message: string, duration: number = 5000) =>  
+    showAlert({ type: "error", message, duration }),
+  [showAlert]
+);
 
-  const showWarning = useCallback(
-    (message: string, duration?: number) =>
-      showAlert({ type: "warning", message, duration }),
-    [showAlert]
-  );
+const showWarning = useCallback(
+  (message: string, duration: number = 4000) =>  
+    showAlert({ type: "warning", message, duration }),
+  [showAlert]
+);
 
-  const showInfo = useCallback(
-    (message: string, duration?: number) =>
-      showAlert({ type: "info", message, duration }),
-    [showAlert]
-  );
+const showInfo = useCallback(
+  (message: string, duration: number = 3000) =>  
+    showAlert({ type: "info", message, duration }),
+  [showAlert]
+);
 
   const showConfirm = useCallback((message: string): Promise<boolean> => {
     return new Promise((resolve) => {
