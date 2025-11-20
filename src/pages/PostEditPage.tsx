@@ -3,8 +3,9 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { postApi } from "../api/post";
 import { categoryApi } from "../api/category";
-import type { Category, Post } from "../types";
+import type { Category } from "../types";
 import { useAlert } from "../contexts/AlertContext";
+import MarkdownEditor from "../components/editor/MarkdownEditor";
 
 export default function PostEditPage() {
   const { postId } = useParams<{ postId: string }>();
@@ -109,7 +110,7 @@ export default function PostEditPage() {
     <div className="min-h-screen bg-white">
       {/* Header */}
       <div className="border-b border-gray-200 sticky top-16 bg-white/80 backdrop-blur-sm z-10">
-        <div className="container mx-auto px-6 py-4 max-w-4xl">
+        <div className="container mx-auto px-6 py-4 max-w-5xl">
           <div className="flex justify-between items-center">
             <button
               onClick={handleCancel}
@@ -131,7 +132,7 @@ export default function PostEditPage() {
       </div>
 
       {/* Form */}
-      <div className="container mx-auto px-6 py-12 max-w-4xl">
+      <div className="container mx-auto px-6 py-12 max-w-5xl">
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Category */}
           <div>
@@ -167,15 +168,11 @@ export default function PostEditPage() {
             </p>
           </div>
 
-          {/* Content */}
+          {/* Content - 마크다운 에디터 */}
           <div>
-            <textarea
+            <MarkdownEditor
               value={content}
-              onChange={(e) => setContent(e.target.value)}
-              required
-              rows={20}
-              className="w-full text-lg text-gray-700 placeholder:text-gray-300 border-none outline-none focus:ring-0 resize-none leading-relaxed px-0"
-              placeholder="당신의 이야기를 들려주세요..."
+              onChange={setContent}
             />
           </div>
         </form>

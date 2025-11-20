@@ -5,6 +5,7 @@ import { postApi } from "../api/post";
 import { categoryApi } from "../api/category";
 import type { Category } from "../types";
 import { useAlert } from "../contexts/AlertContext";
+import MarkdownEditor from "../components/editor/MarkdownEditor";
 
 export default function PostCreatePage() {
   const navigate = useNavigate();
@@ -134,20 +135,14 @@ export default function PostCreatePage() {
               className="w-full text-4xl md:text-5xl font-bold text-gray-900 placeholder:text-gray-300 border-none outline-none focus:ring-0 px-0"
               placeholder="제목을 입력하세요"
             />
-            <p className="text-xs text-gray-400 mt-2 text-right">
-              {title.length}/200
-            </p>
           </div>
 
           {/* Content */}
+          {/* Content - 마크다운 에디터 */}
           <div>
-            <textarea
+            <MarkdownEditor
               value={content}
-              onChange={(e) => setContent(e.target.value)}
-              required
-              rows={20}
-              className="w-full text-lg text-gray-700 placeholder:text-gray-300 border-none outline-none focus:ring-0 resize-none leading-relaxed px-0"
-              placeholder="당신의 이야기를 들려주세요..."
+              onChange={setContent}
             />
           </div>
         </form>

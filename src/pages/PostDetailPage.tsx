@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { postApi } from "../api/post";
 import type { Post } from "../types";
 import { useAlert } from "../contexts/AlertContext";
+import MarkdownViewer from "../components/editor/MarkdownViewer";
 
 export default function PostDetailPage() {
   const { postId } = useParams<{ postId: string }>();
@@ -82,7 +83,6 @@ export default function PostDetailPage() {
               <span>Back</span>
             </Link>
 
-            {/* 본인 글일 때만 수정/삭제 버튼 표시 */}
             {isAuthor && (
               <div className="flex items-center gap-4">
                 <Link
@@ -126,12 +126,8 @@ export default function PostDetailPage() {
           <span>조회 {post.viewCount}</span>
         </div>
 
-        {/* Content */}
-        <div className="prose prose-lg max-w-none">
-          <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
-            {post.content}
-          </div>
-        </div>
+        {/* Content - Markdown Viewer */}
+        <MarkdownViewer content={post.content} />
       </article>
 
       {/* Comments Section */}
