@@ -4,6 +4,7 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import PostDetailPage from "./pages/PostDetailPage";
 import PostCreatePage from "./pages/PostCreatePage";
+import PostEditPage from "./pages/PostEditPage"; 
 import Layout from "./components/common/Layout";
 import type { JSX } from "react";
 
@@ -32,6 +33,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <PostCreatePage />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/posts/:postId/edit" 
+              element={
+                <PrivateRoute>
+                  <PostEditPage />
                 </PrivateRoute>
               } 
             />

@@ -82,13 +82,22 @@ export default function PostDetailPage() {
               <span>Back</span>
             </Link>
 
+            {/* 본인 글일 때만 수정/삭제 버튼 표시 */}
             {isAuthor && (
-              <button
-                onClick={handleDelete}
-                className="text-sm text-red-600 hover:text-red-700 transition-colors"
-              >
-                Delete
-              </button>
+              <div className="flex items-center gap-4">
+                <Link
+                  to={`/posts/${postId}/edit`}
+                  className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                >
+                  Edit
+                </Link>
+                <button
+                  onClick={handleDelete}
+                  className="text-sm text-red-600 hover:text-red-700 transition-colors"
+                >
+                  Delete
+                </button>
+              </div>
             )}
           </div>
         </div>
