@@ -94,9 +94,10 @@ export default function CommentItem({
             </div>
 
             {/* Comment Text */}
-            <p className="text-sm font-mono text-gray-900 whitespace-pre-wrap break-words mb-3 leading-relaxed">
-              {comment.content}
-            </p>
+            <div
+              className="comment-content text-sm font-mono text-gray-900 whitespace-pre-wrap break-words mb-3 leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: comment.contentHtml }}
+            />
 
             {/* Button */}
             <div className="flex items-center gap-4 text-xs font-mono">

@@ -127,8 +127,8 @@ export default function PostDetailPage() {
           </h1>
 
           {/* Content - Markdown Viewer */}
-          <div className="prose prose-lg max-w-none font-mono">
-            <MarkdownViewer content={post.content} />
+          <div className="font-mono">
+            <MarkdownViewer contentHtml={post.contentHtml} />
           </div>
         </div>
       </article>

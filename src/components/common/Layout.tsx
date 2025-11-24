@@ -1,16 +1,17 @@
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useGitHubAuth } from "../../contexts/GitHubAuthContext";
 
 export default function Layout() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isAdmin, setIsAdmin] = useState(false);
-  const { isAuthenticated, user } = useGitHubAuth();
+  const { isAuthenticated, user, logout } = useGitHubAuth();
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     setIsAdmin(!!userId);
-  }, []);
+  }, [location]);
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
@@ -18,6 +19,7 @@ export default function Layout() {
     localStorage.removeItem("userId");
     localStorage.removeItem("nickname");
     setIsAdmin(false);
+    logout();
     navigate("/");
   };
 
@@ -72,6 +74,12 @@ export default function Layout() {
                   <span className="text-xs font-mono text-gray-900 hidden sm:inline">
                     {user.githubUsername}
                   </span>
+                  <button
+                    onClick={logout}
+                    className="text-gray-900 hover:underline text-xs"
+                  >
+                    LOGOUT
+                  </button>
                 </div>
               )}
             </div>

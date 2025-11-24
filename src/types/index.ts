@@ -46,9 +46,10 @@ export interface Post {
   categoryId: number;
   title: string;
   content: string;
+  contentHtml: string;
   thumbnailUrl: string | null;
   viewCount: number;
-  status: "DRAFT" | "PUBLISHED";  
+  status: "DRAFT" | "PUBLISHED";
   createdAt: string;
   updatedAt: string;
 }
@@ -78,6 +79,7 @@ export interface Comment {
   githubAvatarUrl: string | null;
   parentId: number | null;
   content: string;
+  contentHtml: string;
   createdAt: string;
   updatedAt: string;
   replies: Comment[];

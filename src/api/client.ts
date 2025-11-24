@@ -37,9 +37,19 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("userId");
-      window.location.href = "/login";
+      const requestUrl = error.config?.url || '';
+
+      // GitHub 인증 관련 요청인 경우 (댓글 API)
+      if (requestUrl.includes('/comments')) {
+        // GitHub 로그인이 필요한 경우이므로 /login으로 리다이렉트하지 않음
+        console.error('GitHub 인증이 필요합니다. 다시 로그인해주세요.');
+        localStorage.removeItem("githubUser");
+      } else {
+        // 관리자 인증 관련 요청인 경우
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("userId");
+        window.location.href = "/login";
+      }
     }
     return Promise.reject(error);
   }

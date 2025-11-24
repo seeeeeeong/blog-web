@@ -52,13 +52,15 @@ export default function HomePage() {
     <div className="min-h-screen bg-gray-100 w-full">
       <div className="container mx-auto px-4 sm:px-8 py-8 max-w-7xl">
         {/* Hero Section */}
-        <div className="mb-16">
-          <h1 className="text-5xl sm:text-7xl lg:text-[6rem] font-bold text-gray-900 leading-tight font-mono mb-4">
-            Blog
-          </h1>
-          <p className="text-sm font-mono text-gray-900">
-            개발, 기술, 그리고 일상에 대한 이야기
-          </p>
+        <div className="mb-16 flex flex-col items-center justify-center">
+          <div className="relative">
+            <img
+              src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif"
+              alt="귀여운 고양이"
+              className="hero-cat-image w-40 h-40 object-contain rounded-full shadow-sm"
+              style={{ border: 'none', margin: '0' }}
+            />
+          </div>
         </div>
 
         {/* Posts List */}

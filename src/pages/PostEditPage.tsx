@@ -4,7 +4,7 @@ import { postApi } from "../api/post";
 import { categoryApi } from "../api/category";
 import type { Category } from "../types";
 import { useAlert } from "../contexts/AlertContext";
-import MarkdownEditor from "../components/editor/MarkdownEditor";
+import TipTapEditor from "../components/editor/TipTapEditor";
 
 export default function PostEditPage() {
   const { postId } = useParams<{ postId: string }>();
@@ -179,9 +179,9 @@ export default function PostEditPage() {
             </p>
           </div>
 
-          {/* MarkdownEditor */}
+          {/* TipTapEditor */}
           <div>
-            <MarkdownEditor value={content} onChange={setContent} />
+            <TipTapEditor value={content} onChange={setContent} />
           </div>
         </form>
       </div>
