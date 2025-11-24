@@ -1,4 +1,3 @@
-import type React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { postApi } from "../api/post";
@@ -32,9 +31,7 @@ export default function PostCreatePage() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleSubmit = async (isDraft: boolean = false) => {
     if (!categoryId) {
       showWarning("카테고리를 선택해주세요.");
       return;
@@ -56,10 +53,16 @@ export default function PostCreatePage() {
         categoryId,
         title: title.trim(),
         content: content.trim(),
+        isDraft,
       });
 
-      showSuccess("게시글이 작성되었습니다.");
-      navigate(`/posts/${newPost.id}`);
+      showSuccess(isDraft ? "임시저장되었습니다." : "게시글이 작성되었습니다.");
+      
+      if (isDraft) {
+        navigate("/admin/posts");
+      } else {
+        navigate(`/posts/${newPost.id}`);
+      }
     } catch (error) {
       console.error("작성 실패:", error);
       showError("게시글 작성에 실패했습니다.");
@@ -79,42 +82,51 @@ export default function PostCreatePage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-100">
       {/* Header */}
-      <div className="border-b border-gray-200 sticky top-16 bg-white/80 backdrop-blur-sm z-10">
-        <div className="container mx-auto px-6 py-4 max-w-4xl">
+      <div className="border-b border-gray-900 bg-gray-100">
+        <div className="container mx-auto px-4 sm:px-8 py-4 max-w-7xl">
           <div className="flex justify-between items-center">
             <button
               onClick={handleCancel}
-              className="text-sm text-gray-600 hover:text-gray-900 transition-colors flex items-center gap-2"
+              className="text-sm font-mono text-gray-900 hover:underline"
             >
-              <span>←</span>
-              <span>Cancel</span>
+              ← CANCEL
             </button>
 
-            <button
-              onClick={handleSubmit}
-              disabled={loading}
-              className="px-6 py-2 bg-gray-900 text-white text-sm rounded hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? "Publishing..." : "Publish"}
-            </button>
+            <div className="flex items-center gap-4 text-sm font-mono">
+              <button
+                onClick={() => handleSubmit(true)}
+                disabled={loading}
+                className="text-gray-900 hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? "SAVING..." : "SAVE DRAFT"}
+              </button>
+
+              <button
+                onClick={() => handleSubmit(false)}
+                disabled={loading}
+                className="px-4 py-2 border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? "PUBLISHING..." : "PUBLISH"}
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Form */}
-      <div className="container mx-auto px-6 py-12 max-w-4xl">
-        <form onSubmit={handleSubmit} className="space-y-8">
+      <div className="container mx-auto px-4 sm:px-8 py-12 max-w-7xl">
+        <form onSubmit={(e) => { e.preventDefault(); handleSubmit(false); }} className="space-y-8">
           {/* Category */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Category
+            <label className="block text-xs font-mono text-gray-900 mb-2">
+              CATEGORY
             </label>
             <select
               value={categoryId}
               onChange={(e) => setCategoryId(Number(e.target.value))}
-              className="w-full px-4 py-3 bg-white border border-gray-300 rounded text-gray-900 focus:outline-none focus:border-gray-900 focus:ring-1 focus:ring-gray-900 transition-all"
+              className="w-full px-4 py-3 bg-gray-100 border border-gray-900 font-mono text-sm text-gray-900 focus:outline-none focus:bg-white transition-all"
             >
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
@@ -132,18 +144,17 @@ export default function PostCreatePage() {
               onChange={(e) => setTitle(e.target.value)}
               required
               maxLength={200}
-              className="w-full text-4xl md:text-5xl font-bold text-gray-900 placeholder:text-gray-300 border-none outline-none focus:ring-0 px-0"
+              className="w-full text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 placeholder:text-gray-400 bg-gray-100 border-none outline-none focus:ring-0 px-0 font-mono"
               placeholder="제목을 입력하세요"
             />
+            <p className="text-xs font-mono text-gray-600 mt-2 text-right">
+              {title.length}/200
+            </p>
           </div>
 
-          {/* Content */}
-          {/* Content - 마크다운 에디터 */}
+          {/* MarkdownEditor */}
           <div>
-            <MarkdownEditor
-              value={content}
-              onChange={setContent}
-            />
+            <MarkdownEditor value={content} onChange={setContent} />
           </div>
         </form>
       </div>

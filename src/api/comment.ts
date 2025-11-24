@@ -10,15 +10,11 @@ export const commentApi = {
   createComment: async (
     postId: number,
     data: CreateCommentRequest,
-    githubToken: string,
-    githubUsername: string,
-    githubAvatarUrl: string | null
+    githubToken: string
   ): Promise<Comment> => {
     const response = await apiClient.post(`/posts/${postId}/comments`, data, {
       headers: {
         Authorization: `Bearer ${githubToken}`,
-        "GitHub-Username": githubUsername,
-        "GitHub-Avatar-Url": githubAvatarUrl || "",
       },
     });
     return response.data;

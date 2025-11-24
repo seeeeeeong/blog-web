@@ -1,3 +1,10 @@
+// API Response
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T | null;
+  message?: string;
+}
+
 // User
 export interface User {
   id: number;
@@ -41,6 +48,7 @@ export interface Post {
   content: string;
   thumbnailUrl: string | null;
   viewCount: number;
+  status: "DRAFT" | "PUBLISHED";  
   createdAt: string;
   updatedAt: string;
 }
@@ -58,6 +66,7 @@ export interface CreatePostRequest {
   title: string;
   content: string;
   thumbnailUrl?: string | null;
+  isDraft?: boolean;  
 }
 
 // Comment

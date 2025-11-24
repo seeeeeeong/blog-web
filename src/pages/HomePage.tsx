@@ -49,66 +49,66 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="border-b border-gray-200 bg-gradient-to-b from-gray-50 to-white">
-        <div className="container mx-auto px-6 py-20 max-w-5xl">
-          <div className="space-y-8">
-            <div className="flex justify-center pt-8">
-              <img
-                src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif"
-                alt="귀여운 고양이"
-                className="w-40 h-40 object-contain rounded-full"
-              />
-            </div>
-          </div>
+    <div className="min-h-screen bg-gray-100 w-full">
+      <div className="container mx-auto px-4 sm:px-8 py-8 max-w-7xl">
+        {/* Hero Section */}
+        <div className="mb-16">
+          <h1 className="text-5xl sm:text-7xl lg:text-[6rem] font-bold text-gray-900 leading-tight font-mono mb-4">
+            Blog
+          </h1>
+          <p className="text-sm font-mono text-gray-900">
+            개발, 기술, 그리고 일상에 대한 이야기
+          </p>
         </div>
-      </section>
 
-      {/* Posts List */}
-      <section className="container mx-auto px-6 py-16 max-w-5xl">
-        {posts.length === 0 ? (
-          <div className="text-center py-20">
-            <p className="text-gray-600 text-lg">아직 게시글이 없습니다</p>
-          </div>
-        ) : (
-          <div className="space-y-16">
-            {posts.map((post) => (
+        {/* Posts List */}
+        <div className="space-y-8">
+          {posts.length === 0 ? (
+            <div className="border-t border-gray-900 pt-8">
+              <p className="text-sm font-mono text-gray-900">아직 게시글이 없습니다</p>
+            </div>
+          ) : (
+            posts.map((post) => (
               <Link
                 key={post.id}
                 to={`/posts/${post.id}`}
-                className="block group"
+                className="block border-t border-gray-900 pt-8 hover:bg-gray-200 transition-colors -mx-4 sm:-mx-8 px-4 sm:px-8"
               >
-                <article className="space-y-4">
-                  {/* 날짜 */}
-                  <time className="text-sm text-gray-500 font-mono">
-                    {new Date(post.createdAt).toLocaleDateString("ko-KR", {
-                      year: "numeric",
-                      month: "2-digit",
-                      day: "2-digit",
-                    })}
-                  </time>
+                <article className="min-h-40">
+                  <div className="grid lg:grid-cols-[1fr_3fr] gap-4 lg:gap-8">
+                    {/* Left: Date & Meta */}
+                    <div className="space-y-1.5">
+                      <time className="text-xs font-mono text-gray-900 block">
+                        {new Date(post.createdAt).toLocaleDateString("ko-KR", {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                        })}
+                      </time>
+                      <span className="text-xs font-mono text-gray-600 block">
+                        조회 {post.viewCount}회
+                      </span>
+                    </div>
 
-                  {/* 제목 */}
-                  <h2 className="text-3xl font-bold text-gray-900 group-hover:text-gray-600 transition-colors leading-tight">
-                    {post.title}
-                  </h2>
-
-                  {/* 내용 미리보기 */}
-                  <p className="text-gray-600 leading-relaxed line-clamp-3">
-                    {post.content.substring(0, 200)}...
-                  </p>
-
-                  {/* 메타 정보 */}
-                  <div className="flex items-center gap-4 text-sm text-gray-500">
-                    <span>조회 {post.viewCount}</span>
+                    {/* Right: Content */}
+                    <div className="space-y-3">
+                      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 font-mono leading-tight hover:underline">
+                        {post.title}
+                      </h2>
+                      <p className="text-sm font-mono text-gray-700 leading-relaxed line-clamp-3">
+                        {post.content
+                          .replace(/[#*`>\-\[\]]/g, '')
+                          .substring(0, 150)}
+                        {post.content.length > 150 && '...'}
+                      </p>
+                    </div>
                   </div>
                 </article>
               </Link>
-            ))}
-          </div>
-        )}
-      </section>
+            ))
+          )}
+        </div>
+      </div>
     </div>
   );
 }

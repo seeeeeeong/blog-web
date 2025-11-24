@@ -71,32 +71,31 @@ export default function PostDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-100">
       {/* Header */}
-      <div className="border-b border-gray-200">
-        <div className="container mx-auto px-6 py-6 max-w-3xl">
+      <div className="bg-gray-100 border-b border-gray-900">
+        <div className="container mx-auto px-4 sm:px-8 py-4 max-w-7xl">
           <div className="flex justify-between items-center">
             <Link
               to="/"
-              className="text-sm text-gray-600 hover:text-gray-900 transition-colors flex items-center gap-2"
+              className="text-sm font-mono text-gray-900 hover:underline"
             >
-              <span>←</span>
-              <span>Back</span>
+              ← BACK
             </Link>
 
             {isAuthor && (
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 text-sm font-mono">
                 <Link
                   to={`/posts/${postId}/edit`}
-                  className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                  className="text-gray-900 hover:underline"
                 >
-                  Edit
+                  EDIT
                 </Link>
                 <button
                   onClick={handleDelete}
-                  className="text-sm text-red-600 hover:text-red-700 transition-colors"
+                  className="text-gray-900 hover:underline"
                 >
-                  Delete
+                  DELETE
                 </button>
               </div>
             )}
@@ -105,35 +104,38 @@ export default function PostDetailPage() {
       </div>
 
       {/* Article */}
-      <article className="container mx-auto px-6 py-16 max-w-3xl">
-        {/* Meta */}
-        <div className="mb-8">
-          <time className="text-sm text-gray-500 font-mono">
-            {new Date(post.createdAt).toLocaleDateString("ko-KR", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </time>
+      <article className="container mx-auto px-4 sm:px-8 py-12 max-w-7xl">
+        <div className="border-t border-gray-900 pt-8 mb-12">
+          {/* Meta */}
+          <div className="mb-8">
+            <div className="flex items-center gap-3 text-xs font-mono text-gray-900">
+              <time>
+                {new Date(post.createdAt).toLocaleDateString("ko-KR", {
+                  year: "numeric",
+                  month: "2-digit",
+                  day: "2-digit",
+                })}
+              </time>
+              <span>·</span>
+              <span>조회 {post.viewCount}회</span>
+            </div>
+          </div>
+
+          {/* Title */}
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-12 leading-tight font-mono">
+            {post.title}
+          </h1>
+
+          {/* Content - Markdown Viewer */}
+          <div className="prose prose-lg max-w-none font-mono">
+            <MarkdownViewer content={post.content} />
+          </div>
         </div>
-
-        {/* Title */}
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-8 leading-tight break-keep">
-          {post.title}
-        </h1>
-
-        {/* Stats */}
-        <div className="flex items-center gap-4 text-sm text-gray-500 mb-12 pb-8 border-b border-gray-200">
-          <span>조회 {post.viewCount}</span>
-        </div>
-
-        {/* Content - Markdown Viewer */}
-        <MarkdownViewer content={post.content} />
       </article>
 
       {/* Comments Section */}
-      <div className="border-t border-gray-200 bg-gray-50">
-        <div className="container mx-auto px-6 py-16 max-w-3xl">
+      <div className="bg-gray-100 border-t border-gray-900">
+        <div className="container mx-auto px-4 sm:px-8 py-12 max-w-7xl">
           <CommentSection postId={Number(postId)} />
         </div>
       </div>

@@ -56,85 +56,89 @@ export default function CommentItem({
 
   return (
     <div className="space-y-4">
-      {/* 댓글 본문 */}
-      <div className="flex gap-4">
-        {/* 프로필 이미지 */}
-        <div className="flex-shrink-0">
-          {comment.githubAvatarUrl ? (
-            <img
-              src={comment.githubAvatarUrl}
-              alt={comment.githubUsername}
-              className="w-10 h-10 rounded-full"
-            />
-          ) : (
-            <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-              <span className="text-gray-600 text-sm font-medium">
-                {comment.githubUsername[0].toUpperCase()}
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* 댓글 내용 */}
-        <div className="flex-1 min-w-0">
-          {/* 헤더 */}
-          <div className="flex items-center gap-2 mb-2">
-            <span className="font-medium text-gray-900">
-              {comment.githubUsername}
-            </span>
-            <span className="text-sm text-gray-500">
-              {formatDate(comment.createdAt)}
-            </span>
-            {isAuthor && (
-              <span className="text-xs bg-gray-900 text-white px-2 py-0.5 rounded">
-                작성자
-              </span>
+      {/* Comment */}
+      <div className="border-t border-gray-900 pt-4">
+        <div className="flex gap-4">
+          {/* Profile Image */}
+          <div className="flex-shrink-0">
+            {comment.githubAvatarUrl ? (
+              <img
+                src={comment.githubAvatarUrl}
+                alt={comment.githubUsername}
+                className="w-10 h-10 border border-gray-900"
+              />
+            ) : (
+              <div className="w-10 h-10 bg-gray-900 flex items-center justify-center">
+                <span className="text-gray-100 text-xs font-mono font-bold">
+                  {comment.githubUsername[0].toUpperCase()}
+                </span>
+              </div>
             )}
           </div>
 
-          {/* 내용 */}
-          <p className="text-gray-700 whitespace-pre-wrap break-words mb-3">
-            {comment.content}
-          </p>
+          {/* Comment */}
+          <div className="flex-1 min-w-0">
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-2 flex-wrap text-xs font-mono">
+              <span className="text-gray-900 font-bold">
+                {comment.githubUsername}
+              </span>
+              {isAuthor && (
+                <span className="px-2 py-1 border border-gray-900 inline-block">
+                  AUTHOR
+                </span>
+              )}
+              <span className="text-gray-600">
+                {formatDate(comment.createdAt)}
+              </span>
+            </div>
 
-          {/* 액션 버튼 */}
-          <div className="flex items-center gap-4">
-            {user && (
-              <button
-                onClick={() => setShowReplyForm(!showReplyForm)}
-                className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                답글
-              </button>
-            )}
+            {/* Comment Text */}
+            <p className="text-sm font-mono text-gray-900 whitespace-pre-wrap break-words mb-3 leading-relaxed">
+              {comment.content}
+            </p>
 
-            {isAuthor && (
-              <button
-                onClick={handleDelete}
-                className="text-sm text-red-600 hover:text-red-700 transition-colors"
-              >
-                삭제
-              </button>
-            )}
+            {/* Button */}
+            <div className="flex items-center gap-4 text-xs font-mono">
+              {user && (
+                <button
+                  onClick={() => setShowReplyForm(!showReplyForm)}
+                  className="text-gray-900 hover:underline"
+                >
+                  REPLY
+                </button>
+              )}
+
+              {isAuthor && (
+                <button
+                  onClick={handleDelete}
+                  className="text-gray-900 hover:underline"
+                >
+                  DELETE
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* 답글 작성 폼 */}
+      {/* Reply */}
       {showReplyForm && (
-        <div className="ml-14">
-          <CommentForm
-            onSubmit={handleReplySubmit}
-            placeholder="답글을 입력하세요..."
-            buttonText="답글 작성"
-            autoFocus
-          />
+        <div className="ml-8 sm:ml-14">
+          <div className="border border-gray-900 p-4">
+            <CommentForm
+              onSubmit={handleReplySubmit}
+              placeholder="답글을 입력하세요..."
+              buttonText="답글 작성"
+              autoFocus
+            />
+          </div>
         </div>
       )}
 
-      {/* 대댓글 목록 */}
+      {/* Reply List */}
       {comment.replies && comment.replies.length > 0 && (
-        <div className="ml-14 space-y-4 border-l-2 border-gray-200 pl-4">
+        <div className="ml-8 sm:ml-14 space-y-4 border-l border-gray-900 pl-4 sm:pl-6">
           {comment.replies.map((reply) => (
             <CommentItem
               key={reply.id}

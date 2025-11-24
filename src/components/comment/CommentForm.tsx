@@ -33,41 +33,41 @@ export default function CommentForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
-      {/* 사용자 정보 */}
+    <form onSubmit={handleSubmit} className="space-y-4">
       {user && (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 pb-3 border-b border-gray-900">
           {user.githubAvatarUrl && (
             <img
               src={user.githubAvatarUrl}
               alt={user.githubUsername}
-              className="w-8 h-8 rounded-full"
+              className="w-8 h-8 border border-gray-900"
             />
           )}
-          <span className="text-sm font-medium text-gray-700">
-            @{user.githubUsername}
+          <span className="text-xs font-mono font-bold text-gray-900">
+            {user.githubUsername}
           </span>
         </div>
       )}
 
-      {/* 입력 영역 */}
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder={placeholder}
         autoFocus={autoFocus}
         rows={4}
-        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900 focus:ring-1 focus:ring-gray-900 resize-none"
+        className="w-full px-4 py-3 bg-gray-100 border border-gray-900 font-mono text-sm text-gray-900 focus:outline-none focus:bg-white resize-none transition-all"
       />
 
-      {/* 버튼 */}
-      <div className="flex justify-end">
+      <div className="flex justify-between items-center">
+        <p className="text-xs font-mono text-gray-600">
+          {content.length} / 1000
+        </p>
         <button
           type="submit"
           disabled={!content.trim() || isSubmitting}
-          className="px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-4 py-2 border border-gray-900 text-sm font-mono text-gray-900 hover:bg-gray-900 hover:text-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? "작성 중..." : buttonText}
+          {isSubmitting ? "SUBMITTING..." : buttonText.toUpperCase()}
         </button>
       </div>
     </form>

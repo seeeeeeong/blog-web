@@ -31,7 +31,7 @@ export const postApi = {
     page: number = 0,
     size: number = 10
   ): Promise<PostListResponse> => {
-    const response = await apiClient.get(`/posts/category/${categoryId}`, {
+    const response = await apiClient.get(`/posts/categories/${categoryId}`, {
       params: { page, size },
     });
     return response.data;
