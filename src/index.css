@@ -135,12 +135,11 @@
 
 /* Alert 호버 효과 */
 [role="alert"] {
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 [role="alert"]:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 /* 반응형 - 모바일 */

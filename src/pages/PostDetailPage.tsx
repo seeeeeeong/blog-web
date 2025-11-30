@@ -28,7 +28,6 @@ export default function PostDetailPage() {
     } catch (error) {
       console.error("게시글 로딩 실패:", error);
       showError("게시글을 찾을 수 없습니다.");
-      navigate("/");
     } finally {
       setLoading(false);
     }

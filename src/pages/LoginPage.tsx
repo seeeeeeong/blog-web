@@ -25,7 +25,7 @@ export default function LoginPage() {
       localStorage.setItem("nickname", response.user.nickname);
 
       showSuccess("로그인에 성공했습니다!");
-      setTimeout(() => navigate("/"), 500);
+      navigate("/");
     } catch (err) {
       const axiosError = err as AxiosError<{ message?: string }>;
       showError(axiosError.response?.data?.message || "로그인에 실패했습니다.");

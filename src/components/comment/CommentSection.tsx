@@ -37,14 +37,26 @@ export default function CommentSection({ postId }: CommentSectionProps) {
     try {
       await commentApi.createComment(
         postId,
-        { content, parentId },
+        { content, parentId: parentId ?? null },
         user.commentToken
       );
       showSuccess("댓글이 작성되었습니다.");
       await loadComments();
-    } catch (error) {
+    } catch (error: any) {
       console.error("댓글 작성 실패:", error);
-      showError("댓글 작성에 실패했습니다.");
+
+      if (error.response?.data) {
+        const errorData = error.response.data;
+        if (errorData.errors && errorData.errors.length > 0) {
+          showError(errorData.errors.join(", "));
+        } else if (errorData.message) {
+          showError(errorData.message);
+        } else {
+          showError("댓글 작성에 실패했습니다.");
+        }
+      } else {
+        showError("댓글 작성에 실패했습니다.");
+      }
     }
   };
 
@@ -55,9 +67,17 @@ export default function CommentSection({ postId }: CommentSectionProps) {
       await commentApi.deleteComment(postId, commentId, user.commentToken);
       showSuccess("댓글이 삭제되었습니다.");
       await loadComments();
-    } catch (error) {
+    } catch (error: any) {
       console.error("댓글 삭제 실패:", error);
-      showError("댓글 삭제에 실패했습니다.");
+
+      // 401 에러(인증 실패)인 경우 재로그인 안내
+      if (error.response?.status === 401) {
+        showError("인증에 실패했습니다. GitHub 로그인을 다시 시도해주세요.");
+      } else if (error.response?.data?.message) {
+        showError(error.response.data.message);
+      } else {
+        showError("댓글 삭제에 실패했습니다.");
+      }
     }
   };
 

@@ -15,6 +15,7 @@ export default function PostEditPage() {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const { showSuccess, showError, showWarning } = useAlert();
 
   useEffect(() => {
@@ -38,7 +39,8 @@ export default function PostEditPage() {
       const userId = localStorage.getItem("userId");
       if (String(data.userId) !== userId) {
         showError("수정 권한이 없습니다.");
-        navigate(`/posts/${postId}`);
+        setLoadError(true);
+        setInitialLoading(false);
         return;
       }
 
@@ -48,7 +50,7 @@ export default function PostEditPage() {
     } catch (error) {
       console.error("게시글 로딩 실패:", error);
       showError("게시글을 찾을 수 없습니다.");
-      navigate("/");
+      setLoadError(true);
     } finally {
       setInitialLoading(false);
     }
@@ -80,7 +82,7 @@ export default function PostEditPage() {
       });
 
       showSuccess(isDraft ? "임시저장되었습니다." : "게시글이 수정되었습니다.");
-      
+
       if (isDraft) {
         navigate("/admin/posts");
       } else {
@@ -104,6 +106,30 @@ export default function PostEditPage() {
     return (
       <div className="flex justify-center items-center min-h-[60vh]">
         <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center px-6">
+        <div className="text-center">
+          <p className="text-gray-600 mb-6 font-mono">게시글을 불러올 수 없습니다.</p>
+          <div className="flex gap-4 justify-center">
+            <button
+              onClick={() => navigate("/")}
+              className="px-4 py-2 border border-gray-900 text-sm font-mono text-gray-900 hover:bg-gray-900 hover:text-white transition-colors"
+            >
+              홈으로
+            </button>
+            <button
+              onClick={() => navigate(`/posts/${postId}`)}
+              className="px-4 py-2 border border-gray-900 text-sm font-mono text-gray-900 hover:bg-gray-900 hover:text-white transition-colors"
+            >
+              게시글 보기
+            </button>
+          </div>
+        </div>
       </div>
     );
   }

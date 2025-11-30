@@ -57,7 +57,7 @@ export default function PostCreatePage() {
       });
 
       showSuccess(isDraft ? "임시저장되었습니다." : "게시글이 작성되었습니다.");
-      
+
       if (isDraft) {
         navigate("/admin/posts");
       } else {

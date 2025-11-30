@@ -10,9 +10,12 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    // 이미 Authorization 헤더가 설정되어 있으면 덮어쓰지 않음 (GitHub 댓글용)
+    if (!config.headers.Authorization) {
+      const token = localStorage.getItem("accessToken");
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
 
     return config;
@@ -38,14 +41,19 @@ apiClient.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       const requestUrl = error.config?.url || '';
+      const currentPath = window.location.pathname;
 
       // GitHub 인증 관련 요청인 경우 (댓글 API)
       if (requestUrl.includes('/comments')) {
-        // GitHub 로그인이 필요한 경우이므로 /login으로 리다이렉트하지 않음
         console.error('GitHub 인증이 필요합니다. 다시 로그인해주세요.');
         localStorage.removeItem("githubUser");
-      } else {
-        // 관리자 인증 관련 요청인 경우
+      }
+      // 로그인/회원가입 페이지에서의 401 에러는 리다이렉트하지 않음
+      else if (currentPath === '/login' || currentPath === '/signup' || requestUrl.includes('/auth/login') || requestUrl.includes('/auth/signup')) {
+        // 로그인/회원가입 실패는 페이지에서 처리
+      }
+      // 관리자 인증이 필요한 다른 페이지의 경우
+      else {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("userId");
         window.location.href = "/login";

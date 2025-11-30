@@ -1,22 +1,42 @@
 import { useEffect, useState } from "react";
 import { postApi } from "../api/post";
-import type { Post } from "../types";
+import { categoryApi } from "../api/category";
+import type { Post, Category } from "../types";
 import { Link } from "react-router-dom";
 
 export default function HomePage() {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    loadCategories();
     loadPosts();
   }, []);
 
+  useEffect(() => {
+    loadPosts();
+  }, [selectedCategory]);
+
+  const loadCategories = async () => {
+    try {
+      const data = await categoryApi.getCategories();
+      setCategories(data || []);
+    } catch (error) {
+      console.error("카테고리 로딩 실패:", error);
+    }
+  };
+
   const loadPosts = async () => {
     try {
+      setLoading(true);
       setError(null);
-      const data = await postApi.getPosts(0, 10);
-      console.log("Loaded posts:", data); 
+      const data = selectedCategory
+        ? await postApi.getPostsByCategory(selectedCategory, 0, 10)
+        : await postApi.getPosts(0, 10);
+      console.log("Loaded posts:", data);
       setPosts(data.posts || []);
     } catch (error) {
       console.error("게시글 로딩 실패:", error);
@@ -62,6 +82,35 @@ export default function HomePage() {
             />
           </div>
         </div>
+
+        {/* Category Filter */}
+        {categories.length > 0 && (
+          <div className="mb-8 flex items-center gap-3 flex-wrap">
+            <button
+              onClick={() => setSelectedCategory(null)}
+              className={`px-4 py-2 text-sm font-mono border transition-colors ${
+                selectedCategory === null
+                  ? "bg-gray-900 text-white border-gray-900"
+                  : "bg-white text-gray-900 border-gray-900 hover:bg-gray-900 hover:text-white"
+              }`}
+            >
+              ALL
+            </button>
+            {categories.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                className={`px-4 py-2 text-sm font-mono border transition-colors ${
+                  selectedCategory === category.id
+                    ? "bg-gray-900 text-white border-gray-900"
+                    : "bg-white text-gray-900 border-gray-900 hover:bg-gray-900 hover:text-white"
+                }`}
+              >
+                {category.name.toUpperCase()}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Posts List */}
         <div className="space-y-8">
