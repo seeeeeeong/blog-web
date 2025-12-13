@@ -13,12 +13,16 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [postsLoading, setPostsLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    loadCategories();
-    loadPopularPosts();
+    const init = async () => {
+      await Promise.all([loadCategories(), loadPopularPosts()]);
+      setInitialLoading(false);
+    };
+    init();
   }, []);
 
   useEffect(() => {
@@ -40,14 +44,23 @@ export default function HomePage() {
 
   const loadPosts = async () => {
     try {
-      setLoading(true);
+      setPostsLoading(true);
       setError(null);
 
       let data;
       if (searchQuery.trim()) {
-        data = await postApi.searchPosts(searchQuery, selectedCategory || undefined, currentPage, 10);
+        data = await postApi.searchPosts(
+          searchQuery,
+          selectedCategory || undefined,
+          currentPage,
+          10
+        );
       } else if (selectedCategory) {
-        data = await postApi.getPostsByCategory(selectedCategory, currentPage, 10);
+        data = await postApi.getPostsByCategory(
+          selectedCategory,
+          currentPage,
+          10
+        );
       } else {
         data = await postApi.getPosts(currentPage, 10);
       }
@@ -59,7 +72,7 @@ export default function HomePage() {
       console.error("게시글 로딩 실패:", error);
       setError("게시글을 불러오는데 실패했습니다.");
     } finally {
-      setLoading(false);
+      setPostsLoading(false);
     }
   };
 
@@ -74,10 +87,20 @@ export default function HomePage() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    setSearchQuery(searchKeyword);
+    if (searchKeyword.trim() === "") {
+      setSearchQuery("");
+    } else {
+      setSearchQuery(searchKeyword);
+    }
   };
 
-  if (loading) {
+  const handleCategoryClick = (categoryId: number | null) => {
+    setSelectedCategory(categoryId);
+    setSearchKeyword("");
+    setSearchQuery("");
+  };
+
+  if (initialLoading) {
     return (
       <div className="flex justify-center items-center min-h-[60vh]">
         <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin"></div>
@@ -85,11 +108,11 @@ export default function HomePage() {
     );
   }
 
-  if (error) {
+  if (error && posts.length === 0) {
     return (
       <div className="container mx-auto px-6 py-16 max-w-5xl text-center">
         <p className="text-red-600 mb-4">{error}</p>
-        <button 
+        <button
           onClick={loadPosts}
           className="text-gray-900 hover:text-gray-600 underline"
         >
@@ -117,33 +140,49 @@ export default function HomePage() {
 
           {/* Search Bar */}
           <form onSubmit={handleSearch} className="w-full">
-            <div className="flex gap-2">
+            <div className="relative flex items-center">
+              <span className="absolute left-4">
+                <svg
+                  className="w-4 h-4 text-gray-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  ></path>
+                </svg>
+              </span>
               <input
                 type="text"
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
                 placeholder="검색어를 입력하세요..."
-                className="flex-1 px-4 py-2.5 bg-gray-800 text-white border border-gray-700 font-mono text-sm focus:outline-none focus:border-gray-500 placeholder-gray-500"
+                className="w-full pl-10 pr-4 py-2.5 bg-gray-800 text-white border border-gray-700 font-mono text-sm focus:outline-none focus:border-gray-500 placeholder-gray-500"
               />
               <button
                 type="submit"
-                className="px-6 py-2.5 bg-white text-gray-900 font-mono text-sm hover:bg-gray-200 transition-colors"
+                className="absolute right-0 top-0 bottom-0 px-4 bg-white text-gray-900 hover:bg-gray-100 transition-colors border-l border-gray-700"
               >
-                검색
-              </button>
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearchKeyword("");
-                    setSearchQuery("");
-                    setSelectedCategory(null);
-                  }}
-                  className="px-4 py-2.5 border border-gray-700 text-white font-mono text-sm hover:bg-gray-800 transition-colors"
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  ✕
-                </button>
-              )}
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  ></path>
+                </svg>
+              </button>
             </div>
           </form>
         </div>
@@ -155,7 +194,7 @@ export default function HomePage() {
           <div className="mb-8">
             <div className="flex items-center gap-2 flex-wrap">
               <button
-                onClick={() => setSelectedCategory(null)}
+                onClick={() => handleCategoryClick(null)}
                 className={`px-4 py-1.5 text-xs font-mono border transition-colors ${
                   selectedCategory === null
                     ? "bg-gray-900 text-white border-gray-900"
@@ -167,7 +206,7 @@ export default function HomePage() {
               {categories.map((category) => (
                 <button
                   key={category.id}
-                  onClick={() => setSelectedCategory(category.id)}
+                  onClick={() => handleCategoryClick(category.id)}
                   className={`px-4 py-1.5 text-xs font-mono border transition-colors ${
                     selectedCategory === category.id
                       ? "bg-gray-900 text-white border-gray-900"
@@ -184,79 +223,92 @@ export default function HomePage() {
         {/* Main Content Grid */}
         <div className="grid lg:grid-cols-[1fr_300px] gap-8">
           {/* Posts List */}
-          <div>
-            {(searchQuery || selectedCategory) && (
-              <div className="mb-6">
-                <h2 className="text-lg font-bold font-mono text-gray-900">
-                  {searchQuery ? `"${searchQuery}" 검색 결과` : categories.find(c => c.id === selectedCategory)?.name}
-                </h2>
+          <div className="relative">
+            {postsLoading ? (
+              <div className="absolute inset-0 flex justify-center items-center bg-white bg-opacity-75 z-10">
+                <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin"></div>
               </div>
-            )}
-
-            {posts.length === 0 ? (
+            ) : error ? (
+              <div className="py-12 text-center">
+                <p className="text-sm font-mono text-red-500">{error}</p>
+              </div>
+            ) : posts.length === 0 ? (
               <div className="py-12 text-center">
                 <p className="text-sm font-mono text-gray-500">
-                  {searchQuery ? "검색 결과가 없습니다" : "아직 게시글이 없습니다"}
+                  {searchQuery
+                    ? "검색 결과가 없습니다"
+                    : "아직 게시글이 없습니다"}
                 </p>
               </div>
             ) : (
-              <div className="space-y-6">
-                {posts.map((post) => (
-                  <Link
-                    key={post.id}
-                    to={`/posts/${post.id}`}
-                    className="block border-b border-gray-200 pb-6 hover:opacity-70 transition-opacity"
-                  >
-                    <article>
-                      <h3 className="text-xl font-bold text-gray-900 font-mono mb-2 hover:underline">
-                        {post.title}
-                      </h3>
-                      <p className="text-sm font-mono text-gray-600 mb-3 line-clamp-2">
-                        {post.content
-                          .replace(/[#*`>\-\[\]]/g, '')
-                          .substring(0, 120)}
-                        {post.content.length > 120 && '...'}
-                      </p>
-                      <div className="flex items-center gap-3 text-xs font-mono text-gray-500">
-                        <time>
-                          {new Date(post.createdAt).toLocaleDateString("ko-KR", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })}
-                        </time>
-                        <span>·</span>
-                        <span>조회 {post.viewCount}</span>
-                      </div>
-                    </article>
-                  </Link>
-                ))}
-              </div>
-            )}
+              <>
+                <div className="space-y-6">
+                  {posts.map((post) => (
+                    <Link
+                      key={post.id}
+                      to={`/posts/${post.id}`}
+                      className="block border-b border-gray-200 pb-6 hover:opacity-70 transition-opacity"
+                    >
+                      <article>
+                        <h3 className="text-xl font-bold text-gray-900 font-mono mb-2 hover:underline">
+                          {post.title}
+                        </h3>
+                        <p className="text-sm font-mono text-gray-600 mb-3 line-clamp-2">
+                          {post.content
+                            .replace(/[#*`>\-\[\]]/g, "")
+                            .substring(0, 120)}
+                          {post.content.length > 120 && "..."}
+                        </p>
+                        <div className="flex items-center gap-3 text-xs font-mono text-gray-500">
+                          <time>
+                            {new Date(post.createdAt).toLocaleDateString(
+                              "ko-KR",
+                              {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              }
+                            )}
+                          </time>
+                          <span>·</span>
+                          <span>조회 {post.viewCount}</span>
+                        </div>
+                      </article>
+                    </Link>
+                  ))}
+                </div>
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex justify-center items-center gap-4 mt-8 pt-8 border-t border-gray-200 text-sm font-mono">
-                <button
-                  onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
-                  disabled={currentPage === 0}
-                  className="text-gray-900 hover:underline disabled:opacity-30 disabled:cursor-not-allowed"
-                >
-                  ← 이전
-                </button>
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="flex justify-center items-center gap-4 mt-8 pt-8 border-t border-gray-200 text-sm font-mono">
+                    <button
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.max(0, prev - 1))
+                      }
+                      disabled={currentPage === 0}
+                      className="text-gray-900 hover:underline disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      ← 이전
+                    </button>
 
-                <span className="text-gray-600">
-                  {currentPage + 1} / {totalPages}
-                </span>
+                    <span className="text-gray-600">
+                      {currentPage + 1} / {totalPages}
+                    </span>
 
-                <button
-                  onClick={() => setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))}
-                  disabled={currentPage >= totalPages - 1}
-                  className="text-gray-900 hover:underline disabled:opacity-30 disabled:cursor-not-allowed"
-                >
-                  다음 →
-                </button>
-              </div>
+                    <button
+                      onClick={() =>
+                        setCurrentPage((prev) =>
+                          Math.min(totalPages - 1, prev + 1)
+                        )
+                      }
+                      disabled={currentPage >= totalPages - 1}
+                      className="text-gray-900 hover:underline disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      다음 →
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </div>
 
@@ -286,10 +338,13 @@ export default function HomePage() {
                             <span>조회 {post.viewCount}</span>
                             <span>·</span>
                             <span>
-                              {new Date(post.createdAt).toLocaleDateString("ko-KR", {
-                                month: "long",
-                                day: "numeric",
-                              })}
+                              {new Date(post.createdAt).toLocaleDateString(
+                                "ko-KR",
+                                {
+                                  month: "long",
+                                  day: "numeric",
+                                }
+                              )}
                             </span>
                           </div>
                         </div>

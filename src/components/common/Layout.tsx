@@ -55,12 +55,12 @@ export default function Layout() {
         <div className="container mx-auto px-4 sm:px-8 max-w-7xl">
           <div className="flex justify-between items-end py-4">
             {/* Logo */}
-            <Link
-              to="/"
+            <a
+              href="/"
               className="text-sm font-mono text-gray-900 hover:underline"
             >
               / HOME
-            </Link>
+            </a>
 
             {/* Menu */}
             <div className="flex items-center gap-4 sm:gap-6 text-sm font-mono">
