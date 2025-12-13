@@ -1,6 +1,6 @@
 import type React from "react";
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import type { AxiosError } from "axios";
 import { authApi } from "../api/auth";
 import { useAlert } from "../contexts/AlertContext";
