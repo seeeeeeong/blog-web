@@ -14,7 +14,24 @@ apiClient.interceptors.request.use(
     if (!config.headers.Authorization) {
       const token = localStorage.getItem("accessToken");
       if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          const isExpired = payload.exp * 1000 < Date.now();
+
+          if (isExpired) {
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("userId");
+            localStorage.removeItem("nickname");
+          } else {
+            config.headers.Authorization = `Bearer ${token}`;
+          }
+        } catch {
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          localStorage.removeItem("userId");
+          localStorage.removeItem("nickname");
+        }
       }
     }
 
@@ -39,7 +56,9 @@ apiClient.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response?.status === 401) {
+    const status = error.response?.status;
+
+    if (status === 401 || status === 403) {
       const requestUrl = error.config?.url || '';
       const currentPath = window.location.pathname;
 
@@ -48,14 +67,24 @@ apiClient.interceptors.response.use(
         console.error('GitHub 인증이 필요합니다. 다시 로그인해주세요.');
         localStorage.removeItem("githubUser");
       }
-      // 로그인/회원가입 페이지에서의 401 에러는 리다이렉트하지 않음
+      // 로그인/회원가입 페이지에서의 인증 에러는 리다이렉트하지 않음
       else if (currentPath === '/login' || currentPath === '/signup' || requestUrl.includes('/auth/login') || requestUrl.includes('/auth/signup')) {
         // 로그인/회원가입 실패는 페이지에서 처리
+      }
+      // Public 엔드포인트 (홈페이지 게시글 목록 등)
+      else if (requestUrl.includes('/posts') && !requestUrl.includes('/my') && !requestUrl.includes('/drafts')) {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("nickname");
+        // Public 엔드포인트는 리다이렉트하지 않음
       }
       // 관리자 인증이 필요한 다른 페이지의 경우
       else {
         localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
         localStorage.removeItem("userId");
+        localStorage.removeItem("nickname");
         window.location.href = "/login";
       }
     }

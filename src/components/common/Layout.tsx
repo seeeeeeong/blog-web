@@ -10,7 +10,32 @@ export default function Layout() {
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
-    setIsAdmin(!!userId);
+    const token = localStorage.getItem("accessToken");
+
+    if (userId && token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const isExpired = payload.exp * 1000 < Date.now();
+
+        if (isExpired) {
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          localStorage.removeItem("userId");
+          localStorage.removeItem("nickname");
+          setIsAdmin(false);
+        } else {
+          setIsAdmin(true);
+        }
+      } catch {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("nickname");
+        setIsAdmin(false);
+      }
+    } else {
+      setIsAdmin(false);
+    }
   }, [location]);
 
   const handleLogout = () => {

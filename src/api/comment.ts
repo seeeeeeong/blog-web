@@ -49,4 +49,9 @@ export const commentApi = {
       },
     });
   },
+
+  getRecentComments: async (limit: number = 10): Promise<Comment[]> => {
+    const response = await apiClient.get('/comments/recent', { params: { limit } });
+    return response.data;
+  },
 };

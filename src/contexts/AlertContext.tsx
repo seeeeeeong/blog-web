@@ -46,10 +46,7 @@ export function AlertProvider({ children }: { children: ReactNode }) {
 
   const showAlert = useCallback((config: Omit<AlertConfig, "id">) => {
     const id = Date.now();
-    setAlerts((prev) => {
-      const newAlerts = [...prev, { ...config, id }];
-      return newAlerts.slice(-3);
-    });
+    setAlerts([{ ...config, id }]);
   }, []);
 
 const showSuccess = useCallback(

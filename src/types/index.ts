@@ -31,6 +31,20 @@ export interface TokenResponse {
   user: User;
 }
 
+export interface RefreshTokenRequest {
+  refreshToken: string;
+}
+
+export interface UpdateProfileRequest {
+  nickname: string;
+  profileImageUrl?: string | null;
+}
+
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+}
+
 // Category
 export interface Category {
   id: number;

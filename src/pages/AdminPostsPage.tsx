@@ -1,25 +1,47 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { adminApi } from "../api/admin";
+import { postApi } from "../api/post";
 import type { Post } from "../types";
 import { useAlert } from "../contexts/AlertContext";
+
+type FilterType = "all" | "published" | "draft";
 
 export default function AdminPostsPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [filter, setFilter] = useState<FilterType>("all");
   const { showSuccess, showError, showConfirm } = useAlert();
 
   useEffect(() => {
+    setCurrentPage(0);
+  }, [filter]);
+
+  useEffect(() => {
     loadPosts();
-  }, [currentPage]);
+  }, [currentPage, filter]);
 
   const loadPosts = async () => {
     try {
       setLoading(true);
-      const data = await adminApi.getAllPosts(currentPage, 20);
-      setPosts(data.posts);
+      let data;
+
+      if (filter === "draft") {
+        data = await postApi.getDraftPosts(currentPage, 20);
+      } else {
+        data = await adminApi.getAllPosts(currentPage, 20);
+      }
+
+      // 필터링
+      if (filter === "published") {
+        const filteredPosts = data.posts.filter((post: Post) => post.status === "PUBLISHED");
+        setPosts(filteredPosts);
+      } else {
+        setPosts(data.posts);
+      }
+
       setTotalPages(data.totalPages);
     } catch (error) {
       console.error("게시글 로딩 실패:", error);
@@ -55,9 +77,10 @@ export default function AdminPostsPage() {
     <div className="min-h-screen bg-gray-100">
       <div className="container mx-auto px-4 sm:px-8 py-12 max-w-7xl">
         {/* Header */}
-        <div className="flex justify-between items-end mb-12 border-b border-gray-900 pb-4">
-          <div>
-            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-2 font-mono">
+        <div className="mb-12 border-b border-gray-900 pb-4">
+          <div className="flex justify-between items-end mb-6">
+            <div>
+              <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-2 font-mono">
               Admin
             </h1>
             <p className="text-xs font-mono text-gray-600">
@@ -71,6 +94,41 @@ export default function AdminPostsPage() {
           >
             NEW POST
           </Link>
+          </div>
+
+          {/* Filter Tabs */}
+          <div className="flex gap-3 mt-6">
+            <button
+              onClick={() => setFilter("all")}
+              className={`px-4 py-2 text-sm font-mono border transition-colors ${
+                filter === "all"
+                  ? "bg-gray-900 text-white border-gray-900"
+                  : "bg-white text-gray-900 border-gray-900 hover:bg-gray-900 hover:text-white"
+              }`}
+            >
+              ALL
+            </button>
+            <button
+              onClick={() => setFilter("published")}
+              className={`px-4 py-2 text-sm font-mono border transition-colors ${
+                filter === "published"
+                  ? "bg-gray-900 text-white border-gray-900"
+                  : "bg-white text-gray-900 border-gray-900 hover:bg-gray-900 hover:text-white"
+              }`}
+            >
+              PUBLISHED
+            </button>
+            <button
+              onClick={() => setFilter("draft")}
+              className={`px-4 py-2 text-sm font-mono border transition-colors ${
+                filter === "draft"
+                  ? "bg-gray-900 text-white border-gray-900"
+                  : "bg-white text-gray-900 border-gray-900 hover:bg-gray-900 hover:text-white"
+              }`}
+            >
+              DRAFT
+            </button>
+          </div>
         </div>
 
         {/* Posts Table */}

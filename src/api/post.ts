@@ -36,4 +36,26 @@ export const postApi = {
     });
     return response.data;
   },
+
+  searchPosts: async (
+    keyword?: string,
+    categoryId?: number,
+    page: number = 0,
+    size: number = 10
+  ): Promise<PostListResponse> => {
+    const response = await apiClient.get('/posts/search', {
+      params: { keyword, categoryId, page, size },
+    });
+    return response.data;
+  },
+
+  getDraftPosts: async (page: number = 0, size: number = 10): Promise<PostListResponse> => {
+    const response = await apiClient.get('/posts/drafts', { params: { page, size } });
+    return response.data;
+  },
+
+  getPopularPosts: async (limit: number = 10): Promise<Post[]> => {
+    const response = await apiClient.get('/posts/popular', { params: { limit } });
+    return response.data;
+  },
 };
