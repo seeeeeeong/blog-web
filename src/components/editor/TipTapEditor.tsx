@@ -40,7 +40,7 @@ interface TipTapEditorProps {
   onChange: (value: string) => void;
 }
 
-// Turndown 서비스 인스턴스 (HTML → Markdown 변환)
+// Turndown service instance (HTML → Markdown conversion)
 const turndownService = new TurndownService({
   headingStyle: 'atx',
   codeBlockStyle: 'fenced',
@@ -56,7 +56,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         },
       }),
       Placeholder.configure({
-        placeholder: '내용을 입력하세요...',
+        placeholder: 'Enter content...',
       }),
       Typography,
       Underline,
@@ -110,7 +110,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
   }
 
   const addImage = () => {
-    const url = window.prompt('이미지 URL을 입력하세요:');
+    const url = window.prompt('Enter image URL:');
     if (url) {
       editor.chain().focus().setImage({ src: url }).run();
     }
@@ -118,7 +118,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
 
   const setLink = () => {
     const previousUrl = editor.getAttributes('link').href;
-    const url = window.prompt('링크 URL을 입력하세요:', previousUrl);
+    const url = window.prompt('Enter URL for link:', previousUrl);
 
     if (url === null) {
       return;
@@ -162,7 +162,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         <MenuButton
           onClick={() => editor.chain().focus().toggleBold().run()}
           isActive={editor.isActive('bold')}
-          title="굵게 (Ctrl+B)"
+          title="Bold (Ctrl+B)"
         >
           <Bold size={18} />
         </MenuButton>
@@ -170,7 +170,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         <MenuButton
           onClick={() => editor.chain().focus().toggleItalic().run()}
           isActive={editor.isActive('italic')}
-          title="기울임 (Ctrl+I)"
+          title="Italic (Ctrl+I)"
         >
           <Italic size={18} />
         </MenuButton>
@@ -178,7 +178,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         <MenuButton
           onClick={() => editor.chain().focus().toggleUnderline().run()}
           isActive={editor.isActive('underline')}
-          title="밑줄 (Ctrl+U)"
+          title="Underline (Ctrl+U)"
         >
           <UnderlineIcon size={18} />
         </MenuButton>
@@ -186,7 +186,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         <MenuButton
           onClick={() => editor.chain().focus().toggleStrike().run()}
           isActive={editor.isActive('strike')}
-          title="취소선"
+          title="Strikethrough"
         >
           <Strikethrough size={18} />
         </MenuButton>
@@ -194,7 +194,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         <MenuButton
           onClick={() => editor.chain().focus().toggleHighlight().run()}
           isActive={editor.isActive('highlight')}
-          title="형광펜"
+          title="Highlight"
         >
           <Highlighter size={18} />
         </MenuButton>
@@ -204,7 +204,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         <MenuButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
           isActive={editor.isActive('heading', { level: 1 })}
-          title="제목 1"
+          title="Heading 1"
         >
           <Heading1 size={18} />
         </MenuButton>
@@ -212,7 +212,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         <MenuButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           isActive={editor.isActive('heading', { level: 2 })}
-          title="제목 2"
+          title="Heading 2"
         >
           <Heading2 size={18} />
         </MenuButton>
@@ -220,7 +220,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         <MenuButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
           isActive={editor.isActive('heading', { level: 3 })}
-          title="제목 3"
+          title="Heading 3"
         >
           <Heading3 size={18} />
         </MenuButton>
@@ -230,7 +230,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         <MenuButton
           onClick={() => editor.chain().focus().setTextAlign('left').run()}
           isActive={editor.isActive({ textAlign: 'left' })}
-          title="왼쪽 정렬"
+          title="Align left"
         >
           <AlignLeft size={18} />
         </MenuButton>
@@ -238,7 +238,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         <MenuButton
           onClick={() => editor.chain().focus().setTextAlign('center').run()}
           isActive={editor.isActive({ textAlign: 'center' })}
-          title="가운데 정렬"
+          title="Align center"
         >
           <AlignCenter size={18} />
         </MenuButton>
@@ -246,7 +246,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         <MenuButton
           onClick={() => editor.chain().focus().setTextAlign('right').run()}
           isActive={editor.isActive({ textAlign: 'right' })}
-          title="오른쪽 정렬"
+          title="Align right"
         >
           <AlignRight size={18} />
         </MenuButton>
@@ -256,7 +256,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         <MenuButton
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           isActive={editor.isActive('bulletList')}
-          title="글머리 기호"
+          title="Bullet list"
         >
           <List size={18} />
         </MenuButton>
@@ -264,7 +264,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         <MenuButton
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           isActive={editor.isActive('orderedList')}
-          title="번호 매기기"
+          title="Numbered list"
         >
           <ListOrdered size={18} />
         </MenuButton>
@@ -272,7 +272,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         <MenuButton
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           isActive={editor.isActive('blockquote')}
-          title="인용구"
+          title="Blockquote"
         >
           <Quote size={18} />
         </MenuButton>
@@ -280,24 +280,24 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         <MenuButton
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
           isActive={editor.isActive('codeBlock')}
-          title="코드 블록"
+          title="Code block"
         >
           <Code size={18} />
         </MenuButton>
 
         <div className="w-px bg-gray-900 mx-1.5" />
 
-        <MenuButton onClick={setLink} isActive={editor.isActive('link')} title="링크 삽입">
+        <MenuButton onClick={setLink} isActive={editor.isActive('link')} title="Insert link">
           <LinkIcon size={18} />
         </MenuButton>
 
-        <MenuButton onClick={addImage} title="이미지 삽입">
+        <MenuButton onClick={addImage} title="Insert image">
           <ImageIcon size={18} />
         </MenuButton>
 
         <MenuButton
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
-          title="구분선"
+          title="Horizontal rule"
         >
           <Minus size={18} />
         </MenuButton>
@@ -306,14 +306,14 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
 
         <MenuButton
           onClick={() => editor.chain().focus().undo().run()}
-          title="실행 취소 (Ctrl+Z)"
+          title="Undo (Ctrl+Z)"
         >
           <Undo size={18} />
         </MenuButton>
 
         <MenuButton
           onClick={() => editor.chain().focus().redo().run()}
-          title="다시 실행 (Ctrl+Y)"
+          title="Redo (Ctrl+Y)"
         >
           <Redo size={18} />
         </MenuButton>

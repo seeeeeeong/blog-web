@@ -70,7 +70,7 @@ export default function HomePage() {
       setTotalPages(data.totalPages || 0);
     } catch (error) {
       console.error("게시글 로딩 실패:", error);
-      setError("게시글을 불러오는데 실패했습니다.");
+      setError("Failed to load posts.");
     } finally {
       setPostsLoading(false);
     }
@@ -116,7 +116,7 @@ export default function HomePage() {
           onClick={loadPosts}
           className="text-gray-900 hover:text-gray-600 underline"
         >
-          다시 시도
+          Try again
         </button>
       </div>
     );
@@ -161,7 +161,7 @@ export default function HomePage() {
                 type="text"
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
-                placeholder="검색어를 입력하세요..."
+                placeholder="Search..."
                 className="w-full pl-10 pr-4 py-2.5 bg-gray-800 text-white border border-gray-700 font-mono text-sm focus:outline-none focus:border-gray-500 placeholder-gray-500"
               />
               <button
@@ -236,8 +236,8 @@ export default function HomePage() {
               <div className="py-12 text-center">
                 <p className="text-sm font-mono text-gray-500">
                   {searchQuery
-                    ? "검색 결과가 없습니다"
-                    : "아직 게시글이 없습니다"}
+                    ? "No search results"
+                    : "No posts yet"}
                 </p>
               </div>
             ) : (
@@ -262,7 +262,7 @@ export default function HomePage() {
                         <div className="flex items-center gap-3 text-xs font-mono text-gray-500">
                           <time>
                             {new Date(post.createdAt).toLocaleDateString(
-                              "ko-KR",
+                              "en-US",
                               {
                                 year: "numeric",
                                 month: "long",
@@ -271,7 +271,7 @@ export default function HomePage() {
                             )}
                           </time>
                           <span>·</span>
-                          <span>조회 {post.viewCount}</span>
+                          <span>Views {post.viewCount}</span>
                         </div>
                       </article>
                     </Link>
@@ -288,7 +288,7 @@ export default function HomePage() {
                       disabled={currentPage === 0}
                       className="text-gray-900 hover:underline disabled:opacity-30 disabled:cursor-not-allowed"
                     >
-                      ← 이전
+                      ← Previous
                     </button>
 
                     <span className="text-gray-600">
@@ -304,7 +304,7 @@ export default function HomePage() {
                       disabled={currentPage >= totalPages - 1}
                       className="text-gray-900 hover:underline disabled:opacity-30 disabled:cursor-not-allowed"
                     >
-                      다음 →
+                      Next →
                     </button>
                   </div>
                 )}
@@ -317,7 +317,7 @@ export default function HomePage() {
             <aside className="hidden lg:block">
               <div className="sticky top-8">
                 <h3 className="text-sm font-bold font-mono text-gray-900 mb-4 pb-2 border-b border-gray-900">
-                  인기 게시글
+                  Popular Posts...
                 </h3>
                 <div className="space-y-4">
                   {popularPosts.map((post, index) => (
@@ -335,11 +335,11 @@ export default function HomePage() {
                             {post.title}
                           </h4>
                           <div className="flex items-center gap-2 text-[10px] font-mono text-gray-500">
-                            <span>조회 {post.viewCount}</span>
+                            <span>Views {post.viewCount}</span>
                             <span>·</span>
                             <span>
                               {new Date(post.createdAt).toLocaleDateString(
-                                "ko-KR",
+                                "en-US",
                                 {
                                   month: "long",
                                   day: "numeric",

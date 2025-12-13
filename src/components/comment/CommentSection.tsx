@@ -25,7 +25,7 @@ export default function CommentSection({ postId }: CommentSectionProps) {
       const data = await commentApi.getComments(postId);
       setComments(data);
     } catch (error) {
-      console.error("댓글 로딩 실패:", error);
+      console.error("Failed to load comments:", error);
     } finally {
       setLoading(false);
     }
@@ -40,10 +40,10 @@ export default function CommentSection({ postId }: CommentSectionProps) {
         { content, parentId: parentId ?? null },
         user.commentToken
       );
-      showSuccess("댓글이 작성되었습니다.");
+      showSuccess("Comment posted successfully.");
       await loadComments();
     } catch (error: any) {
-      console.error("댓글 작성 실패:", error);
+      console.error("Failed to post comment:", error);
 
       if (error.response?.data) {
         const errorData = error.response.data;
@@ -52,10 +52,10 @@ export default function CommentSection({ postId }: CommentSectionProps) {
         } else if (errorData.message) {
           showError(errorData.message);
         } else {
-          showError("댓글 작성에 실패했습니다.");
+          showError("Failed to post comment.");
         }
       } else {
-        showError("댓글 작성에 실패했습니다.");
+        showError("Failed to post comment.");
       }
     }
   };
@@ -65,18 +65,18 @@ export default function CommentSection({ postId }: CommentSectionProps) {
 
     try {
       await commentApi.deleteComment(postId, commentId, user.commentToken);
-      showSuccess("댓글이 삭제되었습니다.");
+      showSuccess("Comment deleted successfully.");
       await loadComments();
     } catch (error: any) {
-      console.error("댓글 삭제 실패:", error);
+      console.error("Failed to delete comment:", error);
 
       // 401 에러(인증 실패)인 경우 재로그인 안내
       if (error.response?.status === 401) {
-        showError("인증에 실패했습니다. GitHub 로그인을 다시 시도해주세요.");
+        showError("Authentication failed. Please try logging in with GitHub again.");
       } else if (error.response?.data?.message) {
         showError(error.response.data.message);
       } else {
-        showError("댓글 삭제에 실패했습니다.");
+        showError("Failed to delete comment.");
       }
     }
   };
@@ -92,20 +92,17 @@ export default function CommentSection({ postId }: CommentSectionProps) {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="pb-4 border-b border-gray-900">
-        <h3 className="text-2xl font-bold text-gray-900 font-mono">
-          COMMENTS ({comments.length})
-        </h3>
+      <div className="pb-4 border-b border-gray-200">
       </div>
 
       {/* Create Comment */}
-      <div>
+      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
         {isAuthenticated ? (
           <CommentForm onSubmit={(content) => handleSubmitComment(content)} />
         ) : (
-          <div className="border border-gray-900 p-8 text-center">
-            <p className="text-sm font-mono text-gray-900 mb-4">
-              댓글을 남기려면 GitHub 로그인이 필요합니다
+          <div className="text-center">
+            <p className="text-sm font-mono text-gray-700 mb-4">
+              Login with GitHub to leave a comment
             </p>
             <button
               onClick={login}
@@ -123,8 +120,8 @@ export default function CommentSection({ postId }: CommentSectionProps) {
       {/* Comment List */}
       <div className="space-y-6">
         {comments.length === 0 ? (
-          <div className="border-t border-gray-900 pt-8">
-            <p className="text-sm font-mono text-gray-600">아직 댓글이 없습니다</p>
+          <div className="border-t border-gray-200 pt-8 text-center">
+            <p className="text-sm font-mono text-gray-500">No comments yet.</p>
           </div>
         ) : (
           comments.map((comment) => (

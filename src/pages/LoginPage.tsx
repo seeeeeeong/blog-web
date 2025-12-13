@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import type { AxiosError } from "axios";
 import { authApi } from "../api/auth";
 import { useAlert } from "../contexts/AlertContext";
+import AuthLayout from "../components/common/AuthLayout";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -24,105 +25,69 @@ export default function LoginPage() {
       localStorage.setItem("userId", String(response.user.id));
       localStorage.setItem("nickname", response.user.nickname);
 
-      showSuccess("로그인에 성공했습니다!");
+      showSuccess("Logged in successfully!");
       navigate("/");
     } catch (err) {
       const axiosError = err as AxiosError<{ message?: string }>;
-      showError(axiosError.response?.data?.message || "로그인에 실패했습니다.");
+      showError(axiosError.response?.data?.message || "Login failed.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center px-6 py-12">
-      <div className="w-full max-w-md">
-      {/* Header */}
-      <div className="text-center mb-12">
-        <Link to="/" className="inline-block mb-8">
-          <span className="text-3xl font-bold text-gray-900 font-mono">
-            seeeeeeong.log
-          </span>
-        </Link>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Admin Login</h1>
-        <p className="text-gray-600">관리자 로그인</p>
-      </div>
-
-        {/* Form */}
-        <div className="bg-white border border-gray-200 rounded-lg p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-4 py-3 bg-white border border-gray-300 rounded text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-gray-900 focus:ring-1 focus:ring-gray-900 transition-all"
-                placeholder="your@email.com"
-              />
-            </div>
-
-            {/* Password */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full px-4 py-3 bg-white border border-gray-300 rounded text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-gray-900 focus:ring-1 focus:ring-gray-900 transition-all"
-                placeholder="••••••••"
-              />
-            </div>
-
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 bg-gray-900 text-white rounded font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? "로그인 중..." : "로그인"}
-            </button>
-          </form>
-
-          {/* Divider */}
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200"></div>
-            </div>
-            {/* <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-gray-500">or</span>
-            </div> */}
-          </div>
-
-          {/* Sign Up Link */}
-          {/* <p className="text-center text-sm text-gray-600">
-            계정이 없으신가요?{" "}
-            <Link
-              to="/signup"
-              className="text-gray-900 font-medium hover:underline"
-            >
-              회원가입
-            </Link>
-          </p> */}
-        </div>
-
-        {/* Back to Home */}
-        <div className="text-center mt-8">
-          <Link
-            to="/"
-            className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
+    <AuthLayout title="Admin Login">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700"
           >
-            ← 홈으로 돌아가기
-          </Link>
+            Email
+          </label>
+          <div className="mt-1">
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-gray-900 focus:border-gray-900 sm:text-sm"
+            />
+          </div>
         </div>
-      </div>
-    </div>
+
+        <div>
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Password
+          </label>
+          <div className="mt-1">
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-gray-900 focus:border-gray-900 sm:text-sm"
+            />
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 disabled:opacity-50"
+        >
+          {loading ? "Logging in..." : "Login"}
+        </button>
+      </form>
+    </AuthLayout>
   );
 }

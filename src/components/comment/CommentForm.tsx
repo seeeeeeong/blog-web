@@ -10,8 +10,8 @@ interface CommentFormProps {
 
 export default function CommentForm({
   onSubmit,
-  placeholder = "댓글을 입력하세요...",
-  buttonText = "댓글 작성",
+  placeholder = "Leave a comment...",
+  buttonText = "Post Comment",
   autoFocus = false,
 }: CommentFormProps) {
   const [content, setContent] = useState("");
@@ -35,15 +35,15 @@ export default function CommentForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {user && (
-        <div className="flex items-center gap-3 pb-3 border-b border-gray-900">
+        <div className="flex items-center gap-3 pb-3 mb-4 border-b border-gray-200">
           {user.githubAvatarUrl && (
             <img
               src={user.githubAvatarUrl}
               alt={user.githubUsername}
-              className="w-8 h-8 border border-gray-900"
+              className="w-8 h-8 rounded-full border border-gray-300"
             />
           )}
-          <span className="text-xs font-mono font-bold text-gray-900">
+          <span className="text-sm font-mono text-gray-800">
             {user.githubUsername}
           </span>
         </div>
@@ -55,19 +55,19 @@ export default function CommentForm({
         placeholder={placeholder}
         autoFocus={autoFocus}
         rows={4}
-        className="w-full px-4 py-3 bg-gray-100 border border-gray-900 font-mono text-sm text-gray-900 focus:outline-none focus:bg-white resize-none transition-all"
+        className="block w-full border-b-2 border-gray-300 bg-transparent py-2 text-gray-900 placeholder:text-gray-400 focus:border-gray-900 focus:ring-0 sm:text-sm sm:leading-6 font-mono transition-colors duration-200 resize-none"
       />
 
       <div className="flex justify-between items-center">
-        <p className="text-xs font-mono text-gray-600">
+        <p className="text-xs font-mono text-gray-500">
           {content.length} / 1000
         </p>
         <button
           type="submit"
           disabled={!content.trim() || isSubmitting}
-          className="px-4 py-2 border border-gray-900 text-sm font-mono text-gray-900 hover:bg-gray-900 hover:text-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-4 py-2 text-sm font-semibold text-white bg-gray-900 rounded-lg shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 disabled:opacity-50 font-mono transition-colors duration-200"
         >
-          {isSubmitting ? "SUBMITTING..." : buttonText.toUpperCase()}
+          {isSubmitting ? "SUBMITTING..." : buttonText}
         </button>
       </div>
     </form>

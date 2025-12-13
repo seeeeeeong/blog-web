@@ -125,10 +125,10 @@ export default function Layout() {
               © 2025 seeeeeeong.log
             </p>
             <div className="flex gap-4 text-xs font-mono">
-              <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:underline">
+              <a href="https://github.com/seeeeeeong" target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:underline">
                 GitHub
               </a>
-              <a href="mailto:contact@example.com" className="text-gray-900 hover:underline">
+              <a href="mailto:lsinsung@gmail.com" className="text-gray-900 hover:underline">
                 Contact
               </a>
             </div>

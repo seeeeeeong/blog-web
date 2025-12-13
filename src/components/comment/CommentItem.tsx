@@ -24,7 +24,7 @@ export default function CommentItem({
   const isAuthor = user?.githubId === comment.githubId;
 
   const handleDelete = async () => {
-    const confirmed = await showConfirm("정말 삭제하시겠습니까?");
+    const confirmed = await showConfirm("Are you sure you want to delete this comment?");
     if (confirmed) {
       onDelete(comment.id);
     }
@@ -40,14 +40,14 @@ export default function CommentItem({
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-    if (diffInSeconds < 60) return "방금 전";
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}분 전`;
+    if (diffInSeconds < 60) return "just now";
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
     if (diffInSeconds < 86400)
-      return `${Math.floor(diffInSeconds / 3600)}시간 전`;
+      return `${Math.floor(diffInSeconds / 3600)} hours ago`;
     if (diffInSeconds < 604800)
-      return `${Math.floor(diffInSeconds / 86400)}일 전`;
+      return `${Math.floor(diffInSeconds / 86400)} days ago`;
 
-    return date.toLocaleDateString("ko-KR", {
+    return date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -129,8 +129,8 @@ export default function CommentItem({
           <div className="border border-gray-900 p-4">
             <CommentForm
               onSubmit={handleReplySubmit}
-              placeholder="답글을 입력하세요..."
-              buttonText="답글 작성"
+              placeholder="Write a reply..."
+              buttonText="Post Reply"
               autoFocus
             />
           </div>

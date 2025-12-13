@@ -4,6 +4,7 @@ import { adminApi } from "../api/admin";
 import { postApi } from "../api/post";
 import type { Post } from "../types";
 import { useAlert } from "../contexts/AlertContext";
+import PageLayout from "../components/common/PageLayout";
 
 type FilterType = "all" | "published" | "draft";
 
@@ -34,9 +35,10 @@ export default function AdminPostsPage() {
         data = await adminApi.getAllPosts(currentPage, 20);
       }
 
-      // 필터링
       if (filter === "published") {
-        const filteredPosts = data.posts.filter((post: Post) => post.status === "PUBLISHED");
+        const filteredPosts = data.posts.filter(
+          (post: Post) => post.status === "PUBLISHED"
+        );
         setPosts(filteredPosts);
       } else {
         setPosts(data.posts);
@@ -44,24 +46,24 @@ export default function AdminPostsPage() {
 
       setTotalPages(data.totalPages);
     } catch (error) {
-      console.error("게시글 로딩 실패:", error);
-      showError("게시글을 불러오는데 실패했습니다.");
+      console.error("Failed to load posts:", error);
+      showError("Failed to load posts.");
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (postId: number) => {
-    const confirmed = await showConfirm("정말 삭제하시겠습니까?");
+    const confirmed = await showConfirm("Are you sure you want to delete this post?");
     if (!confirmed) return;
 
     try {
       await adminApi.deletePost(postId);
-      showSuccess("삭제되었습니다.");
+      showSuccess("Deleted successfully.");
       loadPosts();
     } catch (error) {
-      console.error("삭제 실패:", error);
-      showError("삭제에 실패했습니다.");
+      console.error("Failed to delete:", error);
+      showError("Failed to delete post.");
     }
   };
 
@@ -74,138 +76,118 @@ export default function AdminPostsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="container mx-auto px-4 sm:px-8 py-12 max-w-7xl">
-        {/* Header */}
-        <div className="mb-12 border-b border-gray-900 pb-4">
-          <div className="flex justify-between items-end mb-6">
-            <div>
-              <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-2 font-mono">
-              Admin
-            </h1>
-            <p className="text-xs font-mono text-gray-600">
-              전체 {posts.length}개의 게시글
-            </p>
-          </div>
-
-          <Link
-            to="/posts/create"
-            className="px-4 py-2 border border-gray-900 text-sm font-mono text-gray-900 hover:bg-gray-900 hover:text-gray-100 transition-colors"
+    <PageLayout title="Admin">
+      <div className="flex justify-between items-center mb-8">
+        <div className="flex items-center gap-2 p-1 bg-gray-100 rounded-lg">
+          <button
+            onClick={() => setFilter("all")}
+            className={`px-4 py-1.5 text-xs font-mono rounded-md transition-colors ${
+              filter === "all"
+                ? "bg-white text-gray-900 shadow-sm"
+                : "text-gray-500 hover:text-gray-900"
+            }`}
           >
-            NEW POST
-          </Link>
-          </div>
-
-          {/* Filter Tabs */}
-          <div className="flex gap-3 mt-6">
-            <button
-              onClick={() => setFilter("all")}
-              className={`px-4 py-2 text-sm font-mono border transition-colors ${
-                filter === "all"
-                  ? "bg-gray-900 text-white border-gray-900"
-                  : "bg-white text-gray-900 border-gray-900 hover:bg-gray-900 hover:text-white"
-              }`}
-            >
-              ALL
-            </button>
-            <button
-              onClick={() => setFilter("published")}
-              className={`px-4 py-2 text-sm font-mono border transition-colors ${
-                filter === "published"
-                  ? "bg-gray-900 text-white border-gray-900"
-                  : "bg-white text-gray-900 border-gray-900 hover:bg-gray-900 hover:text-white"
-              }`}
-            >
-              PUBLISHED
-            </button>
-            <button
-              onClick={() => setFilter("draft")}
-              className={`px-4 py-2 text-sm font-mono border transition-colors ${
-                filter === "draft"
-                  ? "bg-gray-900 text-white border-gray-900"
-                  : "bg-white text-gray-900 border-gray-900 hover:bg-gray-900 hover:text-white"
-              }`}
-            >
-              DRAFT
-            </button>
-          </div>
+            All
+          </button>
+          <button
+            onClick={() => setFilter("published")}
+            className={`px-4 py-1.5 text-xs font-mono rounded-md transition-colors ${
+              filter === "published"
+                ? "bg-white text-gray-900 shadow-sm"
+                : "text-gray-500 hover:text-gray-900"
+            }`}
+          >
+            Published
+          </button>
+          <button
+            onClick={() => setFilter("draft")}
+            className={`px-4 py-1.5 text-xs font-mono rounded-md transition-colors ${
+              filter === "draft"
+                ? "bg-white text-gray-900 shadow-sm"
+                : "text-gray-500 hover:text-gray-900"
+            }`}
+          >
+            Draft
+          </button>
         </div>
+        <Link
+          to="/posts/create"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-xs font-mono hover:bg-gray-700 rounded-lg shadow-sm"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+          </svg>
+          New Post
+        </Link>
+      </div>
 
-        {/* Posts Table */}
-        <div className="space-y-4">
-          {posts.map((post) => (
-            <div
-              key={post.id}
-              className="border-t border-gray-900 pt-4 hover:bg-gray-200 transition-colors -mx-4 sm:-mx-8 px-4 sm:px-8"
-            >
-              <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-4">
-                <div>
-                  <Link
-                    to={`/posts/${post.id}`}
-                    className="text-lg sm:text-xl font-bold text-gray-900 hover:underline font-mono block mb-2"
-                  >
+      <div className="bg-white border border-gray-200 rounded-xl shadow-sm">
+        <table className="w-full table-fixed text-left font-mono">
+          <thead className="border-b border-gray-200">
+            <tr>
+              <th className="w-5/12 p-4 text-xs text-gray-500 font-medium">TITLE</th>
+              <th className="w-2/12 p-4 text-xs text-gray-500 font-medium">STATUS</th>
+              <th className="w-1/12 p-4 text-xs text-gray-500 font-medium">VIEWS</th>
+              <th className="w-2/12 p-4 text-xs text-gray-500 font-medium">DATE</th>
+              <th className="w-2/12 p-4 text-xs text-gray-500 font-medium text-right">ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody>
+            {posts.map((post) => (
+              <tr key={post.id} className="border-b border-gray-100 last:border-b-0">
+                <td className="p-4 text-sm">
+                  <Link to={`/posts/${post.id}`} className="font-medium text-gray-900 hover:underline truncate block">
                     {post.title}
                   </Link>
-                  <div className="flex items-center gap-3 text-xs font-mono text-gray-600">
-                    <span className="px-2 py-1 border border-gray-900 inline-block">
-                      {post.status === "DRAFT" ? "DRAFT" : "PUBLISHED"}
-                    </span>
-                    <span>조회 {post.viewCount}회</span>
-                    <span>
-                      {new Date(post.createdAt).toLocaleDateString("ko-KR", {
-                        year: "numeric",
-                        month: "2-digit",
-                        day: "2-digit",
-                      })}
-                    </span>
+                </td>
+                <td className="p-4 text-gray-700 text-sm">
+                  {post.status}
+                </td>
+                <td className="p-4 text-gray-500 text-sm">{post.viewCount}</td>
+                <td className="p-4 text-gray-500 text-sm">
+                  {new Date(post.createdAt).toLocaleDateString("en-US", { // Changed to en-US for shorter date format
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                  })}
+                </td>
+                <td className="p-4 text-right text-sm">
+                  <div className="flex justify-end items-center gap-4">
+                    <Link to={`/posts/${post.id}/edit`} className="text-gray-400 hover:text-gray-900" title="Edit">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z" /></svg>
+                    </Link>
+                    <button onClick={() => handleDelete(post.id)} className="text-gray-400 hover:text-red-600" title="Delete">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    </button>
                   </div>
-                </div>
-                <div className="flex items-start gap-4 text-sm font-mono">
-                  <Link
-                    to={`/posts/${post.id}/edit`}
-                    className="text-gray-900 hover:underline"
-                  >
-                    EDIT
-                  </Link>
-                  <button
-                    onClick={() => handleDelete(post.id)}
-                    className="text-gray-900 hover:underline"
-                  >
-                    DELETE
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex justify-center items-center gap-4 mt-12 text-sm font-mono">
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
-              disabled={currentPage === 0}
-              className="text-gray-900 hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              ← PREV
-            </button>
-
-            <span className="text-gray-900">
-              {currentPage + 1} / {totalPages}
-            </span>
-
-            <button
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))
-              }
-              disabled={currentPage >= totalPages - 1}
-              className="text-gray-900 hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              NEXT →
-            </button>
-          </div>
-        )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-    </div>
+
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-4 mt-8 pt-8 border-t border-gray-200 text-sm font-mono">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
+            disabled={currentPage === 0}
+            className="text-gray-900 hover:underline disabled:opacity-30"
+          >
+            ← Previous
+          </button>
+          <span className="text-gray-600">
+            Page {currentPage + 1} of {totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))}
+            disabled={currentPage >= totalPages - 1}
+            className="text-gray-900 hover:underline disabled:opacity-30"
+          >
+            Next →
+          </button>
+        </div>
+      )}
+    </PageLayout>
   );
 }
