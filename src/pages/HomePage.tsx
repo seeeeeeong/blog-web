@@ -10,6 +10,7 @@ export default function HomePage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [searchKeyword, setSearchKeyword] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -22,11 +23,11 @@ export default function HomePage() {
 
   useEffect(() => {
     setCurrentPage(0);
-  }, [selectedCategory, searchKeyword]);
+  }, [selectedCategory, searchQuery]);
 
   useEffect(() => {
     loadPosts();
-  }, [selectedCategory, searchKeyword, currentPage]);
+  }, [selectedCategory, searchQuery, currentPage]);
 
   const loadCategories = async () => {
     try {
@@ -43,8 +44,8 @@ export default function HomePage() {
       setError(null);
 
       let data;
-      if (searchKeyword.trim()) {
-        data = await postApi.searchPosts(searchKeyword, selectedCategory || undefined, currentPage, 10);
+      if (searchQuery.trim()) {
+        data = await postApi.searchPosts(searchQuery, selectedCategory || undefined, currentPage, 10);
       } else if (selectedCategory) {
         data = await postApi.getPostsByCategory(selectedCategory, currentPage, 10);
       } else {
@@ -73,7 +74,7 @@ export default function HomePage() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    loadPosts();
+    setSearchQuery(searchKeyword);
   };
 
   if (loading) {
@@ -110,8 +111,7 @@ export default function HomePage() {
               className="w-20 h-20 object-contain rounded-full"
             />
             <div>
-              <h1 className="text-3xl font-bold font-mono mb-2">BLOG</h1>
-              <p className="text-sm font-mono text-gray-400">개발과 일상 이야기</p>
+              <h1 className="text-3xl font-bold font-mono">seeeeeeong.log</h1>
             </div>
           </div>
 
@@ -131,11 +131,12 @@ export default function HomePage() {
               >
                 검색
               </button>
-              {searchKeyword && (
+              {searchQuery && (
                 <button
                   type="button"
                   onClick={() => {
                     setSearchKeyword("");
+                    setSearchQuery("");
                     setSelectedCategory(null);
                   }}
                   className="px-4 py-2.5 border border-gray-700 text-white font-mono text-sm hover:bg-gray-800 transition-colors"
@@ -184,16 +185,18 @@ export default function HomePage() {
         <div className="grid lg:grid-cols-[1fr_300px] gap-8">
           {/* Posts List */}
           <div>
-            <div className="mb-6">
-              <h2 className="text-lg font-bold font-mono text-gray-900">
-                {searchKeyword ? `"${searchKeyword}" 검색 결과` : selectedCategory ? categories.find(c => c.id === selectedCategory)?.name : "최근 게시글"}
-              </h2>
-            </div>
+            {(searchQuery || selectedCategory) && (
+              <div className="mb-6">
+                <h2 className="text-lg font-bold font-mono text-gray-900">
+                  {searchQuery ? `"${searchQuery}" 검색 결과` : categories.find(c => c.id === selectedCategory)?.name}
+                </h2>
+              </div>
+            )}
 
             {posts.length === 0 ? (
               <div className="py-12 text-center">
                 <p className="text-sm font-mono text-gray-500">
-                  {searchKeyword ? "검색 결과가 없습니다" : "아직 게시글이 없습니다"}
+                  {searchQuery ? "검색 결과가 없습니다" : "아직 게시글이 없습니다"}
                 </p>
               </div>
             ) : (
@@ -258,7 +261,7 @@ export default function HomePage() {
           </div>
 
           {/* Sidebar - Popular Posts */}
-          {popularPosts.length > 0 && !searchKeyword && (
+          {popularPosts.length > 0 && !searchQuery && (
             <aside className="hidden lg:block">
               <div className="sticky top-8">
                 <h3 className="text-sm font-bold font-mono text-gray-900 mb-4 pb-2 border-b border-gray-900">
