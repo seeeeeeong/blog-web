@@ -36,7 +36,7 @@ export default function LoginPage() {
   };
 
   return (
-    <AuthLayout title="Admin Login">
+    <AuthLayout title="Admin Login" subtitle="관리자 계정으로 로그인하세요">
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label
