@@ -99,32 +99,35 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 w-full">
-      <div className="container mx-auto px-4 sm:px-8 py-8 max-w-7xl">
-        {/* Hero Section */}
-        <div className="mb-16 flex flex-col items-center justify-center">
-          <div className="relative mb-8">
+    <div className="min-h-screen bg-white w-full">
+      {/* Header Section */}
+      <div className="bg-gray-900 text-white py-12 mb-8">
+        <div className="container mx-auto px-4 sm:px-8 max-w-5xl">
+          <div className="flex items-center gap-6 mb-6">
             <img
               src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif"
               alt="귀여운 고양이"
-              className="hero-cat-image w-40 h-40 object-contain rounded-full shadow-sm"
-              style={{ border: 'none', margin: '0' }}
+              className="w-20 h-20 object-contain rounded-full"
             />
+            <div>
+              <h1 className="text-3xl font-bold font-mono mb-2">BLOG</h1>
+              <p className="text-sm font-mono text-gray-400">개발과 일상 이야기</p>
+            </div>
           </div>
 
           {/* Search Bar */}
-          <form onSubmit={handleSearch} className="w-full max-w-2xl">
+          <form onSubmit={handleSearch} className="w-full">
             <div className="flex gap-2">
               <input
                 type="text"
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
-                placeholder="게시글 검색..."
-                className="flex-1 px-4 py-2 border-2 border-gray-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                placeholder="검색어를 입력하세요..."
+                className="flex-1 px-4 py-2.5 bg-gray-800 text-white border border-gray-700 font-mono text-sm focus:outline-none focus:border-gray-500 placeholder-gray-500"
               />
               <button
                 type="submit"
-                className="px-6 py-2 bg-gray-900 text-white font-mono text-sm hover:bg-gray-800 transition-colors"
+                className="px-6 py-2.5 bg-white text-gray-900 font-mono text-sm hover:bg-gray-200 transition-colors"
               >
                 검색
               </button>
@@ -135,57 +138,27 @@ export default function HomePage() {
                     setSearchKeyword("");
                     setSelectedCategory(null);
                   }}
-                  className="px-4 py-2 border-2 border-gray-900 font-mono text-sm hover:bg-gray-900 hover:text-white transition-colors"
+                  className="px-4 py-2.5 border border-gray-700 text-white font-mono text-sm hover:bg-gray-800 transition-colors"
                 >
-                  초기화
+                  ✕
                 </button>
               )}
             </div>
           </form>
         </div>
+      </div>
 
-        {/* Popular Posts Section */}
-        {popularPosts.length > 0 && !searchKeyword && (
-          <div className="mb-12">
-            <h2 className="text-2xl font-bold font-mono text-gray-900 mb-6 border-b-2 border-gray-900 pb-2">
-              인기 게시글
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {popularPosts.map((post) => (
-                <Link
-                  key={post.id}
-                  to={`/posts/${post.id}`}
-                  className="block border-2 border-gray-900 p-4 hover:bg-gray-900 hover:text-white transition-colors"
-                >
-                  <h3 className="font-mono font-bold text-sm mb-2 truncate">
-                    {post.title}
-                  </h3>
-                  <div className="flex items-center gap-3 text-xs font-mono opacity-70">
-                    <span>조회 {post.viewCount}회</span>
-                    <span>
-                      {new Date(post.createdAt).toLocaleDateString("ko-KR", {
-                        month: "2-digit",
-                        day: "2-digit",
-                      })}
-                    </span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
-
+      <div className="container mx-auto px-4 sm:px-8 max-w-5xl">
         {/* Category Filter */}
         {categories.length > 0 && (
           <div className="mb-8">
-            <h3 className="text-sm font-mono text-gray-600 mb-3">카테고리 필터</h3>
-            <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={() => setSelectedCategory(null)}
-                className={`px-4 py-2 text-sm font-mono border transition-colors ${
+                className={`px-4 py-1.5 text-xs font-mono border transition-colors ${
                   selectedCategory === null
                     ? "bg-gray-900 text-white border-gray-900"
-                    : "bg-white text-gray-900 border-gray-900 hover:bg-gray-900 hover:text-white"
+                    : "bg-white text-gray-900 border-gray-300 hover:border-gray-900"
                 }`}
               >
                 ALL
@@ -194,10 +167,10 @@ export default function HomePage() {
                 <button
                   key={category.id}
                   onClick={() => setSelectedCategory(category.id)}
-                  className={`px-4 py-2 text-sm font-mono border transition-colors ${
+                  className={`px-4 py-1.5 text-xs font-mono border transition-colors ${
                     selectedCategory === category.id
                       ? "bg-gray-900 text-white border-gray-900"
-                      : "bg-white text-gray-900 border-gray-900 hover:bg-gray-900 hover:text-white"
+                      : "bg-white text-gray-900 border-gray-300 hover:border-gray-900"
                   }`}
                 >
                   {category.name.toUpperCase()}
@@ -207,84 +180,124 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* Posts List */}
-        <div className="space-y-8">
-          <h2 className="text-2xl font-bold font-mono text-gray-900 border-b-2 border-gray-900 pb-2">
-            {searchKeyword ? `검색 결과: "${searchKeyword}"` : selectedCategory ? categories.find(c => c.id === selectedCategory)?.name : "최근 게시글"}
-          </h2>
-
-          {posts.length === 0 ? (
-            <div className="border-t border-gray-900 pt-8">
-              <p className="text-sm font-mono text-gray-900">
-                {searchKeyword ? "검색 결과가 없습니다" : "아직 게시글이 없습니다"}
-              </p>
+        {/* Main Content Grid */}
+        <div className="grid lg:grid-cols-[1fr_300px] gap-8">
+          {/* Posts List */}
+          <div>
+            <div className="mb-6">
+              <h2 className="text-lg font-bold font-mono text-gray-900">
+                {searchKeyword ? `"${searchKeyword}" 검색 결과` : selectedCategory ? categories.find(c => c.id === selectedCategory)?.name : "최근 게시글"}
+              </h2>
             </div>
-          ) : (
-            posts.map((post) => (
-              <Link
-                key={post.id}
-                to={`/posts/${post.id}`}
-                className="block border-t border-gray-900 pt-8 hover:bg-gray-200 transition-colors -mx-4 sm:-mx-8 px-4 sm:px-8"
-              >
-                <article className="min-h-40">
-                  <div className="grid lg:grid-cols-[1fr_3fr] gap-4 lg:gap-8">
-                    {/* Left: Date & Meta */}
-                    <div className="space-y-1.5">
-                      <time className="text-xs font-mono text-gray-900 block">
-                        {new Date(post.createdAt).toLocaleDateString("ko-KR", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })}
-                      </time>
-                      <span className="text-xs font-mono text-gray-600 block">
-                        조회 {post.viewCount}회
-                      </span>
-                    </div>
 
-                    {/* Right: Content */}
-                    <div className="space-y-3">
-                      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 font-mono leading-tight hover:underline">
+            {posts.length === 0 ? (
+              <div className="py-12 text-center">
+                <p className="text-sm font-mono text-gray-500">
+                  {searchKeyword ? "검색 결과가 없습니다" : "아직 게시글이 없습니다"}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {posts.map((post) => (
+                  <Link
+                    key={post.id}
+                    to={`/posts/${post.id}`}
+                    className="block border-b border-gray-200 pb-6 hover:opacity-70 transition-opacity"
+                  >
+                    <article>
+                      <h3 className="text-xl font-bold text-gray-900 font-mono mb-2 hover:underline">
                         {post.title}
-                      </h2>
-                      <p className="text-sm font-mono text-gray-700 leading-relaxed line-clamp-3">
+                      </h3>
+                      <p className="text-sm font-mono text-gray-600 mb-3 line-clamp-2">
                         {post.content
                           .replace(/[#*`>\-\[\]]/g, '')
-                          .substring(0, 150)}
-                        {post.content.length > 150 && '...'}
+                          .substring(0, 120)}
+                        {post.content.length > 120 && '...'}
                       </p>
-                    </div>
-                  </div>
-                </article>
-              </Link>
-            ))
+                      <div className="flex items-center gap-3 text-xs font-mono text-gray-500">
+                        <time>
+                          {new Date(post.createdAt).toLocaleDateString("ko-KR", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })}
+                        </time>
+                        <span>·</span>
+                        <span>조회 {post.viewCount}</span>
+                      </div>
+                    </article>
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-4 mt-8 pt-8 border-t border-gray-200 text-sm font-mono">
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
+                  disabled={currentPage === 0}
+                  className="text-gray-900 hover:underline disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  ← 이전
+                </button>
+
+                <span className="text-gray-600">
+                  {currentPage + 1} / {totalPages}
+                </span>
+
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))}
+                  disabled={currentPage >= totalPages - 1}
+                  className="text-gray-900 hover:underline disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  다음 →
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Sidebar - Popular Posts */}
+          {popularPosts.length > 0 && !searchKeyword && (
+            <aside className="hidden lg:block">
+              <div className="sticky top-8">
+                <h3 className="text-sm font-bold font-mono text-gray-900 mb-4 pb-2 border-b border-gray-900">
+                  인기 게시글
+                </h3>
+                <div className="space-y-4">
+                  {popularPosts.map((post, index) => (
+                    <Link
+                      key={post.id}
+                      to={`/posts/${post.id}`}
+                      className="block group"
+                    >
+                      <div className="flex gap-3">
+                        <span className="text-xl font-bold font-mono text-gray-300 group-hover:text-gray-900 transition-colors flex-shrink-0">
+                          {index + 1}
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-mono text-xs font-medium text-gray-900 mb-1 line-clamp-2 group-hover:underline">
+                            {post.title}
+                          </h4>
+                          <div className="flex items-center gap-2 text-[10px] font-mono text-gray-500">
+                            <span>조회 {post.viewCount}</span>
+                            <span>·</span>
+                            <span>
+                              {new Date(post.createdAt).toLocaleDateString("ko-KR", {
+                                month: "long",
+                                day: "numeric",
+                              })}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </aside>
           )}
         </div>
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex justify-center items-center gap-4 mt-12 pb-12 text-sm font-mono">
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
-              disabled={currentPage === 0}
-              className="text-gray-900 hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              ← PREV
-            </button>
-
-            <span className="text-gray-900">
-              {currentPage + 1} / {totalPages}
-            </span>
-
-            <button
-              onClick={() => setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))}
-              disabled={currentPage >= totalPages - 1}
-              className="text-gray-900 hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              NEXT →
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );
