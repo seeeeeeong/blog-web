@@ -34,7 +34,7 @@ import {
 import { useEffect, useRef } from 'react';
 import TurndownService from 'turndown';
 import { marked } from 'marked';
-import { uploadImage } from '../../api/image';
+import { uploadImageDirectly } from '../../api/image';
 import { useAlert } from '../../contexts/AlertContext';
 
 interface TipTapEditorProps {
@@ -120,7 +120,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
             const file = item.getAsFile();
             if (file && editor) {
               try {
-                const imageUrl = await uploadImage(file);
+                const imageUrl = await uploadImageDirectly(file);
                 editor.chain().focus().setImage({ src: imageUrl }).run();
               } catch (error) {
                 console.error('이미지 업로드 실패:', error);
@@ -164,7 +164,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
     const file = event.target.files?.[0];
     if (file && editor) {
       try {
-        const imageUrl = await uploadImage(file);
+        const imageUrl = await uploadImageDirectly(file);
         editor.chain().focus().setImage({ src: imageUrl }).run();
       } catch (error) {
         console.error('이미지 업로드 실패:', error);
