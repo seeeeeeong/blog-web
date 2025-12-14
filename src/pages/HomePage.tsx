@@ -255,7 +255,9 @@ export default function HomePage() {
                         </h3>
                         <p className="text-sm font-mono text-gray-600 mb-3 line-clamp-2">
                           {post.content
+                            .replace(/!\[.*?\]\(.*?\)/g, "")
                             .replace(/[#*`>\-\[\]]/g, "")
+                            .trim()
                             .substring(0, 120)}
                           {post.content.length > 120 && "..."}
                         </p>

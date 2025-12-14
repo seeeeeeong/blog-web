@@ -31,9 +31,11 @@ import {
   Highlighter,
   Minus,
 } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import TurndownService from 'turndown';
 import { marked } from 'marked';
+import { uploadImage } from '../../api/image';
+import { useAlert } from '../../contexts/AlertContext';
 
 interface TipTapEditorProps {
   value: string;
@@ -47,7 +49,25 @@ const turndownService = new TurndownService({
   bulletListMarker: '-',
 });
 
+// 이미지 변환 규칙 커스터마이징
+turndownService.addRule('images', {
+  filter: 'img',
+  replacement: (content, node) => {
+    const alt = (node as HTMLImageElement).alt || '';
+    const src = (node as HTMLImageElement).src || '';
+    const title = (node as HTMLImageElement).title || '';
+
+    if (!src) return '';
+
+    const titlePart = title ? ` "${title}"` : '';
+    return `![${alt}](${src}${titlePart})`;
+  }
+});
+
 export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { showError } = useAlert();
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -67,6 +87,8 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         HTMLAttributes: {
           class: 'rounded-lg max-w-full h-auto',
         },
+        inline: true,
+        allowBase64: false,
       }),
       Link.configure({
         openOnClick: false,
@@ -84,6 +106,31 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
     editorProps: {
       attributes: {
         class: 'focus:outline-none min-h-[600px] p-8 text-gray-900 font-mono text-base leading-relaxed',
+      },
+      handlePaste: async (view, event) => {
+        const items = event.clipboardData?.items;
+        if (!items) return false;
+
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i];
+
+          // 이미지 처리
+          if (item.type.indexOf('image') !== -1) {
+            event.preventDefault();
+            const file = item.getAsFile();
+            if (file && editor) {
+              try {
+                const imageUrl = await uploadImage(file);
+                editor.chain().focus().setImage({ src: imageUrl }).run();
+              } catch (error) {
+                console.error('이미지 업로드 실패:', error);
+                showError('이미지 업로드에 실패했습니다.');
+              }
+            }
+            return true;
+          }
+        }
+        return false;
       },
     },
     onUpdate: ({ editor }) => {
@@ -110,10 +157,22 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
   }
 
   const addImage = () => {
-    const url = window.prompt('Enter image URL:');
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run();
+    fileInputRef.current?.click();
+  };
+
+  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && editor) {
+      try {
+        const imageUrl = await uploadImage(file);
+        editor.chain().focus().setImage({ src: imageUrl }).run();
+      } catch (error) {
+        console.error('이미지 업로드 실패:', error);
+        showError('이미지 업로드에 실패했습니다.');
+      }
     }
+    // Reset input
+    event.target.value = '';
   };
 
   const setLink = () => {
@@ -157,6 +216,13 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
 
   return (
     <div className="border-2 border-gray-900 overflow-hidden bg-white shadow-lg">
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileSelect}
+        accept="image/*"
+        style={{ display: 'none' }}
+      />
       {/* Toolbar */}
       <div className="border-b-2 border-gray-900 bg-gray-100 p-3 flex flex-wrap gap-1.5">
         <MenuButton
