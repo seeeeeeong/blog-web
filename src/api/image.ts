@@ -39,7 +39,7 @@ export const uploadImageDirectly = async (file: File): Promise<string> => {
   try {
     compressedFile = await imageCompression(file, options);
   } catch (error) {
-    console.warn("이미지 압축 실패, 원본 사용:", error);
+    console.warn("Image compression failed, using original:", error);
     compressedFile = file;
   }
 

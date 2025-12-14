@@ -136,8 +136,8 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
                   editor.chain().focus().setImage({ src: imageUrl }).run();
                 })
                 .catch((error) => {
-                  console.error('이미지 업로드 실패:', error);
-                  showError('이미지 업로드에 실패했습니다.');
+                  console.error('Image upload failed:', error);
+                  showError('Failed to upload image.');
                 });
             }
           }
@@ -179,8 +179,8 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         const imageUrl = await uploadImageDirectly(file);
         editor.chain().focus().setImage({ src: imageUrl }).run();
       } catch (error) {
-        console.error('이미지 업로드 실패:', error);
-        showError('이미지 업로드에 실패했습니다.');
+        console.error('Image upload failed:', error);
+        showError('Failed to upload image.');
       }
     }
     // Reset input
