@@ -107,30 +107,42 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
       attributes: {
         class: 'focus:outline-none min-h-[600px] p-8 text-gray-900 font-mono text-base leading-relaxed',
       },
-      handlePaste: async (view, event) => {
+      handlePaste: (view, event) => {
         const items = event.clipboardData?.items;
         if (!items) return false;
 
+        // 이미지가 있는지 확인
+        let hasImage = false;
+        for (let i = 0; i < items.length; i++) {
+          if (items[i].type.indexOf('image') !== -1) {
+            hasImage = true;
+            break;
+          }
+        }
+
+        // 이미지가 없으면 기본 동작 허용 (텍스트 붙여넣기)
+        if (!hasImage) return false;
+
+        // 이미지 처리
+        event.preventDefault();
         for (let i = 0; i < items.length; i++) {
           const item = items[i];
 
-          // 이미지 처리
           if (item.type.indexOf('image') !== -1) {
-            event.preventDefault();
             const file = item.getAsFile();
             if (file && editor) {
-              try {
-                const imageUrl = await uploadImageDirectly(file);
-                editor.chain().focus().setImage({ src: imageUrl }).run();
-              } catch (error) {
-                console.error('이미지 업로드 실패:', error);
-                showError('이미지 업로드에 실패했습니다.');
-              }
+              uploadImageDirectly(file)
+                .then((imageUrl) => {
+                  editor.chain().focus().setImage({ src: imageUrl }).run();
+                })
+                .catch((error) => {
+                  console.error('이미지 업로드 실패:', error);
+                  showError('이미지 업로드에 실패했습니다.');
+                });
             }
-            return true;
           }
         }
-        return false;
+        return true;
       },
     },
     onUpdate: ({ editor }) => {
