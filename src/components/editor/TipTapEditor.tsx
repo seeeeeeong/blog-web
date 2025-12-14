@@ -52,7 +52,7 @@ const turndownService = new TurndownService({
 // 이미지 변환 규칙 커스터마이징
 turndownService.addRule('images', {
   filter: 'img',
-  replacement: (content, node) => {
+  replacement: (_content, node) => {
     const alt = (node as HTMLImageElement).alt || '';
     const src = (node as HTMLImageElement).src || '';
     const title = (node as HTMLImageElement).title || '';
@@ -107,7 +107,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
       attributes: {
         class: 'focus:outline-none min-h-[600px] p-8 text-gray-900 font-mono text-base leading-relaxed',
       },
-      handlePaste: (view, event) => {
+      handlePaste: (_view, event) => {
         const items = event.clipboardData?.items;
         if (!items) return false;
 
