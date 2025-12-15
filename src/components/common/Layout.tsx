@@ -50,39 +50,36 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
-      {/* Navigation */}
-      <nav className="border-b border-gray-900 bg-gray-100">
-        <div className="container mx-auto px-4 sm:px-8 max-w-7xl">
-          <div className="flex justify-between items-end py-4">
-            {/* Logo */}
+      <nav className="border-b-2 border-gray-900 bg-gray-100">
+        <div className="container mx-auto px-6 max-w-7xl">
+          <div className="flex justify-between items-end py-5">
             <a
               href="/"
-              className="text-sm font-mono text-gray-900 hover:underline"
+              className="text-sm font-mono text-gray-900 hover:text-gray-600 transition-colors"
             >
               / HOME
             </a>
 
-            {/* Menu */}
-            <div className="flex items-center gap-4 sm:gap-6 text-sm font-mono">
+            <div className="flex items-center gap-6 text-sm font-mono">
               {isAdmin && (
                 <>
                   <Link
                     to="/admin/posts"
-                    className="text-gray-900 hover:underline"
+                    className="text-gray-900 hover:text-gray-600 transition-colors"
                   >
                     ADMIN
                   </Link>
 
                   <Link
                     to="/posts/create"
-                    className="text-gray-900 hover:underline"
+                    className="text-gray-900 hover:text-gray-600 transition-colors"
                   >
                     WRITE
                   </Link>
 
                   <button
                     onClick={handleLogout}
-                    className="text-gray-900 hover:underline"
+                    className="text-gray-900 hover:text-gray-600 transition-colors"
                   >
                     LOGOUT
                   </button>
@@ -90,18 +87,18 @@ export default function Layout() {
               )}
 
               {!isAdmin && isAuthenticated && user && (
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <img
                     src={user.githubAvatarUrl || ''}
                     alt={user.githubUsername}
-                    className="w-6 h-6 rounded-full border border-gray-900"
+                    className="w-7 h-7 rounded-full border-2 border-gray-900"
                   />
-                  <span className="text-xs font-mono text-gray-900 hidden sm:inline">
+                  <span className="text-sm font-mono text-gray-900 hidden sm:inline">
                     {user.githubUsername}
                   </span>
                   <button
                     onClick={logout}
-                    className="text-gray-900 hover:underline text-xs"
+                    className="text-gray-900 hover:text-gray-600 transition-colors"
                   >
                     LOGOUT
                   </button>
@@ -112,23 +109,29 @@ export default function Layout() {
         </div>
       </nav>
 
-      {/* Body */}
       <main className="flex-1">
         <Outlet />
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-gray-900 mt-auto bg-gray-100">
-        <div className="container mx-auto px-4 sm:px-8 py-8 max-w-7xl">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <p className="text-xs font-mono text-gray-900">
+      <footer className="border-t-2 border-gray-900 mt-auto bg-gray-100">
+        <div className="container mx-auto px-6 py-10 max-w-7xl">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+            <p className="text-sm font-mono text-gray-900">
               © 2025 seeeeeeong.log
             </p>
-            <div className="flex gap-4 text-xs font-mono">
-              <a href="https://github.com/seeeeeeong" target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:underline">
+            <div className="flex gap-6 text-sm font-mono">
+              <a
+                href="https://github.com/seeeeeeong"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-900 hover:text-gray-600 transition-colors"
+              >
                 GitHub
               </a>
-              <a href="mailto:lsinsung@gmail.com" className="text-gray-900 hover:underline">
+              <a
+                href="mailto:lsinsung@gmail.com"
+                className="text-gray-900 hover:text-gray-600 transition-colors"
+              >
                 Contact
               </a>
             </div>

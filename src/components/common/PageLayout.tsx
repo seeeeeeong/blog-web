@@ -7,15 +7,15 @@ interface PageLayoutProps {
 
 export default function PageLayout({ title, children }: PageLayoutProps) {
   return (
-    <div className="min-h-screen bg-white w-full">
-      <div className="bg-gray-900 text-white py-12 mb-8">
-        <div className="container mx-auto px-4 sm:px-8 max-w-5xl">
-          <h1 className="text-3xl font-bold font-mono">{title}</h1>
+    <div className="min-h-screen bg-white">
+      <header className="bg-gray-900 text-white py-16 mb-12">
+        <div className="container mx-auto px-6 max-w-4xl">
+          <h1 className="text-4xl font-bold font-mono tracking-tight">{title}</h1>
         </div>
-      </div>
-      <div className="container mx-auto px-4 sm:px-8 max-w-5xl pb-16">
+      </header>
+      <main className="container mx-auto px-6 max-w-4xl pb-20">
         {children}
-      </div>
+      </main>
     </div>
   );
 }

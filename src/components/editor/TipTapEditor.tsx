@@ -42,14 +42,12 @@ interface TipTapEditorProps {
   onChange: (value: string) => void;
 }
 
-// Turndown service instance (HTML → Markdown conversion)
 const turndownService = new TurndownService({
   headingStyle: 'atx',
   codeBlockStyle: 'fenced',
   bulletListMarker: '-',
 });
 
-// 이미지 변환 규칙 커스터마이징
 turndownService.addRule('images', {
   filter: 'img',
   replacement: (_content, node) => {
@@ -111,7 +109,6 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         const items = event.clipboardData?.items;
         if (!items) return false;
 
-        // 이미지가 있는지 확인
         let hasImage = false;
         for (let i = 0; i < items.length; i++) {
           if (items[i].type.indexOf('image') !== -1) {
@@ -120,10 +117,8 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
           }
         }
 
-        // 이미지가 없으면 기본 동작 허용 (텍스트 붙여넣기)
         if (!hasImage) return false;
 
-        // 이미지 처리
         event.preventDefault();
         for (let i = 0; i < items.length; i++) {
           const item = items[i];
@@ -183,7 +178,6 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         showError('Failed to upload image.');
       }
     }
-    // Reset input
     event.target.value = '';
   };
 
@@ -235,8 +229,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         accept="image/*"
         style={{ display: 'none' }}
       />
-      {/* Toolbar */}
-      <div className="border-b-2 border-gray-900 bg-gray-100 p-3 flex flex-wrap gap-1.5">
+      <div className="border-b-2 border-gray-900 bg-gray-100 p-4 flex flex-wrap gap-2">
         <MenuButton
           onClick={() => editor.chain().focus().toggleBold().run()}
           isActive={editor.isActive('bold')}
@@ -397,10 +390,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         </MenuButton>
       </div>
 
-      {/* Editor */}
-      <div className="bg-white">
-        <EditorContent editor={editor} />
-      </div>
+      <EditorContent editor={editor} />
     </div>
   );
 }

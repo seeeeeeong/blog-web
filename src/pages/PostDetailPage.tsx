@@ -7,6 +7,17 @@ import MarkdownViewer from "../components/editor/MarkdownViewer";
 import CommentSection from "../components/comment/CommentSection";
 import PageLayout from "../components/common/PageLayout";
 
+const Spinner = () => (
+  <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
+);
+
+const formatDate = (date: string) =>
+  new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
 export default function PostDetailPage() {
   const { postId } = useParams<{ postId: string }>();
   const navigate = useNavigate();
@@ -51,8 +62,8 @@ export default function PostDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin"></div>
+      <div className="flex justify-center items-center min-h-screen">
+        <Spinner />
       </div>
     );
   }
@@ -60,9 +71,12 @@ export default function PostDetailPage() {
   if (!post) {
     return (
       <PageLayout title="Error">
-        <div className="text-center">
-          <p className="text-gray-600 mb-6">Post not found.</p>
-          <Link to="/" className="text-gray-900 hover:text-gray-600 underline">
+        <div className="text-center py-20">
+          <p className="text-lg font-mono text-gray-600 mb-8">Post not found.</p>
+          <Link
+            to="/"
+            className="px-6 py-3 bg-gray-900 text-white font-mono text-sm hover:bg-gray-800 transition-colors inline-block"
+          >
             Back to home
           </Link>
         </div>
@@ -72,29 +86,23 @@ export default function PostDetailPage() {
 
   return (
     <PageLayout title={post.title}>
-      <div className="flex justify-between items-center mb-8 pb-4 border-b border-gray-200">
-        <div className="flex items-center gap-3 text-xs font-mono text-gray-500">
-          <time>
-            {new Date(post.createdAt).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </time>
+      <div className="flex justify-between items-center mb-12 pb-6 border-b-2 border-gray-200">
+        <div className="flex items-center gap-4 text-sm font-mono text-gray-500">
+          <time>{formatDate(post.createdAt)}</time>
           <span>·</span>
-          <span>Views {post.viewCount}</span>
+          <span>{post.viewCount} views</span>
         </div>
         {isAuthor && (
-          <div className="flex items-center gap-4 text-sm font-mono">
+          <div className="flex items-center gap-6 text-sm font-mono">
             <Link
               to={`/posts/${postId}/edit`}
-              className="text-gray-500 hover:text-gray-900 underline"
+              className="text-gray-900 hover:text-gray-600 transition-colors"
             >
               Edit
             </Link>
             <button
               onClick={handleDelete}
-              className="text-gray-500 hover:text-gray-900 underline"
+              className="text-red-600 hover:text-red-700 transition-colors"
             >
               Delete
             </button>
@@ -102,9 +110,9 @@ export default function PostDetailPage() {
         )}
       </div>
 
-      <div className="prose prose-lg max-w-none mb-16">
+      <article className="prose prose-lg max-w-none mb-20">
         <MarkdownViewer contentHtml={post.contentHtml} />
-      </div>
+      </article>
 
       <CommentSection postId={Number(postId)} />
     </PageLayout>

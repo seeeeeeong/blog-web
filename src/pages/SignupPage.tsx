@@ -34,96 +34,90 @@ export default function SignupPage() {
 
   return (
     <AuthLayout title="Create Account" subtitle="Create a new account">
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-8">
         <div>
           <label
             htmlFor="email"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-mono font-semibold text-gray-900 mb-2"
           >
             Email
           </label>
-          <div className="mt-1">
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-gray-900 focus:border-gray-900 sm:text-sm"
-            />
-          </div>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-4 py-3 bg-white border-2 border-gray-300 font-mono text-base placeholder-gray-400 focus:outline-none focus:border-gray-900 transition-colors"
+          />
         </div>
 
         <div>
           <label
             htmlFor="password"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-mono font-semibold text-gray-900 mb-2"
           >
             Password
           </label>
-          <div className="mt-1">
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="new-password"
-              required
-              minLength={8}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-gray-900 focus:border-gray-900 sm:text-sm"
-            />
-          </div>
-          <p className="mt-2 text-xs text-gray-500">Please enter at least 8 characters.</p>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autoComplete="new-password"
+            required
+            minLength={8}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-4 py-3 bg-white border-2 border-gray-300 font-mono text-base placeholder-gray-400 focus:outline-none focus:border-gray-900 transition-colors"
+          />
+          <p className="mt-2 text-xs font-mono text-gray-500">Please enter at least 8 characters.</p>
         </div>
 
         <div>
           <label
             htmlFor="nickname"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-mono font-semibold text-gray-900 mb-2"
           >
             Nickname
           </label>
-          <div className="mt-1">
-            <input
-              id="nickname"
-              name="nickname"
-              type="text"
-              autoComplete="nickname"
-              required
-              minLength={2}
-              maxLength={20}
-              value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
-              className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-gray-900 focus:border-gray-900 sm:text-sm"
-            />
-          </div>
-          <p className="mt-2 text-xs text-gray-500">Please enter between 2-20 characters.</p>
+          <input
+            id="nickname"
+            name="nickname"
+            type="text"
+            autoComplete="nickname"
+            required
+            minLength={2}
+            maxLength={20}
+            value={nickname}
+            onChange={(e) => setNickname(e.target.value)}
+            className="w-full px-4 py-3 bg-white border-2 border-gray-300 font-mono text-base placeholder-gray-400 focus:outline-none focus:border-gray-900 transition-colors"
+          />
+          <p className="mt-2 text-xs font-mono text-gray-500">Please enter between 2-20 characters.</p>
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 disabled:opacity-50"
+          className="w-full py-3 text-sm font-mono text-white bg-gray-900 hover:bg-gray-800 disabled:opacity-50 transition-all"
         >
           {loading ? "Signing up..." : "Sign Up"}
         </button>
       </form>
-      <div className="relative my-6">
+      <div className="relative my-8">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-200" />
+          <div className="w-full border-t-2 border-gray-200" />
         </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-white text-gray-500">or</span>
+        <div className="relative flex justify-center text-sm font-mono">
+          <span className="px-3 bg-white text-gray-500">or</span>
         </div>
       </div>
-      <p className="text-center text-sm">
+      <p className="text-center text-sm font-mono">
         Already have an account?{" "}
         <Link
           to="/login"
-          className="font-medium text-gray-900 hover:underline"
+          className="font-semibold text-gray-900 hover:text-gray-600 transition-colors"
         >
           Log in
         </Link>
