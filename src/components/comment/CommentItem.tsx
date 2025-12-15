@@ -56,64 +56,58 @@ export default function CommentItem({
 
   return (
     <div className="space-y-4">
-      {/* Comment */}
-      <div className="border-t border-gray-900 pt-4">
+      <div className="border-t-2 border-gray-200 pt-6">
         <div className="flex gap-4">
-          {/* Profile Image */}
           <div className="flex-shrink-0">
             {comment.githubAvatarUrl ? (
               <img
                 src={comment.githubAvatarUrl}
                 alt={comment.githubUsername}
-                className="w-10 h-10 border border-gray-900"
+                className="w-10 h-10 rounded-full border-2 border-gray-900"
               />
             ) : (
-              <div className="w-10 h-10 bg-gray-900 flex items-center justify-center">
-                <span className="text-gray-100 text-xs font-mono font-bold">
+              <div className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center">
+                <span className="text-white text-sm font-mono font-bold">
                   {comment.githubUsername[0].toUpperCase()}
                 </span>
               </div>
             )}
           </div>
 
-          {/* Comment */}
           <div className="flex-1 min-w-0">
-            {/* Header */}
-            <div className="flex items-center gap-3 mb-2 flex-wrap text-xs font-mono">
-              <span className="text-gray-900 font-bold">
+            <div className="flex items-center gap-3 mb-3 flex-wrap">
+              <span className="text-sm font-mono font-bold text-gray-900">
                 {comment.githubUsername}
               </span>
               {isAuthor && (
-                <span className="px-2 py-1 border border-gray-900 inline-block">
+                <span className="px-2 py-0.5 text-xs font-mono border-2 border-gray-900 bg-gray-900 text-white">
                   AUTHOR
                 </span>
               )}
-              <span className="text-gray-600">
+              <span className="text-xs font-mono text-gray-500">
                 {formatDate(comment.createdAt)}
               </span>
             </div>
 
-            {/* Comment Text */}
             <div
-              className="comment-content text-sm font-mono text-gray-900 whitespace-pre-wrap break-words mb-3 leading-relaxed"
+              className="comment-content text-sm font-mono text-gray-800 whitespace-pre-wrap break-words mb-4 leading-relaxed"
               dangerouslySetInnerHTML={{ __html: comment.contentHtml }}
             />
 
-            {/* Button */}
-            <div className="flex items-center gap-4 text-xs font-mono">
+            <div className="flex items-center gap-6 text-xs font-mono">
               {user && (
                 <button
                   onClick={() => setShowReplyForm(!showReplyForm)}
-                  className="text-gray-900 hover:underline"
+                  className="text-gray-900 hover:text-gray-600 transition-colors font-semibold"
                 >
-                  REPLY
+                  {showReplyForm ? "↑ CANCEL" : "↓ REPLY"}
                 </button>
               )}
 
               {isAuthor && (
                 <button
                   onClick={handleDelete}
-                  className="text-gray-900 hover:underline"
+                  className="text-red-600 hover:text-red-700 transition-colors font-semibold"
                 >
                   DELETE
                 </button>
@@ -123,10 +117,9 @@ export default function CommentItem({
         </div>
       </div>
 
-      {/* Reply */}
       {showReplyForm && (
-        <div className="ml-8 sm:ml-14">
-          <div className="border border-gray-900 p-4">
+        <div className="ml-14 pl-6 border-l-4 border-gray-300">
+          <div className="bg-gray-50 border-2 border-gray-300 p-6">
             <CommentForm
               onSubmit={handleReplySubmit}
               placeholder="Write a reply..."
@@ -137,9 +130,8 @@ export default function CommentItem({
         </div>
       )}
 
-      {/* Reply List */}
       {comment.replies && comment.replies.length > 0 && (
-        <div className="ml-8 sm:ml-14 space-y-4 border-l border-gray-900 pl-4 sm:pl-6">
+        <div className="ml-14 pl-6 space-y-6 border-l-4 border-gray-300">
           {comment.replies.map((reply) => (
             <CommentItem
               key={reply.id}
