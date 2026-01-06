@@ -36,7 +36,7 @@ export default function HomePage() {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
+  const [hasNext, setHasNext] = useState(false);
   const [postsLoading, setPostsLoading] = useState(true);
   const [initialLoading, setInitialLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -73,15 +73,15 @@ export default function HomePage() {
 
       let data;
       if (searchQuery.trim()) {
-        data = await postApi.searchPosts(searchQuery, selectedCategory || undefined, currentPage, 10);
+        data = await postApi.searchPostsBySimilarity(searchQuery, selectedCategory || undefined, currentPage, 10);
       } else if (selectedCategory) {
         data = await postApi.getPostsByCategory(selectedCategory, currentPage, 10);
       } else {
         data = await postApi.getPosts(currentPage, 10);
       }
 
-      setPosts(data.posts || []);
-      setTotalPages(data.totalPages || 0);
+      setPosts(data.content || []);
+      setHasNext(data.hasNext || false);
     } catch (error) {
       console.error("Failed to load posts:", error);
       setError("Failed to load posts.");
@@ -242,7 +242,7 @@ export default function HomePage() {
                   ))}
                 </div>
 
-                {totalPages > 1 && (
+                {(currentPage > 0 || hasNext) && (
                   <div className="flex justify-center items-center gap-6 mt-12 pt-8 border-t border-gray-200 text-sm font-mono">
                     <button
                       onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
@@ -253,12 +253,12 @@ export default function HomePage() {
                     </button>
 
                     <span className="text-gray-600">
-                      {currentPage + 1} / {totalPages}
+                      Page {currentPage + 1}
                     </span>
 
                     <button
-                      onClick={() => setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))}
-                      disabled={currentPage >= totalPages - 1}
+                      onClick={() => setCurrentPage((prev) => prev + 1)}
+                      disabled={!hasNext}
                       className="px-4 py-2 text-gray-900 hover:text-gray-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:text-gray-900"
                     >
                       Next →

@@ -1,6 +1,7 @@
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useGitHubAuth } from "../../contexts/GitHubAuthContext";
+import { authApi } from "../../api/auth";
 
 export default function Layout() {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ export default function Layout() {
         if (isExpired) {
           localStorage.removeItem("accessToken");
           localStorage.removeItem("refreshToken");
+          localStorage.removeItem("refreshTokenId");
           localStorage.removeItem("userId");
           localStorage.removeItem("nickname");
           setIsAdmin(false);
@@ -29,6 +31,7 @@ export default function Layout() {
       } catch {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
+        localStorage.removeItem("refreshTokenId");
         localStorage.removeItem("userId");
         localStorage.removeItem("nickname");
         setIsAdmin(false);
@@ -38,14 +41,25 @@ export default function Layout() {
     }
   }, [location]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("nickname");
-    setIsAdmin(false);
-    logout();
-    navigate("/");
+  const handleLogout = async () => {
+    const refreshToken = localStorage.getItem("refreshToken");
+
+    try {
+      if (refreshToken) {
+        await authApi.logout(refreshToken);
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("refreshTokenId");
+      localStorage.removeItem("userId");
+      localStorage.removeItem("nickname");
+      setIsAdmin(false);
+      logout();
+      navigate("/");
+    }
   };
 
   return (

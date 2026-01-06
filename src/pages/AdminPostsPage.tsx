@@ -12,7 +12,7 @@ export default function AdminPostsPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
+  const [hasNext, setHasNext] = useState(false);
   const [filter, setFilter] = useState<FilterType>("all");
   const { showSuccess, showError, showConfirm } = useAlert();
 
@@ -36,15 +36,15 @@ export default function AdminPostsPage() {
       }
 
       if (filter === "published") {
-        const filteredPosts = data.posts.filter(
+        const filteredPosts = data.content.filter(
           (post: Post) => post.status === "PUBLISHED"
         );
         setPosts(filteredPosts);
       } else {
-        setPosts(data.posts);
+        setPosts(data.content);
       }
 
-      setTotalPages(data.totalPages);
+      setHasNext(data.hasNext || false);
     } catch (error) {
       console.error("Failed to load posts:", error);
       showError("Failed to load posts.");
@@ -167,7 +167,7 @@ export default function AdminPostsPage() {
         </table>
       </div>
 
-      {totalPages > 1 && (
+      {(currentPage > 0 || hasNext) && (
         <div className="flex justify-center items-center gap-4 mt-8 pt-8 border-t border-gray-200 text-sm font-mono">
           <button
             onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
@@ -177,11 +177,11 @@ export default function AdminPostsPage() {
             ← Previous
           </button>
           <span className="text-gray-600">
-            Page {currentPage + 1} of {totalPages}
+            Page {currentPage + 1}
           </span>
           <button
-            onClick={() => setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))}
-            disabled={currentPage >= totalPages - 1}
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+            disabled={!hasNext}
             className="text-gray-900 hover:underline disabled:opacity-30"
           >
             Next →

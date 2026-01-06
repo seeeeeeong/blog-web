@@ -50,12 +50,15 @@ export default function PostCreatePage() {
 
     setLoading(true);
     try {
+      console.log("Creating post...");
       const newPost = await postApi.createPost({
         categoryId,
         title: title.trim(),
         content: content.trim(),
         isDraft,
       });
+      console.log("Post created successfully:", newPost);
+      console.log("Navigating to post ID:", newPost.id);
 
       showSuccess(isDraft ? "Saved as draft." : "Post created successfully.");
 
@@ -66,6 +69,7 @@ export default function PostCreatePage() {
       }
     } catch (error) {
       console.error("Failed to create post:", error);
+      console.error("Error details:", error instanceof Error ? error.message : String(error));
       showError("Failed to create post.");
     } finally {
       setLoading(false);

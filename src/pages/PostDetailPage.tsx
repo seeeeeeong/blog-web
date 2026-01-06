@@ -32,13 +32,16 @@ export default function PostDetailPage() {
 
   const loadPost = async () => {
     try {
+      console.log("Loading post with ID:", postId);
       const data = await postApi.getPost(Number(postId));
+      console.log("Post loaded successfully:", data);
       setPost(data);
 
       const userId = localStorage.getItem("userId");
       setIsAuthor(userId === String(data.userId));
     } catch (error) {
       console.error("Failed to load post:", error);
+      console.error("Error details:", error instanceof Error ? error.message : String(error));
       showError("Post not found.");
       navigate("/");
     } finally {

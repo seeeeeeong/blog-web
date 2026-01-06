@@ -1,8 +1,17 @@
 // API Response
 export interface ApiResponse<T> {
-  success: boolean;
+  result: "SUCCESS" | "ERROR";
   data: T | null;
-  message?: string;
+  error: {
+    code: string;
+    message: string;
+    data?: any;
+  } | null;
+}
+
+export interface PageResponse<T> {
+  content: T[];
+  hasNext: boolean;
 }
 
 // User
@@ -19,30 +28,15 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface SignupRequest {
-  email: string;
-  password: string;
-  nickname: string;
-}
-
 export interface TokenResponse {
   accessToken: string;
   refreshToken: string;
+  refreshTokenId: string;
   user: User;
 }
 
 export interface RefreshTokenRequest {
   refreshToken: string;
-}
-
-export interface UpdateProfileRequest {
-  nickname: string;
-  profileImageUrl?: string | null;
-}
-
-export interface ChangePasswordRequest {
-  currentPassword: string;
-  newPassword: string;
 }
 
 // Category
@@ -68,20 +62,20 @@ export interface Post {
   updatedAt: string;
 }
 
-export interface PostListResponse {
-  posts: Post[];
-  totalPages: number;
-  totalElements: number;
-  currentPage: number;
-  pageSize: number;
-}
-
 export interface CreatePostRequest {
   categoryId: number;
   title: string;
   content: string;
   thumbnailUrl?: string | null;
-  isDraft?: boolean;  
+  isDraft?: boolean;
+}
+
+export interface UpdatePostRequest {
+  categoryId: number;
+  title: string;
+  content: string;
+  thumbnailUrl?: string | null;
+  isDraft?: boolean;
 }
 
 // Comment
@@ -102,4 +96,17 @@ export interface Comment {
 export interface CreateCommentRequest {
   content: string;
   parentId?: number | null;
+}
+
+export interface UpdateCommentRequest {
+  content: string;
+}
+
+// Image
+export interface ImageUploadResponse {
+  url: string;
+  publicId: string;
+  format: string;
+  width: number;
+  height: number;
 }

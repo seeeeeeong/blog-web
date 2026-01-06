@@ -1,18 +1,20 @@
 import apiClient from "./client";
-import type { Comment, CreateCommentRequest } from "../types";
+import type { Comment, CreateCommentRequest, UpdateCommentRequest } from "../types";
 
 export const commentApi = {
+  // 댓글 목록 조회
   getComments: async (postId: number): Promise<Comment[]> => {
-    const response = await apiClient.get(`/posts/${postId}/comments`);
+    const response = await apiClient.get(`/v1/posts/${postId}/comments`);
     return response.data;
   },
 
+  // 댓글 작성
   createComment: async (
     postId: number,
     data: CreateCommentRequest,
     githubToken: string
   ): Promise<Comment> => {
-    const response = await apiClient.post(`/posts/${postId}/comments`, data, {
+    const response = await apiClient.post(`/v1/posts/${postId}/comments`, data, {
       headers: {
         Authorization: `Bearer ${githubToken}`,
       },
@@ -20,14 +22,15 @@ export const commentApi = {
     return response.data;
   },
 
+  // 댓글 수정
   updateComment: async (
     postId: number,
     commentId: number,
-    data: { content: string },
+    data: UpdateCommentRequest,
     githubToken: string
   ): Promise<Comment> => {
     const response = await apiClient.put(
-      `/posts/${postId}/comments/${commentId}`,
+      `/v1/posts/${postId}/comments/${commentId}`,
       data,
       {
         headers: {
@@ -38,20 +41,16 @@ export const commentApi = {
     return response.data;
   },
 
+  // 댓글 삭제
   deleteComment: async (
     postId: number,
     commentId: number,
     githubToken: string
   ): Promise<void> => {
-    await apiClient.delete(`/posts/${postId}/comments/${commentId}`, {
+    await apiClient.delete(`/v1/posts/${postId}/comments/${commentId}`, {
       headers: {
         Authorization: `Bearer ${githubToken}`,
       },
     });
-  },
-
-  getRecentComments: async (limit: number = 10): Promise<Comment[]> => {
-    const response = await apiClient.get('/comments/recent', { params: { limit } });
-    return response.data;
   },
 };

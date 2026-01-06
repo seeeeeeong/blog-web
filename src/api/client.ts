@@ -1,5 +1,4 @@
 import axios from "axios";
-import type { ApiResponse } from "../types";
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -45,13 +44,16 @@ apiClient.interceptors.request.use(
 
 apiClient.interceptors.response.use(
   (response) => {
-    // ApiResponse 형식의 데이터에서 data를 추출
-    if (response.data && typeof response.data === 'object' && 'success' in response.data) {
-      const apiResponse = response.data as ApiResponse<any>;
-      if (apiResponse.success && apiResponse.data !== undefined) {
+    // Backend의 { result, data, error } 형식을 처리
+    if (response.data && typeof response.data === 'object' && 'result' in response.data) {
+      const apiResponse = response.data as { result: string; data: any; error: any };
+      if (apiResponse.result === 'SUCCESS') {
+        // SUCCESS면 data 추출 (null이어도 괜찮음)
         response.data = apiResponse.data;
-      } else if (!apiResponse.success) {
-        return Promise.reject(new Error(apiResponse.message || 'API 요청 실패'));
+      } else if (apiResponse.result === 'ERROR') {
+        // ERROR면 무조건 reject
+        const errorMessage = apiResponse.error?.message || 'API 요청 실패';
+        return Promise.reject(new Error(errorMessage));
       }
     }
     return response;
@@ -112,17 +114,19 @@ apiClient.interceptors.response.use(
       try {
         // refresh token으로 새 토큰 발급
         const response = await axios.post(
-          `${import.meta.env.VITE_API_BASE_URL}/users/refresh`,
+          `${import.meta.env.VITE_API_BASE_URL}/v1/users/refresh`,
           { refreshToken },
           { headers: { "Content-Type": "application/json" } }
         );
 
         const newAccessToken = response.data.data.accessToken;
         const newRefreshToken = response.data.data.refreshToken;
+        const newRefreshTokenId = response.data.data.refreshTokenId;
 
         // 새 토큰 저장
         localStorage.setItem("accessToken", newAccessToken);
         localStorage.setItem("refreshToken", newRefreshToken);
+        localStorage.setItem("refreshTokenId", newRefreshTokenId);
 
         // 큐에 있는 요청들 처리
         processQueue(null, newAccessToken);
@@ -154,6 +158,7 @@ apiClient.interceptors.response.use(
 const clearAuthData = () => {
   localStorage.removeItem("accessToken");
   localStorage.removeItem("refreshToken");
+  localStorage.removeItem("refreshTokenId");
   localStorage.removeItem("userId");
   localStorage.removeItem("nickname");
 };
