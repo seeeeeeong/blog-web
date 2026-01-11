@@ -5,6 +5,8 @@ import { postApi } from "../api/post";
 import type { Post } from "../types";
 import { useAlert } from "../contexts/AlertContext";
 import PageLayout from "../components/common/PageLayout";
+import { PAGINATION } from "../constants/pagination";
+import { formatShortDate } from "../utils/format";
 
 type FilterType = "all" | "published" | "draft";
 
@@ -27,26 +29,17 @@ export default function AdminPostsPage() {
   const loadPosts = async () => {
     try {
       setLoading(true);
-      let data;
+      const data = filter === "draft"
+        ? await postApi.getDraftPosts(currentPage, PAGINATION.ADMIN_POSTS_PER_PAGE)
+        : await adminApi.getAllPosts(currentPage, PAGINATION.ADMIN_POSTS_PER_PAGE);
 
-      if (filter === "draft") {
-        data = await postApi.getDraftPosts(currentPage, 20);
-      } else {
-        data = await adminApi.getAllPosts(currentPage, 20);
-      }
+      const filteredPosts = filter === "published"
+        ? data.content.filter((post: Post) => post.status === "PUBLISHED")
+        : data.content;
 
-      if (filter === "published") {
-        const filteredPosts = data.content.filter(
-          (post: Post) => post.status === "PUBLISHED"
-        );
-        setPosts(filteredPosts);
-      } else {
-        setPosts(data.content);
-      }
-
+      setPosts(filteredPosts);
       setHasNext(data.hasNext || false);
-    } catch (error) {
-      console.error("Failed to load posts:", error);
+    } catch {
       showError("Failed to load posts.");
     } finally {
       setLoading(false);
@@ -61,8 +54,7 @@ export default function AdminPostsPage() {
       await adminApi.deletePost(postId);
       showSuccess("Deleted successfully.");
       loadPosts();
-    } catch (error) {
-      console.error("Failed to delete:", error);
+    } catch {
       showError("Failed to delete post.");
     }
   };
@@ -146,11 +138,7 @@ export default function AdminPostsPage() {
                   </td>
                   <td className="p-4 sm:p-5 text-tertiary text-xs sm:text-sm">{post.viewCount}</td>
                   <td className="p-4 sm:p-5 text-tertiary text-xs sm:text-sm">
-                    {new Date(post.createdAt).toLocaleDateString("en-US", {
-                      year: 'numeric',
-                      month: '2-digit',
-                      day: '2-digit',
-                    })}
+                    {formatShortDate(post.createdAt)}
                   </td>
                   <td className="p-4 sm:p-5 text-right text-xs sm:text-sm">
                     <div className="flex justify-end items-center gap-4 sm:gap-5">

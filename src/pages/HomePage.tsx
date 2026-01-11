@@ -3,30 +3,15 @@ import { postApi } from "../api/post";
 import { categoryApi } from "../api/category";
 import type { Post, Category } from "../types";
 import { Link } from "react-router-dom";
+import Spinner from "../components/common/Spinner";
+import { formatDate, extractPreview } from "../utils/format";
+import { PAGINATION } from "../constants/pagination";
 
 const SearchIcon = () => (
   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
   </svg>
 );
-
-const Spinner = () => (
-  <div className="spinner-modern" />
-);
-
-const formatDate = (date: string) =>
-  new Date(date).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-
-const extractPreview = (content: string) =>
-  content
-    .replace(/!\[.*?\]\(.*?\)/g, "")
-    .replace(/[#*`>\-\[\]]/g, "")
-    .trim()
-    .substring(0, 150);
 
 export default function HomePage() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -60,8 +45,8 @@ export default function HomePage() {
     try {
       const data = await categoryApi.getCategories();
       setCategories(data || []);
-    } catch (error) {
-      console.error("Failed to load categories:", error);
+    } catch {
+      setError("Failed to load categories.");
     }
   };
 
@@ -70,19 +55,15 @@ export default function HomePage() {
       setPostsLoading(true);
       setError(null);
 
-      let data;
-      if (searchQuery.trim()) {
-        data = await postApi.searchPostsBySimilarity(searchQuery, selectedCategory || undefined, currentPage, 10);
-      } else if (selectedCategory) {
-        data = await postApi.getPostsByCategory(selectedCategory, currentPage, 10);
-      } else {
-        data = await postApi.getPosts(currentPage, 10);
-      }
+      const data = searchQuery.trim()
+        ? await postApi.searchPostsBySimilarity(searchQuery, selectedCategory || undefined, currentPage, PAGINATION.POSTS_PER_PAGE)
+        : selectedCategory
+          ? await postApi.getPostsByCategory(selectedCategory, currentPage, PAGINATION.POSTS_PER_PAGE)
+          : await postApi.getPosts(currentPage, PAGINATION.POSTS_PER_PAGE);
 
       setPosts(data.content || []);
       setHasNext(data.hasNext || false);
-    } catch (error) {
-      console.error("Failed to load posts:", error);
+    } catch {
       setError("Failed to load posts.");
     } finally {
       setPostsLoading(false);
@@ -134,7 +115,7 @@ export default function HomePage() {
             />
             <div>
               <h1 className="text-2xl sm:text-4xl font-mono tracking-wider text-primary uppercase mb-2 transition-all-smooth hover:text-accent-green">SEEEEEEONG.LOG</h1>
-              <p className="text-xs sm:text-sm font-mono text-tertiary tracking-widest uppercase">DEVELOPER BLOG</p>
+              <p className="text-xs sm:text-sm font-mono text-tertiary tracking-widest uppercase"></p>
             </div>
           </div>
 

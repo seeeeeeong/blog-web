@@ -27,49 +27,45 @@ export default function PostCreatePage() {
       if (data.length > 0) {
         setCategoryId(data[0].id);
       }
-    } catch (error) {
-      console.error("Failed to load categories:", error);
+    } catch {
+      showError("Failed to load categories.");
     }
   };
 
-  const handleSubmit = async (isDraft: boolean = false) => {
+  const validateForm = (): boolean => {
     if (!categoryId) {
       showWarning("Please select a category.");
-      return;
+      return false;
     }
 
     if (!title.trim()) {
       showWarning("Please enter a title.");
-      return;
+      return false;
     }
 
     if (!content.trim()) {
       showWarning("Please enter content.");
-      return;
+      return false;
     }
+
+    return true;
+  };
+
+  const handleSubmit = async (isDraft: boolean = false) => {
+    if (!validateForm()) return;
 
     setLoading(true);
     try {
-      console.log("Creating post...");
       const newPost = await postApi.createPost({
         categoryId,
         title: title.trim(),
         content: content.trim(),
         isDraft,
       });
-      console.log("Post created successfully:", newPost);
-      console.log("Navigating to post ID:", newPost.id);
 
       showSuccess(isDraft ? "Saved as draft." : "Post created successfully.");
-
-      if (isDraft) {
-        navigate("/admin/posts");
-      } else {
-        navigate(`/posts/${newPost.id}`);
-      }
-    } catch (error) {
-      console.error("Failed to create post:", error);
-      console.error("Error details:", error instanceof Error ? error.message : String(error));
+      navigate(isDraft ? "/admin/posts" : `/posts/${newPost.id}`);
+    } catch {
       showError("Failed to create post.");
     } finally {
       setLoading(false);

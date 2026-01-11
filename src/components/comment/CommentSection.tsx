@@ -24,8 +24,8 @@ export default function CommentSection({ postId }: CommentSectionProps) {
     try {
       const data = await commentApi.getComments(postId);
       setComments(data);
-    } catch (error) {
-      console.error("Failed to load comments:", error);
+    } catch {
+      showError("Failed to load comments.");
     } finally {
       setLoading(false);
     }
@@ -43,20 +43,11 @@ export default function CommentSection({ postId }: CommentSectionProps) {
       showSuccess("Comment posted successfully.");
       await loadComments();
     } catch (error: any) {
-      console.error("Failed to post comment:", error);
-
-      if (error.response?.data) {
-        const errorData = error.response.data;
-        if (errorData.errors && errorData.errors.length > 0) {
-          showError(errorData.errors.join(", "));
-        } else if (errorData.message) {
-          showError(errorData.message);
-        } else {
-          showError("Failed to post comment.");
-        }
-      } else {
-        showError("Failed to post comment.");
-      }
+      const errorData = error.response?.data;
+      const errorMessage = errorData?.errors?.length > 0
+        ? errorData.errors.join(", ")
+        : errorData?.message || "Failed to post comment.";
+      showError(errorMessage);
     }
   };
 
@@ -68,15 +59,10 @@ export default function CommentSection({ postId }: CommentSectionProps) {
       showSuccess("Comment deleted successfully.");
       await loadComments();
     } catch (error: any) {
-      console.error("Failed to delete comment:", error);
-
-      if (error.response?.status === 401) {
-        showError("Authentication failed. Please try logging in with GitHub again.");
-      } else if (error.response?.data?.message) {
-        showError(error.response.data.message);
-      } else {
-        showError("Failed to delete comment.");
-      }
+      const errorMessage = error.response?.status === 401
+        ? "Authentication failed. Please try logging in with GitHub again."
+        : error.response?.data?.message || "Failed to delete comment.";
+      showError(errorMessage);
     }
   };
 

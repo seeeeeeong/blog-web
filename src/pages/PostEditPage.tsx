@@ -6,10 +6,7 @@ import type { Category } from "../types";
 import { useAlert } from "../contexts/AlertContext";
 import TipTapEditor from "../components/editor/TipTapEditor";
 import PageLayout from "../components/common/PageLayout";
-
-const Spinner = () => (
-  <div className="spinner-modern" />
-);
+import Spinner from "../components/common/Spinner";
 
 export default function PostEditPage() {
   const { postId } = useParams<{ postId: string }>();
@@ -35,8 +32,8 @@ export default function PostEditPage() {
     try {
       const data = await categoryApi.getCategories();
       setCategories(data);
-    } catch (error) {
-      console.error("Failed to load categories:", error);
+    } catch {
+      showError("Failed to load categories.");
     }
   };
 
@@ -44,17 +41,18 @@ export default function PostEditPage() {
     try {
       const data = await postApi.getPost(Number(postId));
       const userId = localStorage.getItem("userId");
+
       if (String(data.userId) !== userId) {
         showError("You do not have permission to edit this post.");
         setLoadError(true);
         setInitialLoading(false);
         return;
       }
+
       setCategoryId(data.categoryId);
       setTitle(data.title);
       setContent(data.content);
-    } catch (error) {
-      console.error("Failed to load post:", error);
+    } catch {
       showError("Post not found.");
       setLoadError(true);
     } finally {
@@ -62,19 +60,24 @@ export default function PostEditPage() {
     }
   };
 
-  const handleSubmit = async (isDraft: boolean = false) => {
+  const validateForm = (): boolean => {
     if (!categoryId) {
       showWarning("Please select a category.");
-      return;
+      return false;
     }
     if (!title.trim()) {
       showWarning("Please enter a title.");
-      return;
+      return false;
     }
     if (!content.trim()) {
       showWarning("Please enter content.");
-      return;
+      return false;
     }
+    return true;
+  };
+
+  const handleSubmit = async (isDraft: boolean = false) => {
+    if (!validateForm()) return;
 
     setLoading(true);
     try {
@@ -84,14 +87,10 @@ export default function PostEditPage() {
         content: content.trim(),
         isDraft,
       });
+
       showSuccess(isDraft ? "Saved as draft." : "Post updated successfully.");
-      if (isDraft) {
-        navigate("/admin/posts");
-      } else {
-        navigate(`/posts/${postId}`);
-      }
-    } catch (error) {
-      console.error("Failed to update post:", error);
+      navigate(isDraft ? "/admin/posts" : `/posts/${postId}`);
+    } catch {
       showError("Failed to update post.");
     } finally {
       setLoading(false);

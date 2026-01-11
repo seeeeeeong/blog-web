@@ -130,8 +130,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
                 .then((imageUrl) => {
                   editor.chain().focus().setImage({ src: imageUrl }).run();
                 })
-                .catch((error) => {
-                  console.error('Image upload failed:', error);
+                .catch(() => {
                   showError('Failed to upload image.');
                 });
             }
@@ -173,8 +172,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
       try {
         const imageUrl = await uploadImageDirectly(file);
         editor.chain().focus().setImage({ src: imageUrl }).run();
-      } catch (error) {
-        console.error('Image upload failed:', error);
+      } catch {
         showError('Failed to upload image.');
       }
     }

@@ -9,37 +9,41 @@ export default function Layout() {
   const [isAdmin, setIsAdmin] = useState(false);
   const { isAuthenticated, user, logout } = useGitHubAuth();
 
-  useEffect(() => {
+  const checkTokenExpiration = () => {
     const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("accessToken");
 
-    if (userId && token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        const isExpired = payload.exp * 1000 < Date.now();
-
-        if (isExpired) {
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("refreshToken");
-          localStorage.removeItem("refreshTokenId");
-          localStorage.removeItem("userId");
-          localStorage.removeItem("nickname");
-          setIsAdmin(false);
-        } else {
-          setIsAdmin(true);
-        }
-      } catch {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        localStorage.removeItem("refreshTokenId");
-        localStorage.removeItem("userId");
-        localStorage.removeItem("nickname");
-        setIsAdmin(false);
-      }
-    } else {
+    if (!userId || !token) {
       setIsAdmin(false);
+      return;
     }
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const isExpired = payload.exp * 1000 < Date.now();
+
+      if (isExpired) {
+        clearAuthData();
+      } else {
+        setIsAdmin(true);
+      }
+    } catch {
+      clearAuthData();
+    }
+  };
+
+  useEffect(() => {
+    checkTokenExpiration();
   }, [location]);
+
+  const clearAuthData = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("refreshTokenId");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("nickname");
+    setIsAdmin(false);
+  };
 
   const handleLogout = async () => {
     const refreshToken = localStorage.getItem("refreshToken");
@@ -48,15 +52,8 @@ export default function Layout() {
       if (refreshToken) {
         await authApi.logout(refreshToken);
       }
-    } catch (error) {
-      console.error("Logout failed:", error);
     } finally {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      localStorage.removeItem("refreshTokenId");
-      localStorage.removeItem("userId");
-      localStorage.removeItem("nickname");
-      setIsAdmin(false);
+      clearAuthData();
       logout();
       navigate("/");
     }

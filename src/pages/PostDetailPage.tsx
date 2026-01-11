@@ -6,17 +6,8 @@ import { useAlert } from "../contexts/AlertContext";
 import MarkdownViewer from "../components/editor/MarkdownViewer";
 import CommentSection from "../components/comment/CommentSection";
 import PageLayout from "../components/common/PageLayout";
-
-const Spinner = () => (
-  <div className="spinner-modern" />
-);
-
-const formatDate = (date: string) =>
-  new Date(date).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+import Spinner from "../components/common/Spinner";
+import { formatDate } from "../utils/format";
 
 export default function PostDetailPage() {
   const { postId } = useParams<{ postId: string }>();
@@ -32,16 +23,12 @@ export default function PostDetailPage() {
 
   const loadPost = async () => {
     try {
-      console.log("Loading post with ID:", postId);
       const data = await postApi.getPost(Number(postId));
-      console.log("Post loaded successfully:", data);
       setPost(data);
 
       const userId = localStorage.getItem("userId");
       setIsAuthor(userId === String(data.userId));
-    } catch (error) {
-      console.error("Failed to load post:", error);
-      console.error("Error details:", error instanceof Error ? error.message : String(error));
+    } catch {
       showError("Post not found.");
       navigate("/");
     } finally {
@@ -57,8 +44,7 @@ export default function PostDetailPage() {
       await postApi.deletePost(Number(postId));
       showSuccess("Deleted successfully.");
       navigate("/");
-    } catch (error) {
-      console.error("Failed to delete:", error);
+    } catch {
       showError("Failed to delete post.");
     }
   };

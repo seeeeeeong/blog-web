@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import Spinner from "../components/common/Spinner";
 
 export default function AuthCallbackPage() {
   const [searchParams] = useSearchParams();
@@ -33,7 +34,6 @@ export default function AuthCallbackPage() {
         navigate("/");
       }
     } else {
-      console.error("GitHub OAuth 콜백 파라미터 누락");
       navigate("/");
     }
   }, [searchParams, navigate]);
@@ -41,8 +41,8 @@ export default function AuthCallbackPage() {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">
-        <div className="w-12 h-12 border-4 border-gray-300 border-t-gray-900 rounded-full animate-spin mx-auto mb-4"></div>
-        <p className="text-gray-600">로그인 처리 중...</p>
+        <Spinner />
+        <p className="text-tertiary font-mono text-sm uppercase tracking-wider mt-6">AUTHENTICATING...</p>
       </div>
     </div>
   );

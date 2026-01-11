@@ -27,32 +27,26 @@ const processQueue = (error: any, token: string | null = null) => {
 
 apiClient.interceptors.request.use(
   (config) => {
-    // 이미 Authorization 헤더가 설정되어 있으면 덮어쓰지 않음 (GitHub 댓글용)
     if (!config.headers.Authorization) {
       const token = localStorage.getItem("accessToken");
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
     }
-
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 apiClient.interceptors.response.use(
   (response) => {
-    // Backend의 { result, data, error } 형식을 처리
     if (response.data && typeof response.data === 'object' && 'result' in response.data) {
       const apiResponse = response.data as { result: string; data: any; error: any };
+
       if (apiResponse.result === 'SUCCESS') {
-        // SUCCESS면 data 추출 (null이어도 괜찮음)
         response.data = apiResponse.data;
       } else if (apiResponse.result === 'ERROR') {
-        // ERROR면 무조건 reject
-        const errorMessage = apiResponse.error?.message || 'API 요청 실패';
+        const errorMessage = apiResponse.error?.message || 'API request failed';
         return Promise.reject(new Error(errorMessage));
       }
     }
@@ -64,14 +58,11 @@ apiClient.interceptors.response.use(
     const requestUrl = originalRequest?.url || '';
     const currentPath = window.location.pathname;
 
-    // GitHub 인증 관련 요청인 경우 (댓글 API)
     if (status === 401 && requestUrl.includes('/comments')) {
-      console.error('GitHub 인증이 필요합니다. 다시 로그인해주세요.');
       localStorage.removeItem("githubUser");
       return Promise.reject(error);
     }
 
-    // 로그인/회원가입 페이지에서의 인증 에러는 리다이렉트하지 않음
     if (status === 401 && (currentPath === '/login' || currentPath === '/signup' ||
         requestUrl.includes('/auth/login') || requestUrl.includes('/auth/signup'))) {
       return Promise.reject(error);
