@@ -56,17 +56,17 @@ export default function CommentItem({
 
   return (
     <div className="space-y-4">
-      <div className="border-t-2 border-gray-200 pt-6">
+      <div className="border-t border-primary pt-6 transition-all-smooth hover:bg-whitesmoke hover:-translate-x-1 px-4 py-3 -mx-4 -mt-3">
         <div className="flex gap-4">
           <div className="flex-shrink-0">
             {comment.githubAvatarUrl ? (
               <img
                 src={comment.githubAvatarUrl}
                 alt={comment.githubUsername}
-                className="w-10 h-10 rounded-full border-2 border-gray-900"
+                className="w-10 h-10 rounded-full border border-primary transition-transform-smooth hover:scale-110 hover:rotate-3"
               />
             ) : (
-              <div className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center transition-transform-smooth hover:scale-110">
                 <span className="text-white text-sm font-mono font-bold">
                   {comment.githubUsername[0].toUpperCase()}
                 </span>
@@ -76,21 +76,21 @@ export default function CommentItem({
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 mb-3 flex-wrap">
-              <span className="text-sm font-mono font-bold text-gray-900">
+              <span className="text-sm font-mono font-bold text-primary uppercase tracking-wide">
                 {comment.githubUsername}
               </span>
               {isAuthor && (
-                <span className="px-2 py-0.5 text-xs font-mono border-2 border-gray-900 bg-gray-900 text-white">
+                <span className="px-2 py-0.5 text-xs font-mono border border-primary bg-primary text-white uppercase tracking-wider shadow-[1px_1px_0_#232324]">
                   AUTHOR
                 </span>
               )}
-              <span className="text-xs font-mono text-gray-500">
+              <span className="text-xs font-mono text-tertiary uppercase tracking-wide">
                 {formatDate(comment.createdAt)}
               </span>
             </div>
 
             <div
-              className="comment-content text-sm font-mono text-gray-800 whitespace-pre-wrap break-words mb-4 leading-relaxed"
+              className="comment-content text-sm font-mono text-secondary whitespace-pre-wrap break-words mb-4 leading-relaxed"
               dangerouslySetInnerHTML={{ __html: comment.contentHtml }}
             />
 
@@ -98,7 +98,7 @@ export default function CommentItem({
               {user && (
                 <button
                   onClick={() => setShowReplyForm(!showReplyForm)}
-                  className="text-gray-900 hover:text-gray-600 transition-colors font-semibold"
+                  className="text-primary hover:text-accent-green transition-all-smooth font-semibold uppercase tracking-wide relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full"
                 >
                   {showReplyForm ? "↑ CANCEL" : "↓ REPLY"}
                 </button>
@@ -107,7 +107,7 @@ export default function CommentItem({
               {isAuthor && (
                 <button
                   onClick={handleDelete}
-                  className="text-red-600 hover:text-red-700 transition-colors font-semibold"
+                  className="text-red-600 hover:text-red-700 transition-all-smooth font-semibold uppercase tracking-wide relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-red-600 after:transition-all hover:after:w-full"
                 >
                   DELETE
                 </button>
@@ -118,8 +118,8 @@ export default function CommentItem({
       </div>
 
       {showReplyForm && (
-        <div className="ml-14 pl-6 border-l-4 border-gray-300">
-          <div className="bg-gray-50 border-2 border-gray-300 p-6">
+        <div className="ml-14 pl-6 border-l-2 border-primary animate-slide-in-up">
+          <div className="bg-whitesmoke border border-primary p-6 shadow-[1px_1px_0_#232324] transition-all-smooth hover:shadow-[2px_2px_0_#232324]">
             <CommentForm
               onSubmit={handleReplySubmit}
               placeholder="Write a reply..."
@@ -131,7 +131,7 @@ export default function CommentItem({
       )}
 
       {comment.replies && comment.replies.length > 0 && (
-        <div className="ml-14 pl-6 space-y-6 border-l-4 border-gray-300">
+        <div className="ml-14 pl-6 space-y-6 border-l-2 border-primary">
           {comment.replies.map((reply) => (
             <CommentItem
               key={reply.id}

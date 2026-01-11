@@ -8,7 +8,7 @@ import CommentSection from "../components/comment/CommentSection";
 import PageLayout from "../components/common/PageLayout";
 
 const Spinner = () => (
-  <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
+  <div className="spinner-modern" />
 );
 
 const formatDate = (date: string) =>
@@ -75,12 +75,12 @@ export default function PostDetailPage() {
     return (
       <PageLayout title="Error">
         <div className="text-center py-20">
-          <p className="text-lg font-mono text-gray-600 mb-8">Post not found.</p>
+          <p className="text-[11px] sm:text-xs font-mono text-secondary mb-8 uppercase tracking-wide">POST NOT FOUND.</p>
           <Link
             to="/"
-            className="px-6 py-3 bg-gray-900 text-white font-mono text-sm hover:bg-gray-800 transition-colors inline-block"
+            className="px-4 py-2 bg-whitesmoke text-primary font-mono text-[11px] border border-primary shadow-[1px_1px_0_#232324] hover:bg-primary hover:text-white transition-all inline-block uppercase tracking-wide"
           >
-            Back to home
+            BACK TO HOME
           </Link>
         </div>
       </PageLayout>
@@ -89,35 +89,44 @@ export default function PostDetailPage() {
 
   return (
     <PageLayout title={post.title}>
-      <div className="flex justify-between items-center mb-12 pb-6 border-b-2 border-gray-200">
-        <div className="flex items-center gap-4 text-sm font-mono text-gray-500">
-          <time>{formatDate(post.createdAt)}</time>
-          <span>·</span>
-          <span>{post.viewCount} views</span>
-        </div>
-        {isAuthor && (
-          <div className="flex items-center gap-6 text-sm font-mono">
-            <Link
-              to={`/posts/${postId}/edit`}
-              className="text-gray-900 hover:text-gray-600 transition-colors"
-            >
-              Edit
-            </Link>
-            <button
-              onClick={handleDelete}
-              className="text-red-600 hover:text-red-700 transition-colors"
-            >
-              Delete
-            </button>
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-whitesmoke border border-primary p-8 sm:p-10 mb-8 sm:mb-12 shadow-[1px_1px_0_#232324] transition-all-smooth hover:shadow-[2px_2px_0_#232324] animate-fade-in">
+          <h1 className="text-2xl sm:text-3xl font-mono text-primary mb-6 sm:mb-8 tracking-wide uppercase leading-tight font-bold">
+            {post.title}
+          </h1>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 sm:pb-8 border-b border-primary">
+            <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm font-mono text-tertiary tracking-wider uppercase">
+              <time>{formatDate(post.createdAt)}</time>
+              <span>·</span>
+              <span>{post.viewCount} VIEWS</span>
+            </div>
+            {isAuthor && (
+              <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm font-mono tracking-wider animate-slide-in-up delay-100">
+                <Link
+                  to={`/posts/${postId}/edit`}
+                  className="text-secondary hover:text-primary transition-all-smooth uppercase relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full font-semibold"
+                >
+                  EDIT
+                </Link>
+                <button
+                  onClick={handleDelete}
+                  className="text-red-600 hover:text-red-700 transition-all-smooth uppercase relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-red-600 after:transition-all hover:after:w-full font-semibold"
+                >
+                  DELETE
+                </button>
+              </div>
+            )}
           </div>
-        )}
+        </div>
+
+        <article className="bg-whitesmoke border border-primary p-8 sm:p-10 mb-12 sm:mb-16 shadow-[1px_1px_0_#232324] transition-all-smooth hover:shadow-[2px_2px_0_#232324] animate-slide-in-up delay-100">
+          <MarkdownViewer contentHtml={post.contentHtml} />
+        </article>
+
+        <div className="animate-slide-in-up delay-200">
+          <CommentSection postId={Number(postId)} />
+        </div>
       </div>
-
-      <article className="prose prose-lg max-w-none mb-20">
-        <MarkdownViewer contentHtml={post.contentHtml} />
-      </article>
-
-      <CommentSection postId={Number(postId)} />
     </PageLayout>
   );
 }

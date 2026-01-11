@@ -37,12 +37,12 @@ export default function LoginPage() {
   };
 
   return (
-    <AuthLayout title="Admin Login">
+    <AuthLayout title="Admin Login" subtitle="Access the admin dashboard">
       <form onSubmit={handleSubmit} className="space-y-8">
         <div>
           <label
             htmlFor="email"
-            className="block text-sm font-mono font-semibold text-gray-900 mb-2"
+            className="block text-sm font-mono text-secondary mb-3 uppercase tracking-wider font-semibold"
           >
             Email
           </label>
@@ -54,14 +54,15 @@ export default function LoginPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-3 bg-white border-2 border-gray-300 font-mono text-base placeholder-gray-400 focus:outline-none focus:border-gray-900 transition-colors"
+            className="w-full px-4 py-3 bg-white border border-primary font-mono text-sm placeholder-tertiary focus:outline-none focus:ring-2 focus:ring-primary transition-all-smooth shadow-[1px_1px_0_#232324] focus:shadow-[2px_2px_0_#232324]"
+            placeholder="Enter your email"
           />
         </div>
 
         <div>
           <label
             htmlFor="password"
-            className="block text-sm font-mono font-semibold text-gray-900 mb-2"
+            className="block text-sm font-mono text-secondary mb-3 uppercase tracking-wider font-semibold"
           >
             Password
           </label>
@@ -73,16 +74,17 @@ export default function LoginPage() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-3 bg-white border-2 border-gray-300 font-mono text-base placeholder-gray-400 focus:outline-none focus:border-gray-900 transition-colors"
+            className="w-full px-4 py-3 bg-white border border-primary font-mono text-sm placeholder-tertiary focus:outline-none focus:ring-2 focus:ring-primary transition-all-smooth shadow-[1px_1px_0_#232324] focus:shadow-[2px_2px_0_#232324]"
+            placeholder="Enter your password"
           />
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3 text-sm font-mono text-white bg-gray-900 hover:bg-gray-800 disabled:opacity-50 transition-all"
+          className="btn-interactive w-full py-4 text-sm font-mono text-white bg-primary hover:bg-accent-green hover:text-primary disabled:opacity-50 transition-all-smooth tracking-wider uppercase border border-primary shadow-[1px_1px_0_#232324] hover:shadow-[2px_2px_0_#232324] hover:-translate-y-0.5 active:translate-y-0 font-semibold"
         >
-          {loading ? "Logging in..." : "Login"}
+          {loading ? "LOGGING IN..." : "LOGIN"}
         </button>
       </form>
     </AuthLayout>

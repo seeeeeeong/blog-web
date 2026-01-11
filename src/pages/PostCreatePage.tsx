@@ -88,19 +88,20 @@ export default function PostCreatePage() {
 
   return (
     <PageLayout title="Create Post">
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit(false);
-        }}
-        className="space-y-10"
-      >
+      <div className="max-w-5xl mx-auto">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit(false);
+          }}
+          className="space-y-10"
+        >
         <div className="space-y-8">
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-6">
             <div className="sm:col-span-4">
               <label
                 htmlFor="title"
-                className="block text-sm font-mono font-semibold text-gray-900 mb-2"
+                className="block text-sm font-mono font-semibold text-primary mb-2 uppercase tracking-wide"
               >
                 Title
               </label>
@@ -111,7 +112,7 @@ export default function PostCreatePage() {
                 onChange={(e) => setTitle(e.target.value)}
                 required
                 maxLength={200}
-                className="block w-full border-b-2 border-gray-300 bg-transparent py-3 text-gray-900 placeholder:text-gray-400 focus:border-gray-900 focus:ring-0 text-base font-mono transition-colors"
+                className="block w-full border-b border-primary bg-transparent py-3 text-primary placeholder:text-tertiary focus:border-primary focus:ring-2 focus:ring-primary text-base font-mono transition-all-smooth"
                 placeholder="Enter a captivating title"
               />
             </div>
@@ -119,7 +120,7 @@ export default function PostCreatePage() {
             <div className="sm:col-span-2">
               <label
                 htmlFor="category"
-                className="block text-sm font-mono font-semibold text-gray-900 mb-2"
+                className="block text-sm font-mono font-semibold text-primary mb-2 uppercase tracking-wide"
               >
                 Category
               </label>
@@ -128,7 +129,7 @@ export default function PostCreatePage() {
                   id="category"
                   value={categoryId}
                   onChange={(e) => setCategoryId(Number(e.target.value))}
-                  className="block w-full appearance-none border-b-2 border-gray-300 bg-transparent py-3 pr-8 text-gray-900 focus:border-gray-900 focus:ring-0 text-base font-mono transition-colors"
+                  className="block w-full appearance-none border-b border-primary bg-transparent py-3 pr-8 text-primary focus:border-primary focus:ring-2 focus:ring-primary text-base font-mono transition-all-smooth uppercase"
                 >
                   {categories.map((category) => (
                     <option key={category.id} value={category.id}>
@@ -136,7 +137,7 @@ export default function PostCreatePage() {
                     </option>
                   ))}
                 </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-gray-700">
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-secondary">
                   <svg
                     className="h-5 w-5"
                     xmlns="http://www.w3.org/2000/svg"
@@ -163,7 +164,7 @@ export default function PostCreatePage() {
           <button
             type="button"
             onClick={handleCancel}
-            className="px-6 py-2.5 text-sm font-mono text-gray-700 hover:text-gray-900 transition-colors"
+            className="px-6 py-2.5 text-sm font-mono text-tertiary hover:text-primary transition-all-smooth uppercase tracking-wide relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full"
           >
             Cancel
           </button>
@@ -171,19 +172,20 @@ export default function PostCreatePage() {
             type="button"
             onClick={() => handleSubmit(true)}
             disabled={loading}
-            className="px-6 py-2.5 text-sm font-mono text-gray-900 border-2 border-gray-300 hover:border-gray-900 disabled:opacity-50 transition-all"
+            className="btn-interactive px-6 py-2.5 text-sm font-mono text-primary border border-primary hover:bg-primary hover:text-white disabled:opacity-50 transition-all-smooth shadow-[1px_1px_0_#232324] hover:shadow-[2px_2px_0_#232324] hover:-translate-y-0.5 active:translate-y-0 uppercase tracking-wide"
           >
             {loading ? "Saving..." : "Save Draft"}
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-2.5 text-sm font-mono text-white bg-gray-900 hover:bg-gray-800 disabled:opacity-50 transition-all"
+            className="btn-interactive px-6 py-2.5 text-sm font-mono text-white bg-primary hover:bg-accent-green hover:text-primary disabled:opacity-50 transition-all-smooth border border-primary shadow-[1px_1px_0_#232324] hover:shadow-[2px_2px_0_#232324] hover:-translate-y-0.5 active:translate-y-0 uppercase tracking-wide"
           >
             {loading ? "Publishing..." : "Publish"}
           </button>
         </div>
-      </form>
+        </form>
+      </div>
     </PageLayout>
   );
 }

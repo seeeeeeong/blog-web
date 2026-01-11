@@ -35,15 +35,15 @@ export default function CommentForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {user && (
-        <div className="flex items-center gap-3 pb-4 mb-4 border-b-2 border-gray-200">
+        <div className="flex items-center gap-3 pb-4 mb-4 border-b border-primary">
           {user.githubAvatarUrl && (
             <img
               src={user.githubAvatarUrl}
               alt={user.githubUsername}
-              className="w-8 h-8 rounded-full border-2 border-gray-900"
+              className="w-8 h-8 rounded-full border border-primary transition-transform-smooth hover:scale-110 hover:rotate-3"
             />
           )}
-          <span className="text-sm font-mono font-semibold text-gray-900">
+          <span className="text-sm font-mono font-semibold text-primary uppercase tracking-wide">
             {user.githubUsername}
           </span>
         </div>
@@ -56,17 +56,17 @@ export default function CommentForm({
         autoFocus={autoFocus}
         rows={4}
         maxLength={1000}
-        className="block w-full border-2 border-gray-300 bg-white p-4 text-gray-900 placeholder:text-gray-400 focus:border-gray-900 focus:ring-0 text-sm font-mono transition-colors resize-none"
+        className="block w-full border border-primary bg-white p-4 text-primary placeholder:text-tertiary focus:border-primary focus:ring-2 focus:ring-primary text-sm font-mono transition-all-smooth resize-none"
       />
 
       <div className="flex justify-between items-center">
-        <p className="text-xs font-mono text-gray-500">
+        <p className="text-xs font-mono text-tertiary uppercase tracking-wide">
           {content.length} / 1000
         </p>
         <button
           type="submit"
           disabled={!content.trim() || isSubmitting}
-          className="px-6 py-2.5 text-sm font-mono font-semibold text-white bg-gray-900 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          className="btn-interactive px-6 py-2.5 text-sm font-mono font-semibold text-white bg-primary hover:bg-accent-green hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all-smooth border border-primary shadow-[1px_1px_0_#232324] hover:shadow-[2px_2px_0_#232324] hover:-translate-y-0.5 active:translate-y-0 uppercase tracking-wide"
         >
           {isSubmitting ? "SUBMITTING..." : buttonText}
         </button>

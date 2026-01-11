@@ -9,25 +9,25 @@ interface AuthLayoutProps {
 
 export default function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
   return (
-    <div className="min-h-screen bg-white flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 animate-fade-in">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Link to="/" className="inline-block mb-6">
-            <h1 className="text-3xl font-bold font-mono text-gray-900 hover:text-gray-600 transition-colors">
+        <div className="text-center mb-10">
+          <Link to="/" className="inline-block mb-8 transition-transform-smooth hover:scale-105">
+            <h1 className="text-2xl font-mono text-primary hover:text-accent-green transition-all-smooth tracking-wider uppercase">
               seeeeeeong.log
             </h1>
           </Link>
-          <h2 className="text-2xl font-bold font-mono text-gray-900 mb-2">{title}</h2>
+          <h2 className="text-xl font-mono text-primary mb-2 tracking-wide uppercase animate-slide-in-up delay-100">{title}</h2>
           {subtitle && (
-            <p className="text-sm font-mono text-gray-500 mt-2">{subtitle}</p>
+            <p className="text-xs font-mono text-tertiary mt-2 tracking-wide uppercase animate-slide-in-up delay-200">{subtitle}</p>
           )}
         </div>
-        <div className="bg-white border-2 border-gray-900 shadow-lg p-8">
+        <div className="bg-whitesmoke border border-primary p-10 shadow-[1px_1px_0_#232324] transition-all-smooth hover:shadow-[2px_2px_0_#232324] animate-slide-in-up delay-300">
           {children}
         </div>
-        <div className="text-center mt-6">
-          <Link to="/" className="text-sm font-mono text-gray-500 hover:text-gray-900 hover:underline transition-colors">
-            ← Back to home
+        <div className="text-center mt-6 animate-fade-in delay-400">
+          <Link to="/" className="text-xs font-mono text-tertiary hover:text-primary transition-all-smooth tracking-wide uppercase relative inline-block after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full group">
+            <span className="inline-block transition-transform-smooth group-hover:-translate-x-1">←</span> BACK TO HOME
           </Link>
         </div>
       </div>

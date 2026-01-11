@@ -11,7 +11,7 @@ const SearchIcon = () => (
 );
 
 const Spinner = () => (
-  <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
+  <div className="spinner-modern" />
 );
 
 const formatDate = (date: string) =>
@@ -30,7 +30,6 @@ const extractPreview = (content: string) =>
 
 export default function HomePage() {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [popularPosts, setPopularPosts] = useState<Post[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -43,7 +42,7 @@ export default function HomePage() {
 
   useEffect(() => {
     const init = async () => {
-      await Promise.all([loadCategories(), loadPopularPosts()]);
+      await loadCategories();
       setInitialLoading(false);
     };
     init();
@@ -90,15 +89,6 @@ export default function HomePage() {
     }
   };
 
-  const loadPopularPosts = async () => {
-    try {
-      const data = await postApi.getPopularPosts(5);
-      setPopularPosts(data || []);
-    } catch (error) {
-      console.error("Failed to load popular posts:", error);
-    }
-  };
-
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setSearchQuery(searchKeyword.trim());
@@ -121,76 +111,82 @@ export default function HomePage() {
   if (error && posts.length === 0) {
     return (
       <div className="container mx-auto px-6 py-24 max-w-4xl text-center">
-        <p className="text-red-600 mb-6 text-lg">{error}</p>
+        <p className="text-red-600 mb-6 text-[11px] uppercase tracking-wide">{error}</p>
         <button
           onClick={loadPosts}
-          className="px-6 py-3 bg-gray-900 text-white font-mono text-sm hover:bg-gray-800 transition-colors"
+          className="px-4 py-2 bg-whitesmoke text-primary font-mono text-[11px] border border-primary shadow-[1px_1px_0_#232324] hover:bg-primary hover:text-white transition-all uppercase tracking-wide"
         >
-          Try again
+          TRY AGAIN
         </button>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <header className="bg-gray-900 text-white py-16 mb-12">
-        <div className="container mx-auto px-6 max-w-4xl">
-          <div className="flex items-center gap-6 mb-8">
+    <div className="min-h-screen">
+      <header className="py-16 sm:py-24 mb-12 sm:mb-20 animate-fade-in">
+        <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
+          <div className="flex flex-col items-center text-center mb-10 sm:mb-14">
             <img
               src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif"
               alt="Profile"
-              className="w-24 h-24 object-contain rounded-full"
+              className="w-20 h-20 sm:w-24 sm:h-24 object-contain rounded-full border border-primary transition-transform-smooth hover:scale-110 hover:rotate-3 mb-6"
             />
-            <h1 className="text-4xl font-bold font-mono tracking-tight">seeeeeeong.log</h1>
+            <div>
+              <h1 className="text-2xl sm:text-4xl font-mono tracking-wider text-primary uppercase mb-2 transition-all-smooth hover:text-accent-green">SEEEEEEONG.LOG</h1>
+              <p className="text-xs sm:text-sm font-mono text-tertiary tracking-widest uppercase">DEVELOPER BLOG</p>
+            </div>
           </div>
 
-          <form onSubmit={handleSearch} className="w-full max-w-2xl">
-            <div className="relative flex items-center">
-              <span className="absolute left-4 text-gray-400">
-                <SearchIcon />
-              </span>
-              <input
-                type="text"
-                value={searchKeyword}
-                onChange={(e) => setSearchKeyword(e.target.value)}
-                placeholder="Search posts..."
-                className="w-full pl-12 pr-20 py-3 bg-gray-800 text-white border border-gray-700 font-mono text-sm focus:outline-none focus:border-gray-500 placeholder-gray-500 transition-colors"
-              />
+          <form onSubmit={handleSearch} className="w-full max-w-2xl mx-auto animate-slide-in-up delay-100">
+            <div className="flex gap-3">
+              <div className="relative flex-1 group">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-tertiary transition-all-smooth group-focus-within:text-primary">
+                  <SearchIcon />
+                </span>
+                <input
+                  type="text"
+                  value={searchKeyword}
+                  onChange={(e) => setSearchKeyword(e.target.value)}
+                  placeholder="SEARCH POSTS..."
+                  className="w-full pl-12 pr-4 py-3 sm:py-4 bg-whitesmoke text-primary border border-primary font-mono text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary placeholder-tertiary transition-all-smooth tracking-wide shadow-[1px_1px_0_#232324] hover:shadow-[2px_2px_0_#232324]"
+                />
+              </div>
               <button
                 type="submit"
-                className="absolute right-0 top-0 bottom-0 px-6 bg-white text-gray-900 hover:bg-gray-100 transition-colors border-l border-gray-700 flex items-center gap-2"
+                className="btn-interactive px-6 sm:px-8 py-3 sm:py-4 bg-primary text-white hover:bg-accent-green hover:text-primary transition-all-smooth border border-primary flex items-center justify-center text-xs sm:text-sm tracking-wider uppercase font-semibold shadow-[1px_1px_0_#232324] hover:shadow-[2px_2px_0_#232324] hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap"
               >
-                <SearchIcon />
+                SEARCH
               </button>
             </div>
           </form>
         </div>
       </header>
 
-      <div className="container mx-auto px-6 max-w-4xl pb-20">
+      <div className="container mx-auto px-4 sm:px-6 max-w-6xl pb-12 sm:pb-20">
         {categories.length > 0 && (
-          <div className="mb-12">
-            <div className="flex items-center gap-3 flex-wrap">
+          <div className="mb-12 sm:mb-16 animate-slide-in-up delay-200">
+            <div className="flex items-center justify-center gap-3 sm:gap-4 flex-wrap">
               <button
                 onClick={() => handleCategoryClick(null)}
-                className={`px-5 py-2 text-sm font-mono border-2 transition-all ${
+                className={`btn-interactive px-4 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-mono border transition-all-smooth tracking-wider uppercase shadow-[1px_1px_0_#232324] hover:shadow-[2px_2px_0_#232324] hover:-translate-y-0.5 active:translate-y-0 active:shadow-[1px_1px_0_#232324] ${
                   selectedCategory === null
-                    ? "bg-gray-900 text-white border-gray-900"
-                    : "bg-white text-gray-900 border-gray-300 hover:border-gray-900"
+                    ? "bg-primary text-white border-primary"
+                    : "bg-whitesmoke text-secondary border-primary hover:bg-primary hover:text-white"
                 }`}
               >
                 ALL
               </button>
-              {categories.map((category) => (
+              {categories.map((category, index) => (
                 <button
                   key={category.id}
                   onClick={() => handleCategoryClick(category.id)}
-                  className={`px-5 py-2 text-sm font-mono border-2 transition-all ${
+                  className={`btn-interactive px-4 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-mono border transition-all-smooth tracking-wider uppercase shadow-[1px_1px_0_#232324] hover:shadow-[2px_2px_0_#232324] hover:-translate-y-0.5 active:translate-y-0 active:shadow-[1px_1px_0_#232324] ${
                     selectedCategory === category.id
-                      ? "bg-gray-900 text-white border-gray-900"
-                      : "bg-white text-gray-900 border-gray-300 hover:border-gray-900"
+                      ? "bg-primary text-white border-primary"
+                      : "bg-whitesmoke text-secondary border-primary hover:bg-primary hover:text-white"
                   }`}
+                  style={{ animationDelay: `${(index + 1) * 0.05}s` }}
                 >
                   {category.name.toUpperCase()}
                 </button>
@@ -199,7 +195,7 @@ export default function HomePage() {
           </div>
         )}
 
-        <div className="grid lg:grid-cols-[1fr_280px] gap-12">
+        <div className="max-w-5xl mx-auto">
           <main className="relative min-h-[400px]">
             {postsLoading ? (
               <div className="absolute inset-0 flex justify-center items-center">
@@ -207,35 +203,36 @@ export default function HomePage() {
               </div>
             ) : error ? (
               <div className="py-20 text-center">
-                <p className="text-sm font-mono text-red-500">{error}</p>
+                <p className="text-[11px] font-mono text-red-500 uppercase tracking-wide">{error}</p>
               </div>
             ) : posts.length === 0 ? (
               <div className="py-20 text-center">
-                <p className="text-base font-mono text-gray-500">
-                  {searchQuery ? "No search results found" : "No posts yet"}
+                <p className="text-[11px] sm:text-xs font-mono text-tertiary uppercase tracking-wide">
+                  {searchQuery ? "NO SEARCH RESULTS FOUND" : "NO POSTS YET"}
                 </p>
               </div>
             ) : (
               <>
-                <div className="space-y-8">
-                  {posts.map((post) => (
+                <div className="grid gap-6 sm:gap-8">
+                  {posts.map((post, index) => (
                     <Link
                       key={post.id}
                       to={`/posts/${post.id}`}
-                      className="block group border-b border-gray-200 pb-8 last:border-0"
+                      className="interactive-card block group bg-whitesmoke border border-primary p-6 sm:p-8 hover:bg-primary hover:text-white transition-all-smooth shadow-[1px_1px_0_#232324] hover:shadow-[3px_3px_0_#232324] overflow-hidden animate-fade-in"
+                      style={{ animationDelay: `${index * 0.1}s` }}
                     >
                       <article>
-                        <h2 className="text-2xl font-bold text-gray-900 font-mono mb-3 group-hover:text-gray-600 transition-colors">
+                        <h2 className="text-base sm:text-lg font-mono text-primary mb-3 sm:mb-4 group-hover:text-white transition-all-smooth tracking-wide uppercase relative z-10 font-semibold">
                           {post.title}
                         </h2>
-                        <p className="text-base font-mono text-gray-600 mb-4 line-clamp-2 leading-relaxed">
+                        <p className="text-xs sm:text-sm font-mono text-secondary mb-4 sm:mb-5 line-clamp-2 leading-relaxed group-hover:text-white/80 transition-all-smooth relative z-10">
                           {extractPreview(post.content)}
                           {post.content.length > 150 && "..."}
                         </p>
-                        <div className="flex items-center gap-4 text-sm font-mono text-gray-500">
+                        <div className="flex items-center gap-3 sm:gap-4 text-[11px] sm:text-xs font-mono text-tertiary tracking-wider uppercase group-hover:text-white/60 transition-all-smooth relative z-10">
                           <time>{formatDate(post.createdAt)}</time>
                           <span>·</span>
-                          <span>{post.viewCount} views</span>
+                          <span>{post.viewCount} VIEWS</span>
                         </div>
                       </article>
                     </Link>
@@ -243,71 +240,31 @@ export default function HomePage() {
                 </div>
 
                 {(currentPage > 0 || hasNext) && (
-                  <div className="flex justify-center items-center gap-6 mt-12 pt-8 border-t border-gray-200 text-sm font-mono">
+                  <div className="flex justify-center items-center gap-6 sm:gap-8 mt-12 sm:mt-16 pt-8 sm:pt-10 border-t border-primary text-xs sm:text-sm font-mono tracking-wider animate-fade-in">
                     <button
                       onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
                       disabled={currentPage === 0}
-                      className="px-4 py-2 text-gray-900 hover:text-gray-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:text-gray-900"
+                      className="btn-interactive px-6 sm:px-8 py-3 bg-whitesmoke border border-primary text-primary hover:bg-primary hover:text-white transition-all-smooth disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-whitesmoke disabled:hover:text-primary uppercase shadow-[1px_1px_0_#232324] hover:shadow-[2px_2px_0_#232324] hover:-translate-y-0.5 active:translate-y-0 font-semibold"
                     >
-                      ← Previous
+                      ← PREV
                     </button>
 
-                    <span className="text-gray-600">
-                      Page {currentPage + 1}
+                    <span className="text-secondary uppercase font-bold tracking-widest">
+                      PAGE {currentPage + 1}
                     </span>
 
                     <button
                       onClick={() => setCurrentPage((prev) => prev + 1)}
                       disabled={!hasNext}
-                      className="px-4 py-2 text-gray-900 hover:text-gray-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:text-gray-900"
+                      className="btn-interactive px-6 sm:px-8 py-3 bg-whitesmoke border border-primary text-primary hover:bg-primary hover:text-white transition-all-smooth disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-whitesmoke disabled:hover:text-primary uppercase shadow-[1px_1px_0_#232324] hover:shadow-[2px_2px_0_#232324] hover:-translate-y-0.5 active:translate-y-0 font-semibold"
                     >
-                      Next →
+                      NEXT →
                     </button>
                   </div>
                 )}
               </>
             )}
           </main>
-
-          {popularPosts.length > 0 && !searchQuery && (
-            <aside className="hidden lg:block">
-              <div className="sticky top-8">
-                <h3 className="text-sm font-bold font-mono text-gray-900 mb-6 pb-3 border-b-2 border-gray-900">
-                  POPULAR POSTS
-                </h3>
-                <div className="space-y-5">
-                  {popularPosts.map((post, index) => (
-                    <Link
-                      key={post.id}
-                      to={`/posts/${post.id}`}
-                      className="block group"
-                    >
-                      <div className="flex gap-4">
-                        <span className="text-2xl font-bold font-mono text-gray-200 group-hover:text-gray-900 transition-colors flex-shrink-0">
-                          {index + 1}
-                        </span>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-mono text-sm font-medium text-gray-900 mb-2 line-clamp-2 group-hover:text-gray-600 transition-colors leading-snug">
-                            {post.title}
-                          </h4>
-                          <div className="flex items-center gap-2 text-xs font-mono text-gray-500">
-                            <span>{post.viewCount} views</span>
-                            <span>·</span>
-                            <time>
-                              {new Date(post.createdAt).toLocaleDateString("en-US", {
-                                month: "short",
-                                day: "numeric",
-                              })}
-                            </time>
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </aside>
-          )}
         </div>
       </div>
     </div>

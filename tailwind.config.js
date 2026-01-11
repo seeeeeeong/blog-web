@@ -4,6 +4,19 @@ export default {
   theme: {
     extend: {
       colors: {
+        primary: "#232324",
+        secondary: "#383A41",
+        tertiary: "#8E8E90",
+        quaternary: "#EEEEEE",
+        whitesmoke: "#F5F5F5",
+        gainsboro: "#DCDCDC",
+        accent: {
+          green: "#E0F27E",
+          blue: "#0084FF",
+          secondary: "#E5F2FF",
+        },
+        border: "rgba(0, 0, 0, 0.14)",
+        wash: "rgba(0, 0, 0, 0.04)",
         gray: {
           50: "#fafafa",
           100: "#f5f5f5",
@@ -17,6 +30,11 @@ export default {
           900: "#171717",
           950: "#0a0a0a",
         },
+        cream: {
+          50: "#fefdfb",
+          100: "#fdfbf7",
+          200: "#fbf7f0",
+        },
       },
       fontFamily: {
         sans: [
@@ -28,12 +46,19 @@ export default {
           "sans-serif",
         ],
         mono: [
+          "Google Sans Code",
+          "Roboto Mono",
           "JetBrains Mono",
-          "Menlo",
+          "SF Mono",
           "Monaco",
+          "Inconsolata",
           "Courier New",
           "monospace",
         ],
+      },
+      letterSpacing: {
+        wider: "0.05em",
+        widest: "0.1em",
       },
     },
   },
