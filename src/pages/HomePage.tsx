@@ -104,8 +104,8 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen">
-      <header className="py-16 sm:py-24 mb-12 sm:mb-20 animate-fade-in">
+    <div className="min-h-screen relative">
+      <header className="py-16 sm:py-24 mb-12 sm:mb-20 animate-fade-in relative z-10">
         <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
           <div className="flex flex-col items-center text-center mb-10 sm:mb-14">
             <img
@@ -144,7 +144,7 @@ export default function HomePage() {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 sm:px-6 max-w-6xl pb-12 sm:pb-20">
+      <div className="container mx-auto px-4 sm:px-6 max-w-6xl pb-12 sm:pb-20 relative z-10">
         {categories.length > 0 && (
           <div className="mb-12 sm:mb-16 animate-slide-in-up delay-200">
             <div className="flex items-center justify-center gap-3 sm:gap-4 flex-wrap">

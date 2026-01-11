@@ -2,6 +2,8 @@ import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useGitHubAuth } from "../../contexts/GitHubAuthContext";
 import { authApi } from "../../api/auth";
+import InteractiveBackground from "./InteractiveBackground";
+import MusicPlayer from "./MusicPlayer";
 
 export default function Layout() {
   const navigate = useNavigate();
@@ -60,7 +62,8 @@ export default function Layout() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col relative">
+      <InteractiveBackground />
       <header className="fixed top-0 left-0 right-0 z-30 bg-card/80 backdrop-blur-[8px] transition-all-smooth animate-fade-in">
         <nav className="container mx-auto px-4 sm:px-6 max-w-7xl">
           <div className="flex justify-between items-center py-4">
@@ -128,11 +131,11 @@ export default function Layout() {
         </nav>
       </header>
 
-      <main className="flex-1 pt-16">
+      <main className="flex-1 pt-16 relative z-10">
         <Outlet />
       </main>
 
-      <footer className="mt-auto border-t border-border">
+      <footer className="mt-auto border-t border-border relative z-10">
         <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 max-w-7xl">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-6">
             <p className="text-sm sm:text-base font-sans text-muted transition-all-smooth hover:text-text">
@@ -157,6 +160,7 @@ export default function Layout() {
           </div>
         </div>
       </footer>
+      <MusicPlayer />
     </div>
   );
 }
