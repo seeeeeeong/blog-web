@@ -4,18 +4,22 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "#232324",
-        secondary: "#383A41",
-        tertiary: "#8E8E90",
+        // desktop.fm minimalist palette
+        background: "#bec2c4",
+        card: "#ddd",
+        text: "#2d2d2d",
+        accent: "#0059ff",
+        border: "#999",
+        muted: "#8e8e8e",
+        hover: "#f5f5f5",
+
+        // Legacy support (deprecated, use above)
+        primary: "#2d2d2d",
+        secondary: "#555",
+        tertiary: "#8e8e8e",
         quaternary: "#EEEEEE",
         whitesmoke: "#F5F5F5",
         gainsboro: "#DCDCDC",
-        accent: {
-          green: "#E0F27E",
-          blue: "#0084FF",
-          secondary: "#E5F2FF",
-        },
-        border: "rgba(0, 0, 0, 0.14)",
         wash: "rgba(0, 0, 0, 0.04)",
         gray: {
           50: "#fafafa",
@@ -38,27 +42,39 @@ export default {
       },
       fontFamily: {
         sans: [
-          "Pretendard",
           "-apple-system",
           "BlinkMacSystemFont",
-          "system-ui",
+          "Apple System",
+          "Segoe UI",
           "Roboto",
+          "Helvetica Neue",
           "sans-serif",
         ],
         mono: [
-          "Google Sans Code",
-          "Roboto Mono",
           "JetBrains Mono",
           "SF Mono",
           "Monaco",
-          "Inconsolata",
+          "Consolas",
           "Courier New",
           "monospace",
         ],
       },
-      letterSpacing: {
-        wider: "0.05em",
-        widest: "0.1em",
+      borderRadius: {
+        'sm': '8px',
+        DEFAULT: '12px',
+        'md': '16px',
+        'lg': '20px',
+        'xl': '24px',
+        '2xl': '32px',
+        'full': '9999px',
+      },
+      boxShadow: {
+        'sm': '0 1px 3px rgba(0,0,0,0.08)',
+        DEFAULT: '0 2px 8px rgba(0,0,0,0.1)',
+        'md': '0 4px 12px rgba(0,0,0,0.12)',
+        'lg': '0 8px 24px rgba(0,0,0,0.15)',
+        'xl': '0 16px 48px rgba(0,0,0,0.18)',
+        'none': 'none',
       },
     },
   },

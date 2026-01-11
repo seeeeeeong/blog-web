@@ -42,7 +42,7 @@ export default function AuthCallbackPage() {
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">
         <Spinner />
-        <p className="text-tertiary font-mono text-sm uppercase tracking-wider mt-6">AUTHENTICATING...</p>
+        <p className="text-muted font-sans text-smr mt-6">Authenticating...</p>
       </div>
     </div>
   );

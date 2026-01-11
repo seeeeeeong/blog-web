@@ -54,18 +54,18 @@ export default function Alert({
   if (type === "confirm") {
     return (
       <div
-        className="bg-white border-2 border-gray-900 shadow-lg animate-fade-in w-full max-w-md"
+        className="bg-white border border-gray-900 shadow-lg animate-fade-in w-full max-w-md"
         role="alert"
       >
         <div className="p-6">
-          <p className="text-gray-900 text-base font-mono mb-8 leading-relaxed">
+          <p className="text-gray-900 text-base font-sans mb-8 leading-relaxed">
             {message}
           </p>
 
           <div className="flex justify-end gap-4">
             <button
               onClick={onClose}
-              className="px-6 py-2.5 text-sm font-mono text-gray-700 hover:text-gray-900 border-2 border-gray-300 hover:border-gray-900 transition-all"
+              className="px-6 py-2.5 text-sm font-sans text-gray-700 hover:text-gray-900 border border-gray-300 hover:border-gray-900 transition-all"
             >
               Cancel
             </button>
@@ -74,7 +74,7 @@ export default function Alert({
                 onConfirm?.();
                 onClose();
               }}
-              className="px-6 py-2.5 text-sm font-mono bg-gray-900 text-white hover:bg-gray-800 transition-all"
+              className="px-6 py-2.5 text-sm font-sans bg-gray-900 text-white hover:bg-gray-800 transition-all"
             >
               Confirm
             </button>
@@ -86,7 +86,7 @@ export default function Alert({
 
   return (
     <div
-      className="bg-white border-2 border-gray-900 shadow-lg animate-slide-in w-full max-w-md"
+      className="bg-white border border-gray-900 shadow-lg animate-slide-in w-full max-w-md"
       role="alert"
     >
       <div className="flex items-stretch">
@@ -94,7 +94,7 @@ export default function Alert({
 
         <div className="flex-1 px-5 py-4">
           <div className="flex items-center gap-4">
-            <p className={`flex-1 ${style.text} text-sm font-mono leading-relaxed`}>
+            <p className={`flex-1 ${style.text} text-sm font-sans leading-relaxed`}>
               {message}
             </p>
 

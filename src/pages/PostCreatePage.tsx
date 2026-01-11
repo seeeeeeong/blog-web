@@ -84,20 +84,20 @@ export default function PostCreatePage() {
 
   return (
     <PageLayout title="Create Post">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         <form
           onSubmit={(e) => {
             e.preventDefault();
             handleSubmit(false);
           }}
-          className="space-y-10"
+          className="space-y-8"
         >
-        <div className="space-y-8">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-6">
-            <div className="sm:col-span-4">
+        <div className="bg-card border border-border rounded-lg p-6 shadow-md space-y-6">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+            <div className="sm:col-span-2">
               <label
                 htmlFor="title"
-                className="block text-sm font-mono font-semibold text-primary mb-2 uppercase tracking-wide"
+                className="block text-sm font-sans font-semibold text-text mb-2"
               >
                 Title
               </label>
@@ -108,15 +108,15 @@ export default function PostCreatePage() {
                 onChange={(e) => setTitle(e.target.value)}
                 required
                 maxLength={200}
-                className="block w-full border-b border-primary bg-transparent py-3 text-primary placeholder:text-tertiary focus:border-primary focus:ring-2 focus:ring-primary text-base font-mono transition-all-smooth"
-                placeholder="Enter a captivating title"
+                className="block w-full px-4 py-2.5 border border-border rounded-lg bg-white text-text placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-text focus:border-text text-base font-sans transition-all-smooth"
+                placeholder="Enter a captivating title..."
               />
             </div>
 
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-1">
               <label
                 htmlFor="category"
-                className="block text-sm font-mono font-semibold text-primary mb-2 uppercase tracking-wide"
+                className="block text-sm font-sans font-semibold text-text mb-2"
               >
                 Category
               </label>
@@ -125,7 +125,7 @@ export default function PostCreatePage() {
                   id="category"
                   value={categoryId}
                   onChange={(e) => setCategoryId(Number(e.target.value))}
-                  className="block w-full appearance-none border-b border-primary bg-transparent py-3 pr-8 text-primary focus:border-primary focus:ring-2 focus:ring-primary text-base font-mono transition-all-smooth uppercase"
+                  className="block w-full appearance-none px-4 py-2.5 border border-border rounded-lg bg-white pr-10 text-text focus:outline-none focus:ring-2 focus:ring-text focus:border-text text-base font-sans transition-all-smooth cursor-pointer"
                 >
                   {categories.map((category) => (
                     <option key={category.id} value={category.id}>
@@ -133,7 +133,7 @@ export default function PostCreatePage() {
                     </option>
                   ))}
                 </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-secondary">
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-muted">
                   <svg
                     className="h-5 w-5"
                     xmlns="http://www.w3.org/2000/svg"
@@ -150,35 +150,40 @@ export default function PostCreatePage() {
               </div>
             </div>
           </div>
-
-          <div>
-            <TipTapEditor value={content} onChange={setContent} />
-          </div>
         </div>
 
-        <div className="flex justify-end gap-4 pt-4">
+        <div>
+          <label className="block text-sm font-sans font-semibold text-text mb-3">
+            Content
+          </label>
+          <TipTapEditor value={content} onChange={setContent} />
+        </div>
+
+        <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-4 border-t border-border">
           <button
             type="button"
             onClick={handleCancel}
-            className="px-6 py-2.5 text-sm font-mono text-tertiary hover:text-primary transition-all-smooth uppercase tracking-wide relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full"
+            className="px-5 py-2.5 text-sm font-sans font-medium text-muted hover:text-text transition-all-smooth"
           >
             Cancel
           </button>
-          <button
-            type="button"
-            onClick={() => handleSubmit(true)}
-            disabled={loading}
-            className="btn-interactive px-6 py-2.5 text-sm font-mono text-primary border border-primary hover:bg-primary hover:text-white disabled:opacity-50 transition-all-smooth shadow-[1px_1px_0_#232324] hover:shadow-[2px_2px_0_#232324] hover:-translate-y-0.5 active:translate-y-0 uppercase tracking-wide"
-          >
-            {loading ? "Saving..." : "Save Draft"}
-          </button>
-          <button
-            type="submit"
-            disabled={loading}
-            className="btn-interactive px-6 py-2.5 text-sm font-mono text-white bg-primary hover:bg-accent-green hover:text-primary disabled:opacity-50 transition-all-smooth border border-primary shadow-[1px_1px_0_#232324] hover:shadow-[2px_2px_0_#232324] hover:-translate-y-0.5 active:translate-y-0 uppercase tracking-wide"
-          >
-            {loading ? "Publishing..." : "Publish"}
-          </button>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => handleSubmit(true)}
+              disabled={loading}
+              className="px-6 py-2.5 text-sm font-sans font-semibold text-text bg-white border border-border rounded-lg hover:bg-hover disabled:opacity-50 disabled:cursor-not-allowed transition-all-smooth shadow-sm hover:shadow-md active:scale-[0.98]"
+            >
+              {loading ? "Saving..." : "Save Draft"}
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-6 py-2.5 text-sm font-sans font-semibold text-white bg-text hover:bg-text/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all-smooth rounded-lg shadow-md hover:shadow-lg active:scale-[0.98]"
+            >
+              {loading ? "Publishing..." : "Publish"}
+            </button>
+          </div>
         </div>
         </form>
       </div>

@@ -103,7 +103,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
     content: '',
     editorProps: {
       attributes: {
-        class: 'focus:outline-none min-h-[600px] p-8 text-gray-900 font-mono text-base leading-relaxed',
+        class: 'focus:outline-none min-h-[600px] p-8 text-gray-900 font-sans text-base leading-relaxed',
       },
       handlePaste: (_view, event) => {
         const items = event.clipboardData?.items;
@@ -208,8 +208,8 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
   }) => (
     <button
       onClick={onClick}
-      className={`p-2.5 border border-transparent hover:border-gray-900 transition-all ${
-        isActive ? 'bg-gray-900 text-gray-100 border-gray-900' : 'text-gray-900 hover:bg-gray-100'
+      className={`p-2.5 rounded-lg border border-transparent hover:border-border transition-all ${
+        isActive ? 'bg-accent text-white border-accent' : 'text-text hover:bg-hover'
       }`}
       type="button"
       title={title}
@@ -219,7 +219,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
   );
 
   return (
-    <div className="border-2 border-gray-900 overflow-hidden bg-white shadow-lg">
+    <div className="border border-border rounded-lg overflow-hidden bg-white shadow-md">
       <input
         type="file"
         ref={fileInputRef}
@@ -227,7 +227,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         accept="image/*"
         style={{ display: 'none' }}
       />
-      <div className="border-b-2 border-gray-900 bg-gray-100 p-4 flex flex-wrap gap-2">
+      <div className="border-b border-border bg-gray-100 p-4 flex flex-wrap gap-2">
         <MenuButton
           onClick={() => editor.chain().focus().toggleBold().run()}
           isActive={editor.isActive('bold')}

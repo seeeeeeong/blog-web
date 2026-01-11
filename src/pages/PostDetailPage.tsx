@@ -61,12 +61,12 @@ export default function PostDetailPage() {
     return (
       <PageLayout title="Error">
         <div className="text-center py-20">
-          <p className="text-[11px] sm:text-xs font-mono text-secondary mb-8 uppercase tracking-wide">POST NOT FOUND.</p>
+          <p className="text-[11px] sm:text-xs font-sans text-secondary mb-8">Post not found.</p>
           <Link
             to="/"
-            className="px-4 py-2 bg-whitesmoke text-primary font-mono text-[11px] border border-primary shadow-[1px_1px_0_#232324] hover:bg-primary hover:text-white transition-all inline-block uppercase tracking-wide"
+            className="px-4 py-2 bg-card text-text font-sans text-[11px] border border-border shadow-md rounded-lg hover:bg-primary hover:text-white transition-all inline-block"
           >
-            BACK TO HOME
+            Back to home
           </Link>
         </div>
       </PageLayout>
@@ -76,27 +76,27 @@ export default function PostDetailPage() {
   return (
     <PageLayout title={post.title}>
       <div className="max-w-4xl mx-auto">
-        <div className="bg-whitesmoke border border-primary p-8 sm:p-10 mb-8 sm:mb-12 shadow-[1px_1px_0_#232324] transition-all-smooth hover:shadow-[2px_2px_0_#232324] animate-fade-in">
-          <h1 className="text-2xl sm:text-3xl font-mono text-primary mb-6 sm:mb-8 tracking-wide uppercase leading-tight font-bold">
+        <div className="bg-card border border-border p-8 sm:p-10 mb-8 sm:mb-12 shadow-md rounded-lg transition-all-smooth hover:shadow-lg animate-fade-in">
+          <h1 className="text-2xl sm:text-3xl font-sans text-text mb-6 sm:mb-8 leading-tight font-bold">
             {post.title}
           </h1>
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 sm:pb-8 border-b border-primary">
-            <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm font-mono text-tertiary tracking-wider uppercase">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 sm:pb-8 border-b border-border">
+            <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm font-sans text-mutedr">
               <time>{formatDate(post.createdAt)}</time>
               <span>·</span>
               <span>{post.viewCount} VIEWS</span>
             </div>
             {isAuthor && (
-              <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm font-mono tracking-wider animate-slide-in-up delay-100">
+              <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm font-sansr animate-slide-in-up delay-100">
                 <Link
                   to={`/posts/${postId}/edit`}
-                  className="text-secondary hover:text-primary transition-all-smooth uppercase relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full font-semibold"
+                  className="text-secondary hover:text-text transition-all-smooth relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-text after:transition-all hover:after:w-full font-semibold"
                 >
                   EDIT
                 </Link>
                 <button
                   onClick={handleDelete}
-                  className="text-red-600 hover:text-red-700 transition-all-smooth uppercase relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-red-600 after:transition-all hover:after:w-full font-semibold"
+                  className="text-red-600 hover:text-red-700 transition-all-smooth relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-red-600 after:transition-all hover:after:w-full font-semibold"
                 >
                   DELETE
                 </button>
@@ -105,7 +105,7 @@ export default function PostDetailPage() {
           </div>
         </div>
 
-        <article className="bg-whitesmoke border border-primary p-8 sm:p-10 mb-12 sm:mb-16 shadow-[1px_1px_0_#232324] transition-all-smooth hover:shadow-[2px_2px_0_#232324] animate-slide-in-up delay-100">
+        <article className="bg-card border border-border p-8 sm:p-10 mb-12 sm:mb-16 shadow-md rounded-lg transition-all-smooth hover:shadow-lg animate-slide-in-up delay-100">
           <MarkdownViewer contentHtml={post.contentHtml} />
         </article>
 
