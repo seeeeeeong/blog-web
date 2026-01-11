@@ -36,19 +36,32 @@ export function GitHubAuthProvider({ children }: { children: ReactNode }) {
 
   const login = () => {
     const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
-    const redirectUri = import.meta.env.VITE_GITHUB_REDIRECT_URI;
-    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=read:user`;
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
+    if (clientId == null || clientId === "" || apiBaseUrl == null || apiBaseUrl === "") {
+      console.error("Missing GitHub OAuth configuration.");
+      return;
+    }
+
+    const redirectUri = `${apiBaseUrl}/auth/github/callback`;
+    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(
+      redirectUri
+    )}&scope=read:user`;
 
     const width = 600;
     const height = 700;
     const left = window.screenX + (window.outerWidth - width) / 2;
     const top = window.screenY + (window.outerHeight - height) / 2;
 
-    window.open(
+    const popup = window.open(
       githubAuthUrl,
       "GitHub Login",
       `width=${width},height=${height},left=${left},top=${top}`
     );
+
+    if (popup == null) {
+      window.location.href = githubAuthUrl;
+    }
   };
 
   const logout = () => {

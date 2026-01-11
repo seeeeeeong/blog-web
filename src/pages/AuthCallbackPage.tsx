@@ -8,16 +8,16 @@ export default function AuthCallbackPage() {
 
   useEffect(() => {
     const token = searchParams.get("token");
-    const githubId = searchParams.get("githubId");
-    const githubUsername = searchParams.get("githubUsername");
-    const githubAvatarUrl = searchParams.get("githubAvatarUrl");
+    const oauthId = searchParams.get("oauthId") ?? searchParams.get("githubId");
+    const oauthUsername = searchParams.get("oauthUsername") ?? searchParams.get("githubUsername");
+    const oauthAvatarUrl = searchParams.get("oauthAvatarUrl") ?? searchParams.get("githubAvatarUrl");
 
-    if (token && githubId && githubUsername) {
+    if (token && oauthId && oauthUsername) {
       const userData = {
         commentToken: token,
-        githubId,
-        githubUsername,
-        githubAvatarUrl: githubAvatarUrl || null,
+        githubId: oauthId,
+        githubUsername: oauthUsername,
+        githubAvatarUrl: oauthAvatarUrl || null,
       };
 
       if (window.opener) {
