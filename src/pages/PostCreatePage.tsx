@@ -83,7 +83,7 @@ export default function PostCreatePage() {
     <PageLayout title="Create Post">
       <div className="max-w-3xl mx-auto">
         <h2 className="text-2xl font-bold text-text tracking-tight mb-8">
-          / NEW POST
+          New Post
         </h2>
 
         <form
@@ -99,7 +99,7 @@ export default function PostCreatePage() {
                 htmlFor="title"
                 className="block text-sm font-mono text-muted mb-2"
               >
-                / TITLE
+                Title
               </label>
               <input
                 type="text"
@@ -118,7 +118,7 @@ export default function PostCreatePage() {
                 htmlFor="category"
                 className="block text-sm font-mono text-muted mb-2"
               >
-                / CATEGORY
+                Category
               </label>
               <select
                 id="category"
@@ -137,7 +137,7 @@ export default function PostCreatePage() {
 
           <div>
             <label className="block text-sm font-mono text-muted mb-3">
-              / CONTENT
+              Content
             </label>
             <TipTapEditor value={content} onChange={setContent} />
           </div>

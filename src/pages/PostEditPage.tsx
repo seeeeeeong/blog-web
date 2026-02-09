@@ -122,7 +122,7 @@ export default function PostEditPage() {
             to="/"
             className="font-mono text-sm text-gray-800 underline hover:text-text"
           >
-            / HOME
+            Home
           </Link>
         </div>
       </PageLayout>
@@ -133,7 +133,7 @@ export default function PostEditPage() {
     <PageLayout title="Edit Post">
       <div className="max-w-3xl mx-auto">
         <h2 className="text-2xl font-bold text-text tracking-tight mb-8">
-          / EDIT POST
+          Edit Post
         </h2>
 
         <form
@@ -149,7 +149,7 @@ export default function PostEditPage() {
                 htmlFor="title"
                 className="block text-sm font-mono text-muted mb-2"
               >
-                / TITLE
+                Title
               </label>
               <input
                 type="text"
@@ -168,7 +168,7 @@ export default function PostEditPage() {
                 htmlFor="category"
                 className="block text-sm font-mono text-muted mb-2"
               >
-                / CATEGORY
+                Category
               </label>
               <select
                 id="category"
@@ -187,7 +187,7 @@ export default function PostEditPage() {
 
           <div>
             <label className="block text-sm font-mono text-muted mb-3">
-              / CONTENT
+              Content
             </label>
             <TipTapEditor value={content} onChange={setContent} />
           </div>

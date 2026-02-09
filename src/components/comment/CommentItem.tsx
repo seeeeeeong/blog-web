@@ -103,7 +103,7 @@ export default function CommentItem({
               {isAuthor && (
                 <button
                   onClick={handleDelete}
-                  className="text-primary hover:text-red-700 underline"
+                  className="text-red-600 hover:text-red-700 underline"
                 >
                   DELETE
                 </button>

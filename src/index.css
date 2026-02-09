@@ -10,7 +10,7 @@
   }
 
   body {
-    background: #eaebea;
+    background: #edeeec;
     color: #1a1a1a;
     font-family: "JetBrains Mono", monospace;
     font-size: 16px;
@@ -33,7 +33,7 @@
 
 @layer utilities {
   ::selection {
-    background: #e43b26;
+    background: #2b2b2b;
     color: #ffffff;
   }
 }
@@ -247,13 +247,13 @@
 }
 
 .markdown-viewer a {
-  color: #e43b26;
+  color: #1a1a1a;
   text-decoration: underline;
   font-weight: 500;
 }
 
 .markdown-viewer a:hover {
-  color: #c5321f;
+  color: #444;
 }
 
 .markdown-viewer blockquote {
@@ -483,13 +483,13 @@
 }
 
 .ProseMirror a {
-  color: #e43b26;
+  color: #1a1a1a;
   text-decoration: underline;
   font-weight: 500;
 }
 
 .ProseMirror a:hover {
-  color: #c5321f;
+  color: #444;
 }
 
 .ProseMirror strong {
@@ -566,7 +566,7 @@
 }
 
 .comment-content a {
-  color: #e43b26;
+  color: #1a1a1a;
   text-decoration: underline;
   font-weight: 500;
 }
@@ -598,7 +598,7 @@
 }
 
 .w-md-editor-toolbar {
-  background-color: #eaebea !important;
+  background-color: #edeeec !important;
   border-bottom: 1px solid #9ca3af !important;
   padding: 8px !important;
 }

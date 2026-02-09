@@ -61,44 +61,44 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="w-full border-b border-border">
+      <header className="w-full border-b border-gray-300">
         <nav className="w-full lg:px-8 px-4">
           <div className="flex justify-between items-center h-12">
             <div className="flex items-center gap-6">
               <Link
                 to="/"
-                className="font-mono text-sm text-gray-800 hover:text-text underline"
+                className="font-mono text-sm font-semibold text-text hover:opacity-60 transition-opacity"
               >
-                / HOME
+                Seeeeeeong.log
               </Link>
               <Link
                 to="/"
-                className="font-mono text-sm text-gray-800 hover:text-text underline"
+                className="font-mono text-xs text-muted hover:text-text transition-colors"
               >
-                / FEED
+                Feed
               </Link>
             </div>
 
-            <div className="flex items-center gap-4 font-mono text-sm">
+            <div className="flex items-center gap-4 font-mono text-xs">
               {isAdmin && (
                 <>
                   <Link
                     to="/admin/posts"
-                    className="text-gray-800 hover:text-text underline"
+                    className="text-muted hover:text-text transition-colors"
                   >
-                    / ADMIN
+                    Admin
                   </Link>
                   <Link
                     to="/posts/create"
-                    className="text-gray-800 hover:text-text underline"
+                    className="text-muted hover:text-text transition-colors"
                   >
-                    / WRITE
+                    Write
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="text-gray-800 hover:text-text underline"
+                    className="text-muted hover:text-text transition-colors"
                   >
-                    / LOGOUT
+                    Logout
                   </button>
                 </>
               )}
@@ -108,16 +108,16 @@ export default function Layout() {
                   <img
                     src={user.githubAvatarUrl || ''}
                     alt={user.githubUsername}
-                    className="w-5 h-5 rounded-full border border-border"
+                    className="w-5 h-5 rounded-full border border-gray-300"
                   />
                   <span className="text-text hidden sm:inline">
                     {user.githubUsername}
                   </span>
                   <button
                     onClick={logout}
-                    className="text-gray-800 hover:text-text underline"
+                    className="text-muted hover:text-text transition-colors"
                   >
-                    / LOGOUT
+                    Logout
                   </button>
                 </div>
               )}
@@ -130,7 +130,7 @@ export default function Layout() {
         <Outlet />
       </main>
 
-      <footer className="border-t border-border mt-auto">
+      <footer className="border-t border-gray-300 mt-auto">
         <div className="w-full lg:px-8 px-4 py-6">
           <div className="flex justify-between items-center font-mono text-xs text-muted">
             <span>&copy; 2025 Seeeeeeong.log</span>
@@ -139,13 +139,13 @@ export default function Layout() {
                 href="https://github.com/seeeeeeong"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-text underline"
+                className="hover:text-text transition-colors"
               >
                 GitHub
               </a>
               <a
                 href="mailto:lsinsung@gmail.com"
-                className="hover:text-text underline"
+                className="hover:text-text transition-colors"
               >
                 Contact
               </a>

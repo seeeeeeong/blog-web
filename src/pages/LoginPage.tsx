@@ -44,7 +44,7 @@ export default function LoginPage() {
             htmlFor="email"
             className="block text-sm font-mono text-muted mb-2"
           >
-            / EMAIL
+            Email
           </label>
           <input
             id="email"
@@ -64,7 +64,7 @@ export default function LoginPage() {
             htmlFor="password"
             className="block text-sm font-mono text-muted mb-2"
           >
-            / PASSWORD
+            Password
           </label>
           <input
             id="password"

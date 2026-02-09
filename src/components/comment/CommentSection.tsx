@@ -79,7 +79,7 @@ export default function CommentSection({ postId }: CommentSectionProps) {
     <div className="space-y-8">
       {/* Comment Form */}
       <div className="border-b border-gray-300 pb-6">
-        <h3 className="font-mono text-sm text-muted mb-4">/ COMMENTS</h3>
+        <h3 className="font-mono text-xs text-muted uppercase tracking-wide mb-4">Comments</h3>
         {isAuthenticated ? (
           <CommentForm onSubmit={(content) => handleSubmitComment(content)} />
         ) : (

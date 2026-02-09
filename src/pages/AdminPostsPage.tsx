@@ -65,7 +65,7 @@ export default function AdminPostsPage() {
       <div className="max-w-4xl mx-auto">
         <div className="flex items-end justify-between mb-8">
           <h2 className="text-2xl font-bold text-text tracking-tight">
-            / ADMIN
+            Admin
           </h2>
           <Link
             to="/posts/create"
@@ -77,7 +77,7 @@ export default function AdminPostsPage() {
 
         {/* Filter */}
         <div className="flex items-center gap-4 mb-6 border-b border-gray-500 pb-3 font-mono text-sm">
-          <span className="text-muted">/ FILTER</span>
+          <span className="text-muted">Filter:</span>
           {(["all", "published", "draft"] as FilterType[]).map((f) => (
             <button
               key={f}
@@ -147,7 +147,7 @@ export default function AdminPostsPage() {
                       </Link>
                       <button
                         onClick={() => handleDelete(post.id)}
-                        className="text-primary hover:text-red-700 underline"
+                        className="text-red-600 hover:text-red-700 underline"
                       >
                         DEL
                       </button>

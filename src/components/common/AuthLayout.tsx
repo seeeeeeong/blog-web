@@ -28,8 +28,8 @@ export default function AuthLayout({ title, subtitle, children }: AuthLayoutProp
         </div>
 
         <div className="text-center">
-          <Link to="/" className="text-sm font-mono text-muted hover:text-text underline">
-            / HOME
+          <Link to="/" className="text-sm font-mono text-muted hover:text-text transition-colors">
+            &larr; Home
           </Link>
         </div>
       </div>

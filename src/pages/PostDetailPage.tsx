@@ -61,7 +61,7 @@ export default function PostDetailPage() {
       <div className="w-full lg:px-8 px-4 py-20 text-center">
         <p className="text-sm font-mono text-muted mb-6">Post not found.</p>
         <Link to="/" className="font-mono text-sm text-gray-800 underline hover:text-text">
-          / HOME
+          Home
         </Link>
       </div>
     );
@@ -75,7 +75,7 @@ export default function PostDetailPage() {
           to="/"
           className="font-mono text-sm text-gray-800 hover:text-text underline inline-block mb-8"
         >
-          &larr; / FEED
+          &larr; Feed
         </Link>
 
         {/* Post Header */}
@@ -99,7 +99,7 @@ export default function PostDetailPage() {
                 </Link>
                 <button
                   onClick={handleDelete}
-                  className="text-primary hover:text-red-700 underline"
+                  className="text-red-600 hover:text-red-700 underline"
                 >
                   DELETE
                 </button>

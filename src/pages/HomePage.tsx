@@ -86,10 +86,10 @@ export default function HomePage() {
   if (error && posts.length === 0) {
     return (
       <div className="w-full lg:px-8 px-4 py-20 text-center">
-        <p className="text-sm font-mono text-primary mb-6">{error}</p>
+        <p className="text-sm font-mono text-red-600 mb-6">{error}</p>
         <button
           onClick={loadPosts}
-          className="font-mono text-sm text-gray-800 underline hover:text-text"
+          className="font-mono text-sm text-muted hover:text-text transition-colors"
         >
           Try Again
         </button>
@@ -100,33 +100,25 @@ export default function HomePage() {
   return (
     <div className="flex flex-col h-full w-full lg:px-8 px-4 py-8">
       {/* Header */}
-      <div className="flex items-end justify-between mb-8">
-        <h2 className="text-gray-900 lg:text-[6rem] text-[4rem] leading-[1.1] tracking-tighter font-bold">
+      <div className="mb-6">
+        <h2 className="text-text lg:text-[5rem] text-[3rem] leading-[1.1] tracking-tighter font-bold">
           Feed
         </h2>
       </div>
 
       {/* Search */}
       <form onSubmit={handleSearch} className="mb-8">
-        <div className="flex gap-3 items-center">
-          <div className="flex-1 relative">
-            <span className="absolute left-0 top-1/2 -translate-y-1/2 font-mono text-sm text-muted">
-              /&nbsp;SEARCH
-            </span>
-            <input
-              type="text"
-              value={searchKeyword}
-              onChange={(e) => setSearchKeyword(e.target.value)}
-              placeholder="Type to search..."
-              className="w-full pl-24 pr-4 py-2 bg-transparent border-b border-gray-500 font-mono text-sm text-text placeholder:text-gray-400 focus:outline-none focus:border-text transition-colors"
-            />
-          </div>
-          <button
-            type="submit"
-            className="font-mono text-sm text-gray-800 hover:text-text underline shrink-0"
-          >
-            SEARCH
-          </button>
+        <div className="flex gap-3 items-center border-b border-gray-400 pb-2">
+          <svg className="w-4 h-4 text-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            type="text"
+            value={searchKeyword}
+            onChange={(e) => setSearchKeyword(e.target.value)}
+            placeholder="Search posts..."
+            className="w-full bg-transparent font-mono text-sm text-text placeholder:text-gray-400 focus:outline-none"
+          />
           {searchQuery && (
             <button
               type="button"
@@ -134,55 +126,57 @@ export default function HomePage() {
                 setSearchKeyword("");
                 setSearchQuery("");
               }}
-              className="font-mono text-sm text-muted hover:text-text underline shrink-0"
+              className="font-mono text-xs text-muted hover:text-text transition-colors shrink-0"
             >
-              CLEAR
+              Clear
             </button>
           )}
         </div>
       </form>
 
       {/* Content */}
-      <div className="flex lg:flex-row flex-col lg:gap-x-12 gap-y-8">
+      <div className="flex lg:flex-row flex-col lg:gap-x-10 gap-y-6">
         {/* Category Filter (Sidebar) */}
         {categories.length > 0 && (
-          <div className="flex flex-col lg:w-1/5 w-full shrink-0">
-            <div className="w-full flex h-8 border-b border-gray-500 justify-between items-start">
-              <span className="text-sm font-mono">/ FILTER</span>
+          <div className="flex flex-col lg:w-44 w-full shrink-0">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-mono text-muted uppercase tracking-wide">Filter</span>
               {selectedCategory !== null && (
                 <button
                   type="button"
-                  className="text-sm font-mono text-gray-800 hover:text-text"
+                  className="text-xs font-mono text-muted hover:text-text transition-colors"
                   onClick={() => handleCategoryClick(null)}
                 >
-                  CLEAR
+                  Clear
                 </button>
               )}
             </div>
-            <div className="flex flex-col pt-3 gap-y-1">
+            <div className="flex flex-col gap-y-0.5">
               <button
                 type="button"
-                className="relative gap-x-2 flex font-mono text-gray-800 hover:text-text text-sm"
+                className={`text-left font-mono text-sm py-1 transition-colors ${
+                  selectedCategory === null
+                    ? "text-text font-semibold"
+                    : "text-muted hover:text-text"
+                }`}
                 onClick={() => handleCategoryClick(null)}
               >
-                {selectedCategory === null && (
-                  <div className="absolute top-1/2 -translate-y-1/2 left-[0.875rem] w-2.5 h-2.5 border-[1.5px] border-gray-800 rounded-full" />
-                )}
-                <span className="whitespace-pre">{`(   )`}</span>
-                <span>All</span>
+                {selectedCategory === null && <span className="mr-1.5">&bull;</span>}
+                All
               </button>
               {categories.map((category) => (
                 <button
                   key={category.id}
                   type="button"
-                  className="relative gap-x-2 flex font-mono text-gray-800 hover:text-text text-sm"
+                  className={`text-left font-mono text-sm py-1 transition-colors ${
+                    selectedCategory === category.id
+                      ? "text-text font-semibold"
+                      : "text-muted hover:text-text"
+                  }`}
                   onClick={() => handleCategoryClick(category.id)}
                 >
-                  {selectedCategory === category.id && (
-                    <div className="absolute top-1/2 -translate-y-1/2 left-[0.875rem] w-2.5 h-2.5 border-[1.5px] border-gray-800 rounded-full" />
-                  )}
-                  <span className="whitespace-pre">{`(   )`}</span>
-                  <span>{category.name}</span>
+                  {selectedCategory === category.id && <span className="mr-1.5">&bull;</span>}
+                  {category.name}
                 </button>
               ))}
             </div>
@@ -190,22 +184,23 @@ export default function HomePage() {
         )}
 
         {/* Post List */}
-        <div className="flex flex-col lg:w-0 flex-grow pb-20">
+        <div className="flex flex-col lg:w-0 flex-grow pb-16">
           {/* Column Headers */}
-          <div className="w-full flex h-8">
-            <span className="text-sm font-mono w-32 shrink-0">/ DATE</span>
-            <span className="text-sm font-mono">/ TITLE</span>
+          <div className="w-full flex h-8 text-xs font-mono text-muted uppercase tracking-wide border-b border-gray-400">
+            <span className="w-28 shrink-0">Date</span>
+            <span className="flex-1">Title</span>
+            <span className="w-16 text-right hidden sm:block">Views</span>
           </div>
 
           {/* Post Rows */}
-          <div className="flex flex-col w-full border-t border-gray-500">
+          <div className="flex flex-col w-full">
             {postsLoading ? (
               <div className="flex justify-center py-16">
                 <Spinner />
               </div>
             ) : error ? (
               <div className="py-12 text-center">
-                <p className="text-sm font-mono text-primary">{error}</p>
+                <p className="text-sm font-mono text-red-600">{error}</p>
               </div>
             ) : posts.length === 0 ? (
               <div className="py-12 text-center">
@@ -219,36 +214,39 @@ export default function HomePage() {
                   <Link
                     key={post.id}
                     to={`/posts/${post.id}`}
-                    className="flex border-b border-gray-500 items-center w-full lg:h-14 lg:py-0 py-3 hover:bg-hover/50 transition-colors"
+                    className="flex items-center w-full py-3 border-b border-gray-300 hover:bg-hover/40 transition-colors group"
                   >
-                    <span className="text-sm font-mono w-32 shrink-0 text-muted">
+                    <span className="text-xs font-mono w-28 shrink-0 text-muted">
                       {formatDate(post.createdAt)}
                     </span>
-                    <span className="lg:text-xl text-base w-0 grow tracking-tight font-medium truncate">
+                    <span className="flex-1 lg:text-lg text-base tracking-tight font-medium truncate group-hover:text-muted transition-colors">
                       {post.title}
+                    </span>
+                    <span className="w-16 text-right text-xs font-mono text-muted hidden sm:block">
+                      {post.viewCount}
                     </span>
                   </Link>
                 ))}
 
                 {/* Pagination */}
                 {(currentPage > 0 || hasNext) && (
-                  <div className="flex justify-center items-center gap-8 mt-10 pt-6 font-mono text-sm">
+                  <div className="flex justify-center items-center gap-8 mt-10 pt-6 font-mono text-xs">
                     <button
                       onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
                       disabled={currentPage === 0}
-                      className="text-gray-800 hover:text-text underline disabled:opacity-30 disabled:no-underline disabled:cursor-not-allowed"
+                      className="text-muted hover:text-text transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                     >
-                      &larr; PREV
+                      &larr; Prev
                     </button>
                     <span className="text-muted">
-                      PAGE {currentPage + 1}
+                      {currentPage + 1}
                     </span>
                     <button
                       onClick={() => setCurrentPage((prev) => prev + 1)}
                       disabled={!hasNext}
-                      className="text-gray-800 hover:text-text underline disabled:opacity-30 disabled:no-underline disabled:cursor-not-allowed"
+                      className="text-muted hover:text-text transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                     >
-                      NEXT &rarr;
+                      Next &rarr;
                     </button>
                   </div>
                 )}
