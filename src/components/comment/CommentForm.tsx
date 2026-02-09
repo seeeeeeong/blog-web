@@ -11,7 +11,7 @@ interface CommentFormProps {
 export default function CommentForm({
   onSubmit,
   placeholder = "Leave a comment...",
-  buttonText = "Post Comment",
+  buttonText = "Post",
   autoFocus = false,
 }: CommentFormProps) {
   const [content, setContent] = useState("");
@@ -33,17 +33,17 @@ export default function CommentForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-3">
       {user && (
-        <div className="flex items-center gap-3 pb-4 mb-4 border-b border-border">
+        <div className="flex items-center gap-2 pb-3 mb-3 border-b border-gray-300">
           {user.githubAvatarUrl && (
             <img
               src={user.githubAvatarUrl}
               alt={user.githubUsername}
-              className="w-8 h-8 rounded-full border border-border transition-transform-smooth hover:scale-110 hover:rotate-3"
+              className="w-5 h-5 rounded-full border border-border"
             />
           )}
-          <span className="text-sm font-sans font-semibold text-text">
+          <span className="text-sm font-mono font-semibold text-text">
             {user.githubUsername}
           </span>
         </div>
@@ -54,21 +54,21 @@ export default function CommentForm({
         onChange={(e) => setContent(e.target.value)}
         placeholder={placeholder}
         autoFocus={autoFocus}
-        rows={4}
+        rows={3}
         maxLength={1000}
-        className="block w-full border border-border bg-white p-4 text-text placeholder:text-muted focus:border-border focus:ring-2 focus:ring-primary text-sm font-sans transition-all-smooth resize-none"
+        className="block w-full border border-gray-300 bg-white p-3 text-text placeholder:text-gray-400 focus:outline-none focus:border-text text-sm font-mono resize-none transition-colors"
       />
 
       <div className="flex justify-between items-center">
-        <p className="text-xs font-sans text-muted">
+        <p className="text-xs font-mono text-muted">
           {content.length} / 1000
         </p>
         <button
           type="submit"
           disabled={!content.trim() || isSubmitting}
-          className="btn-interactive px-6 py-2.5 text-sm font-sans font-semibold text-white bg-primary hover:bg-accent-green hover:text-text disabled:opacity-50 disabled:cursor-not-allowed transition-all-smooth border border-border shadow-md rounded-lg hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0"
+          className="font-mono text-sm px-4 py-1.5 bg-text text-white hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
-          {isSubmitting ? "SUBMITTING..." : buttonText}
+          {isSubmitting ? "..." : buttonText}
         </button>
       </div>
     </form>

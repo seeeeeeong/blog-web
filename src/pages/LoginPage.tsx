@@ -42,9 +42,9 @@ export default function LoginPage() {
         <div>
           <label
             htmlFor="email"
-            className="block text-sm font-sans text-text mb-2 font-medium"
+            className="block text-sm font-mono text-muted mb-2"
           >
-            Email
+            / EMAIL
           </label>
           <input
             id="email"
@@ -54,7 +54,7 @@ export default function LoginPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-3 bg-white border border-border rounded-lg font-sans text-base placeholder-muted focus:outline-none focus:ring-2 focus:ring-text focus:border-text transition-all-smooth"
+            className="w-full px-3 py-2 border-b border-gray-500 bg-transparent font-mono text-base text-text placeholder:text-gray-400 focus:outline-none focus:border-text transition-colors"
             placeholder="admin@example.com"
           />
         </div>
@@ -62,9 +62,9 @@ export default function LoginPage() {
         <div>
           <label
             htmlFor="password"
-            className="block text-sm font-sans text-text mb-2 font-medium"
+            className="block text-sm font-mono text-muted mb-2"
           >
-            Password
+            / PASSWORD
           </label>
           <input
             id="password"
@@ -74,7 +74,7 @@ export default function LoginPage() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-3 bg-white border border-border rounded-lg font-sans text-base placeholder-muted focus:outline-none focus:ring-2 focus:ring-text focus:border-text transition-all-smooth"
+            className="w-full px-3 py-2 border-b border-gray-500 bg-transparent font-mono text-base text-text placeholder:text-gray-400 focus:outline-none focus:border-text transition-colors"
             placeholder="••••••••"
           />
         </div>
@@ -82,9 +82,9 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3.5 text-base font-sans font-semibold text-white bg-text hover:bg-text/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all-smooth rounded-lg shadow-md hover:shadow-lg active:scale-[0.98]"
+          className="w-full py-3 font-mono text-sm font-semibold text-white bg-text hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
-          {loading ? "Logging in..." : "Login"}
+          {loading ? "Logging in..." : "LOGIN"}
         </button>
       </form>
     </AuthLayout>

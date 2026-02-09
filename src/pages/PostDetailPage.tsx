@@ -5,7 +5,6 @@ import type { Post } from "../types";
 import { useAlert } from "../contexts/AlertContext";
 import MarkdownViewer from "../components/editor/MarkdownViewer";
 import CommentSection from "../components/comment/CommentSection";
-import PageLayout from "../components/common/PageLayout";
 import Spinner from "../components/common/Spinner";
 import { formatDate } from "../utils/format";
 
@@ -51,7 +50,7 @@ export default function PostDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="flex justify-center items-center min-h-[60vh]">
         <Spinner />
       </div>
     );
@@ -59,44 +58,48 @@ export default function PostDetailPage() {
 
   if (!post) {
     return (
-      <PageLayout title="Error">
-        <div className="text-center py-20">
-          <p className="text-[11px] sm:text-xs font-sans text-secondary mb-8">Post not found.</p>
-          <Link
-            to="/"
-            className="px-4 py-2 bg-card text-text font-sans text-[11px] border border-border shadow-md rounded-lg hover:bg-primary hover:text-white transition-all inline-block"
-          >
-            Back to home
-          </Link>
-        </div>
-      </PageLayout>
+      <div className="w-full lg:px-8 px-4 py-20 text-center">
+        <p className="text-sm font-mono text-muted mb-6">Post not found.</p>
+        <Link to="/" className="font-mono text-sm text-gray-800 underline hover:text-text">
+          / HOME
+        </Link>
+      </div>
     );
   }
 
   return (
-    <PageLayout title={post.title}>
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-card border border-border p-8 sm:p-10 mb-8 sm:mb-12 shadow-md rounded-lg transition-all-smooth hover:shadow-lg animate-fade-in">
-          <h1 className="text-2xl sm:text-3xl font-sans text-text mb-6 sm:mb-8 leading-tight font-bold">
+    <div className="w-full lg:px-8 px-4 py-8">
+      <div className="max-w-3xl mx-auto">
+        {/* Back link */}
+        <Link
+          to="/"
+          className="font-mono text-sm text-gray-800 hover:text-text underline inline-block mb-8"
+        >
+          &larr; / FEED
+        </Link>
+
+        {/* Post Header */}
+        <div className="mb-8 pb-6 border-b border-gray-500">
+          <h1 className="text-3xl lg:text-4xl font-bold text-text tracking-tight leading-tight mb-4">
             {post.title}
           </h1>
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 sm:pb-8 border-b border-border">
-            <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm font-sans text-mutedr">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div className="flex items-center gap-3 font-mono text-sm text-muted">
               <time>{formatDate(post.createdAt)}</time>
-              <span>·</span>
-              <span>{post.viewCount} VIEWS</span>
+              <span>&middot;</span>
+              <span>{post.viewCount} views</span>
             </div>
             {isAuthor && (
-              <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm font-sansr animate-slide-in-up delay-100">
+              <div className="flex items-center gap-4 font-mono text-sm">
                 <Link
                   to={`/posts/${postId}/edit`}
-                  className="text-secondary hover:text-text transition-all-smooth relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-text after:transition-all hover:after:w-full font-semibold"
+                  className="text-gray-800 hover:text-text underline"
                 >
                   EDIT
                 </Link>
                 <button
                   onClick={handleDelete}
-                  className="text-red-600 hover:text-red-700 transition-all-smooth relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-red-600 after:transition-all hover:after:w-full font-semibold"
+                  className="text-primary hover:text-red-700 underline"
                 >
                   DELETE
                 </button>
@@ -105,14 +108,14 @@ export default function PostDetailPage() {
           </div>
         </div>
 
-        <article className="bg-card border border-border p-8 sm:p-10 mb-12 sm:mb-16 shadow-md rounded-lg transition-all-smooth hover:shadow-lg animate-slide-in-up delay-100">
+        {/* Post Content */}
+        <article className="pb-12 mb-8 border-b border-gray-300">
           <MarkdownViewer contentHtml={post.contentHtml} />
         </article>
 
-        <div className="animate-slide-in-up delay-200">
-          <CommentSection postId={Number(postId)} />
-        </div>
+        {/* Comments */}
+        <CommentSection postId={Number(postId)} />
       </div>
-    </PageLayout>
+    </div>
   );
 }

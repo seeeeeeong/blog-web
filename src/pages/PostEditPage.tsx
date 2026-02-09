@@ -105,7 +105,7 @@ export default function PostEditPage() {
 
   if (initialLoading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="flex justify-center items-center min-h-[60vh]">
         <Spinner />
       </div>
     );
@@ -115,14 +115,14 @@ export default function PostEditPage() {
     return (
       <PageLayout title="Error">
         <div className="text-center py-20">
-          <p className="text-lg font-sans text-text mb-8">
+          <p className="text-sm font-mono text-muted mb-6">
             Could not load post or you do not have permission to edit.
           </p>
           <Link
             to="/"
-            className="inline-block px-6 py-3 bg-accent text-white font-sans font-semibold text-sm hover:bg-accent/90 transition-all-smooth rounded-lg shadow-md hover:shadow-lg active:scale-[0.98]"
+            className="font-mono text-sm text-gray-800 underline hover:text-text"
           >
-            Back to home
+            / HOME
           </Link>
         </div>
       </PageLayout>
@@ -131,22 +131,25 @@ export default function PostEditPage() {
 
   return (
     <PageLayout title="Edit Post">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-3xl mx-auto">
+        <h2 className="text-2xl font-bold text-text tracking-tight mb-8">
+          / EDIT POST
+        </h2>
+
         <form
           onSubmit={(e) => {
             e.preventDefault();
             handleSubmit(false);
           }}
-          className="space-y-8"
+          className="space-y-6"
         >
-        <div className="bg-card border border-border rounded-lg p-6 shadow-md space-y-6">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             <div className="sm:col-span-2">
               <label
                 htmlFor="title"
-                className="block text-sm font-sans font-semibold text-text mb-2"
+                className="block text-sm font-mono text-muted mb-2"
               >
-                Title
+                / TITLE
               </label>
               <input
                 type="text"
@@ -155,83 +158,66 @@ export default function PostEditPage() {
                 onChange={(e) => setTitle(e.target.value)}
                 required
                 maxLength={200}
-                className="block w-full px-4 py-2.5 border border-border rounded-lg bg-white text-text placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-text focus:border-text text-base font-sans transition-all-smooth"
-                placeholder="Enter a captivating title..."
+                className="block w-full px-3 py-2 border-b border-gray-500 bg-transparent text-text font-mono placeholder:text-gray-400 focus:outline-none focus:border-text text-base transition-colors"
+                placeholder="Enter title..."
               />
             </div>
 
             <div className="sm:col-span-1">
               <label
                 htmlFor="category"
-                className="block text-sm font-sans font-semibold text-text mb-2"
+                className="block text-sm font-mono text-muted mb-2"
               >
-                Category
+                / CATEGORY
               </label>
-              <div className="relative">
-                <select
-                  id="category"
-                  value={categoryId}
-                  onChange={(e) => setCategoryId(Number(e.target.value))}
-                  className="block w-full appearance-none px-4 py-2.5 border border-border rounded-lg bg-white pr-10 text-text focus:outline-none focus:ring-2 focus:ring-text focus:border-text text-base font-sans transition-all-smooth cursor-pointer"
-                >
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-muted">
-                  <svg
-                    className="h-5 w-5"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </div>
-              </div>
+              <select
+                id="category"
+                value={categoryId}
+                onChange={(e) => setCategoryId(Number(e.target.value))}
+                className="block w-full px-3 py-2 border-b border-gray-500 bg-transparent text-text font-mono focus:outline-none focus:border-text text-base transition-colors cursor-pointer"
+              >
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
-        </div>
 
-        <div>
-          <label className="block text-sm font-sans font-semibold text-text mb-3">
-            Content
-          </label>
-          <TipTapEditor value={content} onChange={setContent} />
-        </div>
+          <div>
+            <label className="block text-sm font-mono text-muted mb-3">
+              / CONTENT
+            </label>
+            <TipTapEditor value={content} onChange={setContent} />
+          </div>
 
-        <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-4 border-t border-border">
-          <button
-            type="button"
-            onClick={handleCancel}
-            className="px-5 py-2.5 text-sm font-sans font-medium text-muted hover:text-text transition-all-smooth"
-          >
-            Cancel
-          </button>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-6 border-t border-gray-300">
             <button
               type="button"
-              onClick={() => handleSubmit(true)}
-              disabled={loading}
-              className="px-6 py-2.5 text-sm font-sans font-semibold text-text bg-white border border-border rounded-lg hover:bg-hover disabled:opacity-50 disabled:cursor-not-allowed transition-all-smooth shadow-sm hover:shadow-md active:scale-[0.98]"
+              onClick={handleCancel}
+              className="font-mono text-sm text-muted hover:text-text underline"
             >
-              {loading ? "Saving..." : "Save Draft"}
+              Cancel
             </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-6 py-2.5 text-sm font-sans font-semibold text-white bg-text hover:bg-text/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all-smooth rounded-lg shadow-md hover:shadow-lg active:scale-[0.98]"
-            >
-              {loading ? "Updating..." : "Update Post"}
-            </button>
+            <div className="flex gap-4">
+              <button
+                type="button"
+                onClick={() => handleSubmit(true)}
+                disabled={loading}
+                className="font-mono text-sm text-gray-800 hover:text-text underline disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? "Saving..." : "Save Draft"}
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="font-mono text-sm px-6 py-2 bg-text text-white hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {loading ? "Updating..." : "Update Post"}
+              </button>
+            </div>
           </div>
-        </div>
         </form>
       </div>
     </PageLayout>

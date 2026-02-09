@@ -6,7 +6,8 @@ import type { Post } from "../types";
 import { useAlert } from "../contexts/AlertContext";
 import PageLayout from "../components/common/PageLayout";
 import { PAGINATION } from "../constants/pagination";
-import { formatShortDate } from "../utils/format";
+import { formatDate } from "../utils/format";
+import Spinner from "../components/common/Spinner";
 
 type FilterType = "all" | "published" | "draft";
 
@@ -59,123 +60,126 @@ export default function AdminPostsPage() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="w-8 h-8 border border-tertiary border-t-primary rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
   return (
     <PageLayout title="Admin">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 sm:mb-10 gap-4">
-          <div className="flex items-center gap-3 flex-wrap">
-            <button
-              onClick={() => setFilter("all")}
-              className={`btn-interactive px-4 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-sans border transition-all-smoothr shadow-md rounded-lg hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 ${
-                filter === "all"
-                  ? "bg-primary text-white border-border"
-                  : "bg-card text-secondary border-border hover:bg-primary hover:text-white"
-              }`}
-            >
-              ALL
-            </button>
-            <button
-              onClick={() => setFilter("published")}
-              className={`btn-interactive px-4 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-sans border transition-all-smoothr shadow-md rounded-lg hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 ${
-                filter === "published"
-                  ? "bg-primary text-white border-border"
-                  : "bg-card text-secondary border-border hover:bg-primary hover:text-white"
-              }`}
-            >
-              PUBLISHED
-            </button>
-            <button
-              onClick={() => setFilter("draft")}
-              className={`btn-interactive px-4 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-sans border transition-all-smoothr shadow-md rounded-lg hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 ${
-                filter === "draft"
-                  ? "bg-primary text-white border-border"
-                  : "bg-card text-secondary border-border hover:bg-primary hover:text-white"
-              }`}
-            >
-              DRAFT
-            </button>
-          </div>
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-end justify-between mb-8">
+          <h2 className="text-2xl font-bold text-text tracking-tight">
+            / ADMIN
+          </h2>
           <Link
             to="/posts/create"
-            className="btn-interactive inline-flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-primary text-white text-xs sm:text-sm font-sans hover:bg-accent-green hover:text-text border border-borderr shadow-md rounded-lg hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all-smooth font-semibold"
+            className="font-mono text-sm text-gray-800 hover:text-text underline"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-            </svg>
-            NEW POST
+            + NEW POST
           </Link>
         </div>
 
-        <div className="bg-card border border-border shadow-md rounded-lg transition-all-smooth hover:shadow-lg overflow-x-auto">
-          <table className="w-full table-fixed text-left font-sans">
-            <thead className="border-b border-border bg-white">
-              <tr>
-                <th className="w-5/12 p-4 sm:p-5 text-xs sm:text-sm text-secondary font-semiboldst">TITLE</th>
-                <th className="w-2/12 p-4 sm:p-5 text-xs sm:text-sm text-secondary font-semiboldst">STATUS</th>
-                <th className="w-1/12 p-4 sm:p-5 text-xs sm:text-sm text-secondary font-semiboldst">VIEWS</th>
-                <th className="w-2/12 p-4 sm:p-5 text-xs sm:text-sm text-secondary font-semiboldst">DATE</th>
-                <th className="w-2/12 p-4 sm:p-5 text-xs sm:text-sm text-secondary font-semibold text-rightst">ACTIONS</th>
-              </tr>
-            </thead>
-            <tbody>
-              {posts.map((post) => (
-                <tr key={post.id} className="border-b border-border last:border-b-0 hover:bg-white transition-all-smooth">
-                  <td className="p-4 sm:p-5 text-xs sm:text-sm">
-                    <Link to={`/posts/${post.id}`} className="text-text hover:text-secondary truncate block transition-all-smooth font-medium">
-                      {post.title}
-                    </Link>
-                  </td>
-                  <td className="p-4 sm:p-5 text-secondary text-xs sm:text-smr font-medium">
-                    {post.status}
-                  </td>
-                  <td className="p-4 sm:p-5 text-muted text-xs sm:text-sm">{post.viewCount}</td>
-                  <td className="p-4 sm:p-5 text-muted text-xs sm:text-sm">
-                    {formatShortDate(post.createdAt)}
-                  </td>
-                  <td className="p-4 sm:p-5 text-right text-xs sm:text-sm">
-                    <div className="flex justify-end items-center gap-4 sm:gap-5">
-                      <Link to={`/posts/${post.id}/edit`} className="text-muted hover:text-text transition-all-smooth" title="Edit">
-                        <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z" /></svg>
-                      </Link>
-                      <button onClick={() => handleDelete(post.id)} className="text-muted hover:text-red-600 transition-all-smooth" title="Delete">
-                        <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        {/* Filter */}
+        <div className="flex items-center gap-4 mb-6 border-b border-gray-500 pb-3 font-mono text-sm">
+          <span className="text-muted">/ FILTER</span>
+          {(["all", "published", "draft"] as FilterType[]).map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`uppercase ${
+                filter === f
+                  ? "text-text font-semibold underline"
+                  : "text-gray-800 hover:text-text"
+              }`}
+            >
+              {f}
+            </button>
+          ))}
         </div>
 
-        {(currentPage > 0 || hasNext) && (
-          <div className="flex justify-center items-center gap-6 sm:gap-8 mt-8 sm:mt-10 pt-8 sm:pt-10 border-t border-border text-xs sm:text-sm font-sansr">
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
-              disabled={currentPage === 0}
-              className="btn-interactive px-6 sm:px-8 py-3 bg-card border border-border text-text hover:bg-primary hover:text-white transition-all-smooth disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-card disabled:hover:text-text shadow-md rounded-lg hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 font-semibold"
-            >
-              ← PREV
-            </button>
-            <span className="text-secondary font-boldst">
-              PAGE {currentPage + 1}
-            </span>
-            <button
-              onClick={() => setCurrentPage((prev) => prev + 1)}
-              disabled={!hasNext}
-              className="btn-interactive px-6 sm:px-8 py-3 bg-card border border-border text-text hover:bg-primary hover:text-white transition-all-smooth disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-card disabled:hover:text-text shadow-md rounded-lg hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 font-semibold"
-            >
-              NEXT →
-            </button>
+        {/* Post Table */}
+        {loading ? (
+          <div className="flex justify-center py-16">
+            <Spinner />
           </div>
+        ) : (
+          <>
+            <div className="w-full">
+              {/* Table Header */}
+              <div className="flex items-center font-mono text-sm text-muted border-b border-gray-500 pb-2">
+                <span className="w-5/12">TITLE</span>
+                <span className="w-2/12">STATUS</span>
+                <span className="w-1/12">VIEWS</span>
+                <span className="w-2/12">DATE</span>
+                <span className="w-2/12 text-right">ACTIONS</span>
+              </div>
+
+              {/* Table Rows */}
+              {posts.length === 0 ? (
+                <div className="py-12 text-center">
+                  <p className="text-sm font-mono text-muted">No posts found.</p>
+                </div>
+              ) : (
+                posts.map((post) => (
+                  <div
+                    key={post.id}
+                    className="flex items-center border-b border-gray-300 py-3 text-sm hover:bg-hover/50 transition-colors"
+                  >
+                    <div className="w-5/12 pr-4">
+                      <Link
+                        to={`/posts/${post.id}`}
+                        className="text-text hover:underline truncate block font-medium"
+                      >
+                        {post.title}
+                      </Link>
+                    </div>
+                    <div className="w-2/12 font-mono text-muted text-xs uppercase">
+                      {post.status}
+                    </div>
+                    <div className="w-1/12 font-mono text-muted text-xs">
+                      {post.viewCount}
+                    </div>
+                    <div className="w-2/12 font-mono text-muted text-xs">
+                      {formatDate(post.createdAt)}
+                    </div>
+                    <div className="w-2/12 flex justify-end gap-4 font-mono text-xs">
+                      <Link
+                        to={`/posts/${post.id}/edit`}
+                        className="text-gray-800 hover:text-text underline"
+                      >
+                        EDIT
+                      </Link>
+                      <button
+                        onClick={() => handleDelete(post.id)}
+                        className="text-primary hover:text-red-700 underline"
+                      >
+                        DEL
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Pagination */}
+            {(currentPage > 0 || hasNext) && (
+              <div className="flex justify-center items-center gap-8 mt-10 pt-6 font-mono text-sm">
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
+                  disabled={currentPage === 0}
+                  className="text-gray-800 hover:text-text underline disabled:opacity-30 disabled:no-underline disabled:cursor-not-allowed"
+                >
+                  &larr; PREV
+                </button>
+                <span className="text-muted">
+                  PAGE {currentPage + 1}
+                </span>
+                <button
+                  onClick={() => setCurrentPage((prev) => prev + 1)}
+                  disabled={!hasNext}
+                  className="text-gray-800 hover:text-text underline disabled:opacity-30 disabled:no-underline disabled:cursor-not-allowed"
+                >
+                  NEXT &rarr;
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </PageLayout>
