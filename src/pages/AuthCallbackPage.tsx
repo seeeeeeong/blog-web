@@ -1,41 +1,57 @@
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Spinner from "../components/common/Spinner";
+import apiClient from "../api/client";
 
 export default function AuthCallbackPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = searchParams.get("token");
-    const oauthId = searchParams.get("oauthId") ?? searchParams.get("githubId");
-    const oauthUsername = searchParams.get("oauthUsername") ?? searchParams.get("githubUsername");
-    const oauthAvatarUrl = searchParams.get("oauthAvatarUrl") ?? searchParams.get("githubAvatarUrl");
+    const code = searchParams.get("code");
 
-    if (token && oauthId && oauthUsername) {
-      const userData = {
-        commentToken: token,
-        githubId: oauthId,
-        githubUsername: oauthUsername,
-        githubAvatarUrl: oauthAvatarUrl || null,
-      };
+    if (!code) {
+      navigate("/");
+      return;
+    }
 
-      if (window.opener) {
-        window.opener.postMessage(
-          {
-            type: "GITHUB_AUTH_SUCCESS",
-            user: userData,
-          },
-          window.location.origin
-        );
-        window.close();
-      } else {
-        localStorage.setItem("githubUser", JSON.stringify(userData));
+    const exchange = async () => {
+      try {
+        const response = await apiClient.post("/auth/github/exchange", { code });
+        const { token, user } = response.data || {};
+
+        if (!token || !user) {
+          navigate("/");
+          return;
+        }
+
+        const userData = {
+          commentToken: token as string,
+          githubId: String(user.id),
+          githubUsername: user.login as string,
+          githubAvatarUrl: (user.avatarUrl as string) || null,
+        };
+
+        if (window.opener) {
+          window.opener.postMessage(
+            {
+              type: "GITHUB_AUTH_SUCCESS",
+              user: userData,
+            },
+            window.location.origin
+          );
+          window.close();
+        } else {
+          localStorage.setItem("githubUser", JSON.stringify(userData));
+          navigate("/");
+        }
+      } catch (error) {
+        console.error("GitHub exchange failed", error);
         navigate("/");
       }
-    } else {
-      navigate("/");
-    }
+    };
+
+    exchange();
   }, [searchParams, navigate]);
 
   return (

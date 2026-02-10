@@ -5,6 +5,7 @@ import {
   useEffect,
   type ReactNode,
 } from "react";
+import apiClient from "../api/client";
 
 interface GitHubUser {
   githubId: string;
@@ -35,18 +36,12 @@ export function GitHubAuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = () => {
-    const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
     const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
-    if (clientId == null || clientId === "" || apiBaseUrl == null || apiBaseUrl === "") {
-      console.error("Missing GitHub OAuth configuration.");
+    if (apiBaseUrl == null || apiBaseUrl === "") {
+      console.error("Missing API base URL.");
       return;
     }
-
-    const redirectUri = `${apiBaseUrl}/auth/github/callback`;
-    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(
-      redirectUri
-    )}&scope=read:user`;
 
     const width = 600;
     const height = 700;
@@ -54,14 +49,33 @@ export function GitHubAuthProvider({ children }: { children: ReactNode }) {
     const top = window.screenY + (window.outerHeight - height) / 2;
 
     const popup = window.open(
-      githubAuthUrl,
+      "",
       "GitHub Login",
       `width=${width},height=${height},left=${left},top=${top}`
     );
 
-    if (popup == null) {
-      window.location.href = githubAuthUrl;
-    }
+    apiClient
+      .get("/auth/github/authorize")
+      .then((response) => {
+        const { authorizationUrl } = response.data || {};
+
+        if (!authorizationUrl) {
+          throw new Error("Missing authorizationUrl");
+        }
+
+        if (popup == null) {
+          window.location.href = authorizationUrl;
+          return;
+        }
+
+        popup.location.href = authorizationUrl;
+      })
+      .catch((error) => {
+        console.error("Failed to start GitHub OAuth", error);
+        if (popup != null) {
+          popup.close();
+        }
+      });
   };
 
   const logout = () => {
