@@ -1,6 +1,6 @@
 import apiClient from "./client";
 import imageCompression from "browser-image-compression";
-import type { ImageUploadResponse } from "../types";
+import type { ImageUploadResponse, ImagePresignedUrlResponse } from "../types";
 
 // 서버를 통한 이미지 업로드
 export const uploadImage = async (file: File): Promise<ImageUploadResponse> => {
@@ -17,24 +17,19 @@ export const uploadImage = async (file: File): Promise<ImageUploadResponse> => {
   return response.data;
 };
 
-// 업로드 서명 가져오기
-interface UploadSignature {
-  signature: string;
-  timestamp: number;
-  apiKey: string;
-  cloudName: string;
-}
-
-export const getUploadSignature = async (folder: string = "blog"): Promise<UploadSignature> => {
-  const response = await apiClient.get<UploadSignature>("/images/upload-signature", {
-    params: { folder },
+// S3 Presigned URL 가져오기
+export const getPresignedUrl = async (
+  contentType: string,
+  folder: string = "blog"
+): Promise<ImagePresignedUrlResponse> => {
+  const response = await apiClient.get<ImagePresignedUrlResponse>("/images/presigned-url", {
+    params: { contentType, folder },
   });
   return response.data;
 };
 
-// Cloudinary 직접 업로드 (압축 포함)
+// S3 Presigned URL로 직접 업로드 (압축 포함)
 export const uploadImageDirectly = async (file: File): Promise<string> => {
-  // 이미지 압축
   const options = {
     maxSizeMB: 1,
     maxWidthOrHeight: 1920,
@@ -44,38 +39,30 @@ export const uploadImageDirectly = async (file: File): Promise<string> => {
   let compressedFile: File;
   try {
     compressedFile = await imageCompression(file, options);
-  } catch (error) {
+  } catch {
     compressedFile = file;
   }
 
-  // Presigned Upload
-  const signatureData = await getUploadSignature();
+  const contentType = compressedFile.type || "image/png";
+  const presigned = await getPresignedUrl(contentType);
 
-  const formData = new FormData();
-  formData.append("file", compressedFile);
-  formData.append("signature", signatureData.signature);
-  formData.append("timestamp", String(signatureData.timestamp));
-  formData.append("api_key", signatureData.apiKey);
-  formData.append("folder", "blog");
-
-  const response = await fetch(
-    `https://api.cloudinary.com/v1_1/${signatureData.cloudName}/image/upload`,
-    {
-      method: "POST",
-      body: formData,
-    }
-  );
+  const response = await fetch(presigned.uploadUrl, {
+    method: "PUT",
+    headers: {
+      "Content-Type": contentType,
+    },
+    body: compressedFile,
+  });
 
   if (!response.ok) {
     throw new Error("Image upload failed");
   }
 
-  const result = await response.json();
-  return result.secure_url;
+  return presigned.fileUrl;
 };
 
 // 이미지 삭제
-export const deleteImage = async (publicId: string): Promise<boolean> => {
-  const response = await apiClient.delete<{ deleted: boolean }>(`/images/${publicId}`);
+export const deleteImage = async (key: string): Promise<boolean> => {
+  const response = await apiClient.delete<{ deleted: boolean }>(`/images/${encodeURIComponent(key)}`);
   return response.data.deleted;
 };

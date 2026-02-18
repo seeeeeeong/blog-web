@@ -105,8 +105,12 @@ export interface UpdateCommentRequest {
 // Image
 export interface ImageUploadResponse {
   url: string;
-  publicId: string;
+  key: string;
   format: string;
-  width: number;
-  height: number;
+}
+
+export interface ImagePresignedUrlResponse {
+  uploadUrl: string;
+  fileUrl: string;
+  key: string;
 }
