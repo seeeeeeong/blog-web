@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getUserIdFromToken } from "../utils/authToken";
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -25,6 +26,36 @@ const processQueue = (error: any, token: string | null = null) => {
   failedQueue = [];
 };
 
+interface ApiErrorPayload {
+  code?: string;
+  message?: string;
+}
+
+const extractApiError = (data: unknown): ApiErrorPayload | null => {
+  if (data == null || typeof data !== "object") {
+    return null;
+  }
+
+  const apiResponse = data as {
+    result?: string;
+    error?: { code?: string; message?: string };
+    message?: string;
+  };
+
+  if (apiResponse.result === "ERROR" && apiResponse.error) {
+    return {
+      code: apiResponse.error.code,
+      message: apiResponse.error.message,
+    };
+  }
+
+  if (typeof apiResponse.message === "string") {
+    return { message: apiResponse.message };
+  }
+
+  return null;
+};
+
 apiClient.interceptors.request.use(
   (config) => {
     if (!config.headers.Authorization) {
@@ -40,13 +71,13 @@ apiClient.interceptors.request.use(
 
 apiClient.interceptors.response.use(
   (response) => {
-    if (response.data && typeof response.data === 'object' && 'result' in response.data) {
+    if (response.data && typeof response.data === "object" && "result" in response.data) {
       const apiResponse = response.data as { result: string; data: any; error: any };
 
-      if (apiResponse.result === 'SUCCESS') {
+      if (apiResponse.result === "SUCCESS") {
         response.data = apiResponse.data;
-      } else if (apiResponse.result === 'ERROR') {
-        const errorMessage = apiResponse.error?.message || 'API request failed';
+      } else if (apiResponse.result === "ERROR") {
+        const errorMessage = apiResponse.error?.message || "API request failed";
         return Promise.reject(new Error(errorMessage));
       }
     }
@@ -55,29 +86,33 @@ apiClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     const status = error.response?.status;
-    const requestUrl = originalRequest?.url || '';
+    const requestUrl = originalRequest?.url || "";
     const currentPath = window.location.pathname;
+    const apiError = extractApiError(error.response?.data);
+    if (apiError?.message) {
+      error.message = apiError.message;
+    }
 
-    if (status === 401 && requestUrl.includes('/comments')) {
+    const isUserAuthEndpoint =
+      requestUrl.includes("/v1/users/login") ||
+      requestUrl.includes("/v1/users/refresh") ||
+      requestUrl.includes("/v1/users/logout");
+
+    if (status === 401 && requestUrl.includes("/comments")) {
       localStorage.removeItem("githubUser");
       return Promise.reject(error);
     }
 
-    if (status === 401 && (currentPath === '/login' || currentPath === '/signup' ||
-        requestUrl.includes('/auth/login') || requestUrl.includes('/auth/signup'))) {
+    if (status === 401 && (isUserAuthEndpoint || currentPath === "/login")) {
       return Promise.reject(error);
     }
 
-    // Public 엔드포인트 (홈페이지 게시글 목록 등)
-    if (status === 401 && requestUrl.includes('/posts') &&
-        !requestUrl.includes('/my') && !requestUrl.includes('/drafts')) {
+    if (status === 401 && requestUrl.includes("/posts") && !requestUrl.includes("/drafts")) {
       return Promise.reject(error);
     }
 
-    // 401 에러이고 아직 재시도하지 않은 요청인 경우
     if (status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
-        // 이미 토큰 갱신 중이면 큐에 추가
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
@@ -96,37 +131,34 @@ apiClient.interceptors.response.use(
       const refreshToken = localStorage.getItem("refreshToken");
 
       if (!refreshToken) {
-        // refresh token이 없으면 로그인 페이지로
         clearAuthData();
         window.location.href = "/login";
         return Promise.reject(error);
       }
 
       try {
-        // refresh token으로 새 토큰 발급
         const response = await axios.post(
           `${import.meta.env.VITE_API_BASE_URL}/v1/users/refresh`,
           { refreshToken },
           { headers: { "Content-Type": "application/json" } }
         );
 
-        const newAccessToken = response.data.data.accessToken;
-        const newRefreshToken = response.data.data.refreshToken;
-        const newRefreshTokenId = response.data.data.refreshTokenId;
+        const tokenData = response.data?.data ?? response.data;
+        const newAccessToken = tokenData.accessToken;
+        const newRefreshToken = tokenData.refreshToken;
+        const userId = getUserIdFromToken(newAccessToken);
 
-        // 새 토큰 저장
         localStorage.setItem("accessToken", newAccessToken);
         localStorage.setItem("refreshToken", newRefreshToken);
-        localStorage.setItem("refreshTokenId", newRefreshTokenId);
+        if (userId) {
+          localStorage.setItem("userId", userId);
+        }
 
-        // 큐에 있는 요청들 처리
         processQueue(null, newAccessToken);
 
-        // 원래 요청 재시도
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return apiClient(originalRequest);
       } catch (refreshError) {
-        // refresh token도 만료된 경우
         processQueue(refreshError, null);
         clearAuthData();
         window.location.href = "/login";
@@ -136,7 +168,6 @@ apiClient.interceptors.response.use(
       }
     }
 
-    // 403 에러 또는 다른 에러는 기존 로직 유지
     if (status === 403) {
       clearAuthData();
       window.location.href = "/login";
@@ -149,9 +180,7 @@ apiClient.interceptors.response.use(
 const clearAuthData = () => {
   localStorage.removeItem("accessToken");
   localStorage.removeItem("refreshToken");
-  localStorage.removeItem("refreshTokenId");
   localStorage.removeItem("userId");
-  localStorage.removeItem("nickname");
 };
 
 export default apiClient;

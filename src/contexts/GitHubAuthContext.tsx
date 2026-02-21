@@ -57,7 +57,10 @@ export function GitHubAuthProvider({ children }: { children: ReactNode }) {
     apiClient
       .get("/auth/github/authorize")
       .then((response) => {
-        const { authorizationUrl } = response.data || {};
+        const authorizationUrl =
+          typeof response.data === "string"
+            ? response.data
+            : response.data?.authorizationUrl;
 
         if (!authorizationUrl) {
           throw new Error("Missing authorizationUrl");

@@ -17,6 +17,19 @@ export default function CommentSection({ postId }: CommentSectionProps) {
   const { isAuthenticated, login, user } = useGitHubAuth();
   const { showSuccess, showError } = useAlert();
 
+  const resolveErrorMessage = (error: any, fallback: string): string => {
+    const apiErrorMessage = error?.response?.data?.error?.message;
+    if (typeof apiErrorMessage === "string" && apiErrorMessage.length > 0) {
+      return apiErrorMessage;
+    }
+
+    if (typeof error?.message === "string" && error.message.length > 0) {
+      return error.message;
+    }
+
+    return fallback;
+  };
+
   useEffect(() => {
     loadComments();
   }, [postId]);
@@ -44,11 +57,7 @@ export default function CommentSection({ postId }: CommentSectionProps) {
       showSuccess("Comment posted successfully.");
       await loadComments();
     } catch (error: any) {
-      const errorData = error.response?.data;
-      const errorMessage = errorData?.errors?.length > 0
-        ? errorData.errors.join(", ")
-        : errorData?.message || "Failed to post comment.";
-      showError(errorMessage);
+      showError(resolveErrorMessage(error, "Failed to post comment."));
     }
   };
 
@@ -62,7 +71,7 @@ export default function CommentSection({ postId }: CommentSectionProps) {
     } catch (error: any) {
       const errorMessage = error.response?.status === 401
         ? "Authentication failed. Please try logging in with GitHub again."
-        : error.response?.data?.message || "Failed to delete comment.";
+        : resolveErrorMessage(error, "Failed to delete comment.");
       showError(errorMessage);
     }
   };

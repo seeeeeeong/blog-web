@@ -50,7 +50,7 @@ export default function HomePage() {
       setError(null);
 
       const data = searchQuery.trim()
-        ? await postApi.searchPostsBySimilarity(searchQuery, selectedCategory || undefined, currentPage, PAGINATION.POSTS_PER_PAGE)
+        ? await postApi.searchPosts(searchQuery, selectedCategory || undefined, currentPage, PAGINATION.POSTS_PER_PAGE)
         : selectedCategory
           ? await postApi.getPostsByCategory(selectedCategory, currentPage, PAGINATION.POSTS_PER_PAGE)
           : await postApi.getPosts(currentPage, PAGINATION.POSTS_PER_PAGE);

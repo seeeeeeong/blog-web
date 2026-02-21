@@ -30,16 +30,30 @@ export default function AdminPostsPage() {
   const loadPosts = async () => {
     try {
       setLoading(true);
-      const data = filter === "draft"
-        ? await postApi.getDraftPosts(currentPage, PAGINATION.ADMIN_POSTS_PER_PAGE)
-        : await adminApi.getAllPosts(currentPage, PAGINATION.ADMIN_POSTS_PER_PAGE);
+      if (filter === "draft") {
+        const data = await postApi.getDraftPosts(currentPage, PAGINATION.ADMIN_POSTS_PER_PAGE);
+        setPosts(data.content);
+        setHasNext(data.hasNext || false);
+        return;
+      }
 
-      const filteredPosts = filter === "published"
-        ? data.content.filter((post: Post) => post.status === "PUBLISHED")
-        : data.content;
+      if (filter === "published") {
+        const data = await adminApi.getAllPosts(currentPage, PAGINATION.ADMIN_POSTS_PER_PAGE);
+        setPosts(data.content);
+        setHasNext(data.hasNext || false);
+        return;
+      }
 
-      setPosts(filteredPosts);
-      setHasNext(data.hasNext || false);
+      const [published, draft] = await Promise.all([
+        adminApi.getAllPosts(currentPage, PAGINATION.ADMIN_POSTS_PER_PAGE),
+        postApi.getDraftPosts(currentPage, PAGINATION.ADMIN_POSTS_PER_PAGE),
+      ]);
+
+      const merged = [...published.content, ...draft.content]
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+      setPosts(merged);
+      setHasNext((published.hasNext || false) || (draft.hasNext || false));
     } catch {
       showError("Failed to load posts.");
     } finally {

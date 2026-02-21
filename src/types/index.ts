@@ -31,8 +31,6 @@ export interface LoginRequest {
 export interface TokenResponse {
   accessToken: string;
   refreshToken: string;
-  refreshTokenId: string;
-  user: User;
 }
 
 export interface RefreshTokenRequest {
@@ -111,6 +109,18 @@ export interface ImageUploadResponse {
 
 export interface ImagePresignedUrlResponse {
   uploadUrl: string;
+  fileUrl: string;
+  key: string;
+  uploadToken: string;
+  expiresInSeconds: number;
+}
+
+export interface ImagePresignedUrlCompleteRequest {
+  uploadToken: string;
+  key: string;
+}
+
+export interface ImagePresignedUrlCompleteResponse {
   fileUrl: string;
   key: string;
 }

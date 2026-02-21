@@ -5,6 +5,15 @@ import type { AxiosError } from "axios";
 import { authApi } from "../api/auth";
 import { useAlert } from "../contexts/AlertContext";
 import AuthLayout from "../components/common/AuthLayout";
+import { getUserIdFromToken } from "../utils/authToken";
+
+interface LoginApiError {
+  error?: {
+    code?: string;
+    message?: string;
+  };
+  message?: string;
+}
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -19,18 +28,30 @@ export default function LoginPage() {
 
     try {
       const response = await authApi.login({ email, password });
+      const userId = getUserIdFromToken(response.accessToken);
 
       localStorage.setItem("accessToken", response.accessToken);
       localStorage.setItem("refreshToken", response.refreshToken);
-      localStorage.setItem("refreshTokenId", response.refreshTokenId);
-      localStorage.setItem("userId", String(response.user.id));
-      localStorage.setItem("nickname", response.user.nickname);
+      if (userId) {
+        localStorage.setItem("userId", userId);
+      }
 
       showSuccess("Logged in successfully!");
       navigate("/");
     } catch (err) {
-      const axiosError = err as AxiosError<{ message?: string }>;
-      showError(axiosError.response?.data?.message || "Login failed.");
+      const axiosError = err as AxiosError<LoginApiError>;
+      const errorCode = axiosError.response?.data?.error?.code;
+      if (errorCode === "AUTH_009") {
+        showError("Too many login attempts. Please try again later.");
+        return;
+      }
+
+      const errorMessage =
+        axiosError.response?.data?.error?.message ||
+        axiosError.response?.data?.message ||
+        axiosError.message ||
+        "Login failed.";
+      showError(errorMessage);
     } finally {
       setLoading(false);
     }

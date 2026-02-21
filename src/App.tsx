@@ -10,9 +10,11 @@ import AuthCallbackPage from "./pages/AuthCallbackPage";
 import AdminPostsPage from "./pages/AdminPostsPage";
 import Layout from "./components/common/Layout";
 import type { JSX } from "react";
+import { isAdminToken } from "./utils/authToken";
 
 function PrivateRoute({ children }: { children: JSX.Element }) {
-  const isAdmin = !!localStorage.getItem("userId");
+  const token = localStorage.getItem("accessToken");
+  const isAdmin = token ? isAdminToken(token) : false;
   
   if (!isAdmin) {
     return <Navigate to="/" replace />;

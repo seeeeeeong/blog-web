@@ -1,6 +1,11 @@
 import apiClient from "./client";
 import imageCompression from "browser-image-compression";
-import type { ImageUploadResponse, ImagePresignedUrlResponse } from "../types";
+import type {
+  ImageUploadResponse,
+  ImagePresignedUrlResponse,
+  ImagePresignedUrlCompleteRequest,
+  ImagePresignedUrlCompleteResponse,
+} from "../types";
 
 // 서버를 통한 이미지 업로드
 export const uploadImage = async (file: File): Promise<ImageUploadResponse> => {
@@ -25,6 +30,16 @@ export const getPresignedUrl = async (
   const response = await apiClient.get<ImagePresignedUrlResponse>("/images/presigned-url", {
     params: { contentType, folder },
   });
+  return response.data;
+};
+
+export const completePresignedUpload = async (
+  payload: ImagePresignedUrlCompleteRequest
+): Promise<ImagePresignedUrlCompleteResponse> => {
+  const response = await apiClient.post<ImagePresignedUrlCompleteResponse>(
+    "/images/presigned-url/complete",
+    payload
+  );
   return response.data;
 };
 
@@ -58,11 +73,17 @@ export const uploadImageDirectly = async (file: File): Promise<string> => {
     throw new Error("Image upload failed");
   }
 
-  return presigned.fileUrl;
+  const completed = await completePresignedUpload({
+    uploadToken: presigned.uploadToken,
+    key: presigned.key,
+  });
+  return completed.fileUrl;
 };
 
 // 이미지 삭제
 export const deleteImage = async (key: string): Promise<boolean> => {
-  const response = await apiClient.delete<{ deleted: boolean }>(`/images/${encodeURIComponent(key)}`);
-  return response.data.deleted;
+  await apiClient.delete("/images", {
+    params: { key },
+  });
+  return true;
 };

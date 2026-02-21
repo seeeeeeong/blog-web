@@ -2,6 +2,7 @@ import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useGitHubAuth } from "../../contexts/GitHubAuthContext";
 import { authApi } from "../../api/auth";
+import { isAdminToken, isExpiredToken } from "../../utils/authToken";
 
 export default function Layout() {
   const navigate = useNavigate();
@@ -10,26 +11,19 @@ export default function Layout() {
   const { isAuthenticated, user, logout } = useGitHubAuth();
 
   const checkTokenExpiration = () => {
-    const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("accessToken");
 
-    if (!userId || !token) {
+    if (!token) {
       setIsAdmin(false);
       return;
     }
 
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      const isExpired = payload.exp * 1000 < Date.now();
-
-      if (isExpired) {
-        clearAuthData();
-      } else {
-        setIsAdmin(true);
-      }
-    } catch {
+    if (isExpiredToken(token)) {
       clearAuthData();
+      return;
     }
+
+    setIsAdmin(isAdminToken(token));
   };
 
   useEffect(() => {
@@ -39,9 +33,7 @@ export default function Layout() {
   const clearAuthData = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
-    localStorage.removeItem("refreshTokenId");
     localStorage.removeItem("userId");
-    localStorage.removeItem("nickname");
     setIsAdmin(false);
   };
 

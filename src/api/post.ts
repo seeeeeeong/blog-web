@@ -43,40 +43,22 @@ export const postApi = {
     return response.data;
   },
 
-  // 내 게시글 조회
-  getMyPosts: async (page: number = 0, size: number = 10): Promise<PageResponse<Post>> => {
-    const response = await apiClient.get('/v1/posts/my', { params: { page, size } });
-    return response.data;
-  },
-
   // 임시저장 게시글 조회
   getDraftPosts: async (page: number = 0, size: number = 10): Promise<PageResponse<Post>> => {
     const response = await apiClient.get('/v1/posts/drafts', { params: { page, size } });
     return response.data;
   },
 
-  // 인기 게시글 조회
-  getPopularPosts: async (limit: number = 10): Promise<Post[]> => {
-    const response = await apiClient.get('/v1/posts/popular', { params: { limit } });
-    return response.data;
-  },
-
-  // 유사도 기반 검색 (AI)
-  searchPostsBySimilarity: async (
+  // 검색
+  searchPosts: async (
     query: string,
     categoryId?: number,
     page: number = 0,
     size: number = 10
   ): Promise<PageResponse<Post>> => {
-    const response = await apiClient.get('/v1/posts/search/similarity', {
+    const response = await apiClient.get('/v1/posts/search', {
       params: { query, categoryId, page, size },
     });
-    return response.data;
-  },
-
-  // 관련 게시글 추천
-  getSimilarPosts: async (postId: number, limit: number = 5): Promise<Post[]> => {
-    const response = await apiClient.get(`/v1/posts/${postId}/similar`, { params: { limit } });
     return response.data;
   },
 };
