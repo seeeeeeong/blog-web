@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { postApi } from "../api/post";
 import type { Post } from "../types";
-import { useAlert } from "../contexts/AlertContext";
+import { useAlert } from "../contexts/useAlert";
 import MarkdownViewer from "../components/editor/MarkdownViewer";
 import CommentSection from "../components/comment/CommentSection";
 import Spinner from "../components/common/Spinner";
@@ -14,13 +14,9 @@ export default function PostDetailPage() {
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAuthor, setIsAuthor] = useState(false);
-  const { showSuccess, showError, showConfirm } = useAlert();
+  const { showError } = useAlert();
 
-  useEffect(() => {
-    loadPost();
-  }, [postId]);
-
-  const loadPost = async () => {
+  const loadPost = useCallback(async () => {
     try {
       const data = await postApi.getPost(Number(postId));
       setPost(data);
@@ -28,23 +24,23 @@ export default function PostDetailPage() {
       const userId = localStorage.getItem("userId");
       setIsAuthor(userId === String(data.userId));
     } catch {
-      showError("Post not found.");
+      showError("게시글을 찾을 수 없습니다.");
       navigate("/");
     } finally {
       setLoading(false);
     }
-  };
+  }, [navigate, postId, showError]);
+
+  useEffect(() => {
+    void loadPost();
+  }, [loadPost]);
 
   const handleDelete = async () => {
-    const confirmed = await showConfirm("Are you sure you want to delete this post?");
-    if (!confirmed) return;
-
     try {
       await postApi.deletePost(Number(postId));
-      showSuccess("Deleted successfully.");
       navigate("/");
     } catch {
-      showError("Failed to delete post.");
+      showError("게시글 삭제에 실패했습니다.");
     }
   };
 
@@ -70,7 +66,6 @@ export default function PostDetailPage() {
   return (
     <div className="w-full lg:px-8 px-4 py-8">
       <div className="max-w-3xl mx-auto">
-        {/* Back link */}
         <Link
           to="/"
           className="font-mono text-sm text-gray-800 hover:text-text underline inline-block mb-8"
@@ -78,7 +73,6 @@ export default function PostDetailPage() {
           &larr; Feed
         </Link>
 
-        {/* Post Header */}
         <div className="mb-8 pb-6 border-b border-gray-500">
           <h1 className="text-3xl lg:text-4xl font-bold text-text tracking-tight leading-tight mb-4">
             {post.title}
@@ -108,12 +102,10 @@ export default function PostDetailPage() {
           </div>
         </div>
 
-        {/* Post Content */}
         <article className="pb-12 mb-8 border-b border-gray-300">
           <MarkdownViewer contentHtml={post.contentHtml} />
         </article>
 
-        {/* Comments */}
         <CommentSection postId={Number(postId)} />
       </div>
     </div>

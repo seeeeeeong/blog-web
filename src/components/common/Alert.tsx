@@ -11,12 +11,28 @@ interface AlertProps {
   showCloseButton?: boolean;
 }
 
+const LABEL: Record<AlertType, string> = {
+  success: "완료",
+  error:   "오류",
+  warning: "주의",
+  info:    "안내",
+  confirm: "확인",
+};
+
+const ACCENT: Record<AlertType, string> = {
+  success: "border-l-gray-900",
+  error:   "border-l-gray-600",
+  warning: "border-l-gray-500",
+  info:    "border-l-gray-400",
+  confirm: "border-l-gray-900",
+};
+
 export default function Alert({
   type,
   message,
   onClose,
   onConfirm,
-  duration,  
+  duration,
   showCloseButton = true,
 }: AlertProps) {
   useEffect(() => {
@@ -26,101 +42,60 @@ export default function Alert({
     }
   }, [duration, onClose, type]);
 
-  const alertStyles = {
-    success: {
-      accent: "bg-gray-900",
-      text: "text-gray-900",
-    },
-    error: {
-      accent: "bg-red-600",
-      text: "text-gray-900",
-    },
-    warning: {
-      accent: "bg-amber-500",
-      text: "text-gray-900",
-    },
-    info: {
-      accent: "bg-blue-600",
-      text: "text-gray-900",
-    },
-    confirm: {
-      accent: "bg-gray-900",
-      text: "text-gray-900",
-    },
-  };
-
-  const style = alertStyles[type];
+  const base = `w-72 border border-gray-400 border-l-2 ${ACCENT[type]} bg-[#edeeec] animate-fade-in`;
 
   if (type === "confirm") {
     return (
-      <div
-        className="bg-white border border-gray-900 shadow-lg animate-fade-in w-full max-w-md"
-        role="alert"
-      >
-        <div className="p-6">
-          <p className="text-gray-900 text-base font-sans mb-8 leading-relaxed">
+      <div className={base} role="alertdialog">
+        <div className="px-3.5 py-3">
+          <span className="font-mono text-[11px] font-semibold text-gray-500">
+            [{LABEL[type]}]
+          </span>
+          <p className="mt-1.5 font-mono text-[13px] leading-relaxed text-gray-900">
             {message}
           </p>
-
-          <div className="flex justify-end gap-4">
-            <button
-              onClick={onClose}
-              className="px-6 py-2.5 text-sm font-sans text-gray-700 hover:text-gray-900 border border-gray-300 hover:border-gray-900 transition-all"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={() => {
-                onConfirm?.();
-                onClose();
-              }}
-              className="px-6 py-2.5 text-sm font-sans bg-gray-900 text-white hover:bg-gray-800 transition-all"
-            >
-              Confirm
-            </button>
-          </div>
+        </div>
+        <div className="flex justify-end gap-3 border-t border-gray-300 px-3.5 py-2">
+          <button
+            onClick={onClose}
+            className="font-mono text-xs text-gray-500 transition-colors hover:text-gray-900"
+          >
+            취소
+          </button>
+          <button
+            onClick={() => {
+              onConfirm?.();
+              onClose();
+            }}
+            className="font-mono text-xs font-semibold text-gray-900 transition-colors hover:text-gray-600"
+          >
+            확인
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div
-      className="bg-white border border-gray-900 shadow-lg animate-slide-in w-full max-w-md"
-      role="alert"
-    >
-      <div className="flex items-stretch">
-        <div className={`w-2 flex-shrink-0 ${style.accent}`} />
-
-        <div className="flex-1 px-5 py-4">
-          <div className="flex items-center gap-4">
-            <p className={`flex-1 ${style.text} text-sm font-sans leading-relaxed`}>
-              {message}
-            </p>
-
-            {showCloseButton && (
-              <button
-                onClick={onClose}
-                className="text-gray-400 hover:text-gray-900 transition-colors flex-shrink-0 p-1"
-                aria-label="Close"
-              >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            )}
-          </div>
+    <div className={base} role="alert">
+      <div className="flex items-start justify-between gap-3 px-3.5 py-3">
+        <div className="flex items-baseline gap-2">
+          <span className="flex-shrink-0 font-mono text-[11px] font-semibold text-gray-500">
+            [{LABEL[type]}]
+          </span>
+          <p className="font-mono text-[13px] leading-relaxed text-gray-900">
+            {message}
+          </p>
         </div>
+        {showCloseButton && (
+          <button
+            onClick={onClose}
+            className="flex-shrink-0 font-mono text-base leading-none text-gray-400 transition-colors hover:text-gray-900"
+            aria-label="닫기"
+          >
+            ×
+          </button>
+        )}
       </div>
     </div>
   );

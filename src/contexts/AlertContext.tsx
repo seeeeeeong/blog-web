@@ -1,33 +1,21 @@
 import {
-  createContext,
-  useContext,
   useState,
   useCallback,
   useRef,
   type ReactNode,
 } from "react";
-import Alert, { type AlertType } from "../components/common/Alert";
+import Alert from "../components/common/Alert";
+import { AlertContext } from "./alert-context";
 
 interface AlertConfig {
   id: number;
-  type: AlertType;
+  type: "success" | "error" | "warning" | "info" | "confirm";
   message: string;
   duration?: number;
   showCloseButton?: boolean;
   onConfirm?: () => void;
   onCancel?: () => void;
 }
-
-interface AlertContextType {
-  showAlert: (config: Omit<AlertConfig, "id">) => void;
-  showSuccess: (message: string, duration?: number) => void;
-  showError: (message: string, duration?: number) => void;
-  showWarning: (message: string, duration?: number) => void;
-  showInfo: (message: string, duration?: number) => void;
-  showConfirm: (message: string) => Promise<boolean>;
-}
-
-const AlertContext = createContext<AlertContextType | undefined>(undefined);
 
 export function AlertProvider({ children }: { children: ReactNode }) {
   const [alerts, setAlerts] = useState<AlertConfig[]>([]);
@@ -49,29 +37,29 @@ export function AlertProvider({ children }: { children: ReactNode }) {
     setAlerts([{ ...config, id }]);
   }, []);
 
-const showSuccess = useCallback(
-  (message: string, duration: number = 2500) =>
-    showAlert({ type: "success", message, duration }),
-  [showAlert]
-);
+  const showSuccess = useCallback(
+    (message: string, duration: number = 2500) =>
+      showAlert({ type: "success", message, duration }),
+    [showAlert]
+  );
 
-const showError = useCallback(
-  (message: string, duration: number = 3000) =>
-    showAlert({ type: "error", message, duration }),
-  [showAlert]
-);
+  const showError = useCallback(
+    (message: string, duration: number = 3000) =>
+      showAlert({ type: "error", message, duration }),
+    [showAlert]
+  );
 
-const showWarning = useCallback(
-  (message: string, duration: number = 3000) =>
-    showAlert({ type: "warning", message, duration }),
-  [showAlert]
-);
+  const showWarning = useCallback(
+    (message: string, duration: number = 3000) =>
+      showAlert({ type: "warning", message, duration }),
+    [showAlert]
+  );
 
-const showInfo = useCallback(
-  (message: string, duration: number = 2500) =>
-    showAlert({ type: "info", message, duration }),
-  [showAlert]
-);
+  const showInfo = useCallback(
+    (message: string, duration: number = 2500) =>
+      showAlert({ type: "info", message, duration }),
+    [showAlert]
+  );
 
   const showConfirm = useCallback((message: string): Promise<boolean> => {
     return new Promise((resolve) => {
@@ -106,41 +94,32 @@ const showInfo = useCallback(
     });
   }, []);
 
-return (
-  <AlertContext.Provider
-    value={{
-      showAlert,
-      showSuccess,
-      showError,
-      showWarning,
-      showInfo,
-      showConfirm,
-    }}
-  >
-    {children}
-
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3 pointer-events-none">
-      {alerts.map((alert) => (
-        <div key={alert.id} className="pointer-events-auto">
-          <Alert
-            type={alert.type}
-            message={alert.message}
-            duration={alert.duration}
-            showCloseButton={alert.showCloseButton}
-            onConfirm={alert.onConfirm}
-            onClose={() => closeAlert(alert.id)}
-          />
-        </div>
-      ))}
-    </div>
-  </AlertContext.Provider>
-);
-}
-
-export function useAlert() {
-  const context = useContext(AlertContext);
-  if (!context) {
-    throw new Error("useAlert must be used within AlertProvider");
-  }
-  return context;
+  return (
+    <AlertContext.Provider
+      value={{
+        showAlert,
+        showSuccess,
+        showError,
+        showWarning,
+        showInfo,
+        showConfirm,
+      }}
+    >
+      {children}
+      <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none sm:bottom-6 sm:right-6">
+        {alerts.map((alert) => (
+          <div key={alert.id} className="pointer-events-auto">
+            <Alert
+              type={alert.type}
+              message={alert.message}
+              duration={alert.duration}
+              showCloseButton={alert.showCloseButton}
+              onConfirm={alert.onConfirm}
+              onClose={() => closeAlert(alert.id)}
+            />
+          </div>
+        ))}
+      </div>
+    </AlertContext.Provider>
+  );
 }

@@ -13,7 +13,9 @@ export const formatShortDate = (date: string): string => {
 export const extractPreview = (content: string, maxLength: number = 150): string => {
   return content
     .replace(/!\[.*?\]\(.*?\)/g, "")
-    .replace(/[#*`>\-\[\]]/g, "")
+    .replace(/[#*`>-]/g, "")
+    .replaceAll("[", "")
+    .replaceAll("]", "")
     .trim()
     .substring(0, maxLength);
 };

@@ -1,11 +1,10 @@
-// API Response
 export interface ApiResponse<T> {
   result: "SUCCESS" | "ERROR";
   data: T | null;
   error: {
     code: string;
     message: string;
-    data?: any;
+    data?: unknown;
   } | null;
 }
 
@@ -14,7 +13,6 @@ export interface PageResponse<T> {
   hasNext: boolean;
 }
 
-// User
 export interface User {
   id: number;
   email: string;
@@ -37,7 +35,6 @@ export interface RefreshTokenRequest {
   refreshToken: string;
 }
 
-// Category
 export interface Category {
   id: number;
   name: string;
@@ -45,19 +42,22 @@ export interface Category {
   createdAt: string;
 }
 
-// Post
-export interface Post {
+export interface PostSummary {
   id: number;
   userId: number;
   categoryId: number;
   title: string;
-  content: string;
-  contentHtml: string;
+  excerpt: string;
   thumbnailUrl: string | null;
   viewCount: number;
   status: "DRAFT" | "PUBLISHED";
   createdAt: string;
   updatedAt: string;
+}
+
+export interface Post extends PostSummary {
+  content: string;
+  contentHtml: string;
 }
 
 export interface CreatePostRequest {
@@ -76,13 +76,12 @@ export interface UpdatePostRequest {
   isDraft?: boolean;
 }
 
-// Comment
 export interface Comment {
   id: number;
   postId: number;
-  githubId: string;
-  githubUsername: string;
-  githubAvatarUrl: string | null;
+  oauthId: string;
+  oauthUsername: string;
+  oauthAvatarUrl: string | null;
   parentId: number | null;
   content: string;
   contentHtml: string;
@@ -100,7 +99,6 @@ export interface UpdateCommentRequest {
   content: string;
 }
 
-// Image
 export interface ImageUploadResponse {
   url: string;
   key: string;

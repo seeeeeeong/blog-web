@@ -7,7 +7,6 @@ import type {
   ImagePresignedUrlCompleteResponse,
 } from "../types";
 
-// 서버를 통한 이미지 업로드
 export const uploadImage = async (file: File): Promise<ImageUploadResponse> => {
   const formData = new FormData();
   formData.append("file", file);
@@ -22,7 +21,6 @@ export const uploadImage = async (file: File): Promise<ImageUploadResponse> => {
   return response.data;
 };
 
-// S3 Presigned URL 가져오기
 export const getPresignedUrl = async (
   contentType: string,
   folder: string = "blog"
@@ -43,7 +41,6 @@ export const completePresignedUpload = async (
   return response.data;
 };
 
-// S3 Presigned URL로 직접 업로드 (압축 포함)
 export const uploadImageDirectly = async (file: File): Promise<string> => {
   const options = {
     maxSizeMB: 1,
@@ -80,7 +77,6 @@ export const uploadImageDirectly = async (file: File): Promise<string> => {
   return completed.fileUrl;
 };
 
-// 이미지 삭제
 export const deleteImage = async (key: string): Promise<boolean> => {
   await apiClient.delete("/images", {
     params: { key },

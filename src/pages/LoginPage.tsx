@@ -3,9 +3,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { AxiosError } from "axios";
 import { authApi } from "../api/auth";
-import { useAlert } from "../contexts/AlertContext";
 import AuthLayout from "../components/common/AuthLayout";
 import { getUserIdFromToken } from "../utils/authToken";
+import { extractApiErrorMessage } from "../utils/error";
 
 interface LoginApiError {
   error?: {
@@ -17,13 +17,14 @@ interface LoginApiError {
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const { showSuccess, showError } = useAlert();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage("");
     setLoading(true);
 
     try {
@@ -36,22 +37,15 @@ export default function LoginPage() {
         localStorage.setItem("userId", userId);
       }
 
-      showSuccess("Logged in successfully!");
       navigate("/");
     } catch (err) {
       const axiosError = err as AxiosError<LoginApiError>;
       const errorCode = axiosError.response?.data?.error?.code;
       if (errorCode === "AUTH_009") {
-        showError("Too many login attempts. Please try again later.");
-        return;
+        setErrorMessage("로그인 시도가 너무 많습니다. 잠시 후 다시 시도해 주세요.");
+      } else {
+        setErrorMessage(extractApiErrorMessage(err, "로그인에 실패했습니다."));
       }
-
-      const errorMessage =
-        axiosError.response?.data?.error?.message ||
-        axiosError.response?.data?.message ||
-        axiosError.message ||
-        "Login failed.";
-      showError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -99,6 +93,10 @@ export default function LoginPage() {
             placeholder="••••••••"
           />
         </div>
+
+        {errorMessage && (
+          <p className="font-mono text-sm text-red-600">{errorMessage}</p>
+        )}
 
         <button
           type="submit"

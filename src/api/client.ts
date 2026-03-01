@@ -1,4 +1,8 @@
-import axios from "axios";
+import axios, {
+  AxiosError,
+  AxiosHeaders,
+  type InternalAxiosRequestConfig,
+} from "axios";
 import { getUserIdFromToken } from "../utils/authToken";
 
 const apiClient = axios.create({
@@ -9,17 +13,28 @@ const apiClient = axios.create({
 });
 
 let isRefreshing = false;
+type RetryableRequestConfig = InternalAxiosRequestConfig & { _retry?: boolean };
+type ApiEnvelope<T = unknown> = {
+  result: "SUCCESS" | "ERROR";
+  data?: T;
+  error?: { code?: string; message?: string } | null;
+  message?: string;
+};
+
 let failedQueue: Array<{
   resolve: (token: string) => void;
-  reject: (error: any) => void;
+  reject: (error: unknown) => void;
 }> = [];
 
-const processQueue = (error: any, token: string | null = null) => {
+const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);
-    } else {
-      prom.resolve(token!);
+      return;
+    }
+
+    if (token != null) {
+      prom.resolve(token);
     }
   });
 
@@ -56,15 +71,28 @@ const extractApiError = (data: unknown): ApiErrorPayload | null => {
   return null;
 };
 
+const setAuthorizationHeader = (
+  config: RetryableRequestConfig,
+  token: string
+) => {
+  const headers = AxiosHeaders.from(config.headers);
+  headers.set("Authorization", `Bearer ${token}`);
+  config.headers = headers;
+};
+
 apiClient.interceptors.request.use(
   (config) => {
-    if (!config.headers.Authorization) {
+    const requestConfig = config as RetryableRequestConfig;
+    const headers = AxiosHeaders.from(requestConfig.headers);
+    const hasAuthorizationHeader = headers.has("Authorization");
+
+    if (!hasAuthorizationHeader) {
       const token = localStorage.getItem("accessToken");
       if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+        setAuthorizationHeader(requestConfig, token);
       }
     }
-    return config;
+    return requestConfig;
   },
   (error) => Promise.reject(error)
 );
@@ -72,10 +100,10 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => {
     if (response.data && typeof response.data === "object" && "result" in response.data) {
-      const apiResponse = response.data as { result: string; data: any; error: any };
+      const apiResponse = response.data as ApiEnvelope;
 
       if (apiResponse.result === "SUCCESS") {
-        response.data = apiResponse.data;
+        response.data = apiResponse.data ?? null;
       } else if (apiResponse.result === "ERROR") {
         const errorMessage = apiResponse.error?.message || "API request failed";
         return Promise.reject(new Error(errorMessage));
@@ -83,10 +111,11 @@ apiClient.interceptors.response.use(
     }
     return response;
   },
-  async (error) => {
-    const originalRequest = error.config;
+  async (error: AxiosError<unknown>) => {
+    const originalRequest = error.config as RetryableRequestConfig | undefined;
     const status = error.response?.status;
     const requestUrl = originalRequest?.url || "";
+    const method = String(originalRequest?.method || "get").toLowerCase();
     const currentPath = window.location.pathname;
     const apiError = extractApiError(error.response?.data);
     if (apiError?.message) {
@@ -107,17 +136,22 @@ apiClient.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    if (status === 401 && requestUrl.includes("/posts") && !requestUrl.includes("/drafts")) {
+    const isPublicPostReadEndpoint =
+      method === "get" &&
+      requestUrl.startsWith("/v1/posts") &&
+      !requestUrl.includes("/drafts");
+
+    if (status === 401 && isPublicPostReadEndpoint) {
       return Promise.reject(error);
     }
 
-    if (status === 401 && !originalRequest._retry) {
+    if (status === 401 && originalRequest && !originalRequest._retry) {
       if (isRefreshing) {
-        return new Promise((resolve, reject) => {
+        return new Promise<string>((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
           .then((token) => {
-            originalRequest.headers.Authorization = `Bearer ${token}`;
+            setAuthorizationHeader(originalRequest, token);
             return apiClient(originalRequest);
           })
           .catch((err) => {
@@ -137,15 +171,16 @@ apiClient.interceptors.response.use(
       }
 
       try {
-        const response = await axios.post(
-          `${import.meta.env.VITE_API_BASE_URL}/v1/users/refresh`,
-          { refreshToken },
-          { headers: { "Content-Type": "application/json" } }
+        const tokenData = await apiClient.post<{
+          accessToken: string;
+          refreshToken: string;
+        }>(
+          "/v1/users/refresh",
+          { refreshToken }
         );
 
-        const tokenData = response.data?.data ?? response.data;
-        const newAccessToken = tokenData.accessToken;
-        const newRefreshToken = tokenData.refreshToken;
+        const newAccessToken = tokenData.data.accessToken;
+        const newRefreshToken = tokenData.data.refreshToken;
         const userId = getUserIdFromToken(newAccessToken);
 
         localStorage.setItem("accessToken", newAccessToken);
@@ -156,9 +191,9 @@ apiClient.interceptors.response.use(
 
         processQueue(null, newAccessToken);
 
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        setAuthorizationHeader(originalRequest, newAccessToken);
         return apiClient(originalRequest);
-      } catch (refreshError) {
+      } catch (refreshError: unknown) {
         processQueue(refreshError, null);
         clearAuthData();
         window.location.href = "/login";
@@ -166,11 +201,6 @@ apiClient.interceptors.response.use(
       } finally {
         isRefreshing = false;
       }
-    }
-
-    if (status === 403) {
-      clearAuthData();
-      window.location.href = "/login";
     }
 
     return Promise.reject(error);

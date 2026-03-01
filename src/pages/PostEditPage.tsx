@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { postApi } from "../api/post";
 import { categoryApi } from "../api/category";
 import type { Category } from "../types";
-import { useAlert } from "../contexts/AlertContext";
+import { useAlert } from "../contexts/useAlert";
 import TipTapEditor from "../components/editor/TipTapEditor";
 import PageLayout from "../components/common/PageLayout";
 import Spinner from "../components/common/Spinner";
@@ -18,32 +18,24 @@ export default function PostEditPage() {
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
-  const { showSuccess, showError, showWarning } = useAlert();
+  const { showError, showWarning } = useAlert();
 
-  useEffect(() => {
-    const loadData = async () => {
-      await loadCategories();
-      await loadPost();
-    };
-    loadData();
-  }, []);
-
-  const loadCategories = async () => {
+  const loadCategories = useCallback(async () => {
     try {
       const data = await categoryApi.getCategories();
       setCategories(data);
     } catch {
-      showError("Failed to load categories.");
+      showError("카테고리를 불러오지 못했습니다.");
     }
-  };
+  }, [showError]);
 
-  const loadPost = async () => {
+  const loadPost = useCallback(async () => {
     try {
       const data = await postApi.getPost(Number(postId));
       const userId = localStorage.getItem("userId");
 
       if (String(data.userId) !== userId) {
-        showError("You do not have permission to edit this post.");
+        showError("이 게시글을 수정할 권한이 없습니다.");
         setLoadError(true);
         setInitialLoading(false);
         return;
@@ -53,24 +45,32 @@ export default function PostEditPage() {
       setTitle(data.title);
       setContent(data.content);
     } catch {
-      showError("Post not found.");
+      showError("게시글을 찾을 수 없습니다.");
       setLoadError(true);
     } finally {
       setInitialLoading(false);
     }
-  };
+  }, [postId, showError]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      await loadCategories();
+      await loadPost();
+    };
+    void loadData();
+  }, [loadCategories, loadPost]);
 
   const validateForm = (): boolean => {
     if (!categoryId) {
-      showWarning("Please select a category.");
+      showWarning("카테고리를 선택해 주세요.");
       return false;
     }
     if (!title.trim()) {
-      showWarning("Please enter a title.");
+      showWarning("제목을 입력해 주세요.");
       return false;
     }
     if (!content.trim()) {
-      showWarning("Please enter content.");
+      showWarning("본문을 입력해 주세요.");
       return false;
     }
     return true;
@@ -88,19 +88,16 @@ export default function PostEditPage() {
         isDraft,
       });
 
-      showSuccess(isDraft ? "Saved as draft." : "Post updated successfully.");
       navigate(isDraft ? "/admin/posts" : `/posts/${postId}`);
     } catch {
-      showError("Failed to update post.");
+      showError("게시글 수정에 실패했습니다.");
     } finally {
       setLoading(false);
     }
   };
 
   const handleCancel = () => {
-    if (window.confirm("Are you sure you want to cancel editing?")) {
-      navigate(`/posts/${postId}`);
-    }
+    navigate(`/posts/${postId}`);
   };
 
   if (initialLoading) {

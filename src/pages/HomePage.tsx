@@ -1,14 +1,15 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { postApi } from "../api/post";
 import { categoryApi } from "../api/category";
-import type { Post, Category } from "../types";
+import type { PostSummary, Category } from "../types";
 import { Link } from "react-router-dom";
 import Spinner from "../components/common/Spinner";
 import { formatDate } from "../utils/format";
 import { PAGINATION } from "../constants/pagination";
 
 export default function HomePage() {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<PostSummary[]>([]);
+  const [popularPosts, setPopularPosts] = useState<PostSummary[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -19,32 +20,25 @@ export default function HomePage() {
   const [initialLoading, setInitialLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const init = async () => {
-      await loadCategories();
-      setInitialLoading(false);
-    };
-    init();
-  }, []);
-
-  useEffect(() => {
-    setCurrentPage(0);
-  }, [selectedCategory, searchQuery]);
-
-  useEffect(() => {
-    loadPosts();
-  }, [selectedCategory, searchQuery, currentPage]);
-
-  const loadCategories = async () => {
+  const loadCategories = useCallback(async () => {
     try {
       const data = await categoryApi.getCategories();
       setCategories(data || []);
     } catch {
       setError("Failed to load categories.");
     }
-  };
+  }, []);
 
-  const loadPosts = async () => {
+  const loadPopularPosts = useCallback(async () => {
+    try {
+      const data = await postApi.getPopularPosts(PAGINATION.POPULAR_POSTS_LIMIT);
+      setPopularPosts(data || []);
+    } catch {
+      setPopularPosts([]);
+    }
+  }, []);
+
+  const loadPosts = useCallback(async () => {
     try {
       setPostsLoading(true);
       setError(null);
@@ -62,7 +56,26 @@ export default function HomePage() {
     } finally {
       setPostsLoading(false);
     }
-  };
+  }, [currentPage, searchQuery, selectedCategory]);
+
+  useEffect(() => {
+    const init = async () => {
+      try {
+        await Promise.all([loadCategories(), loadPopularPosts()]);
+      } finally {
+        setInitialLoading(false);
+      }
+    };
+    void init();
+  }, [loadCategories, loadPopularPosts]);
+
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [selectedCategory, searchQuery]);
+
+  useEffect(() => {
+    void loadPosts();
+  }, [loadPosts]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,14 +112,12 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col h-full w-full lg:px-8 px-4 py-8">
-      {/* Header */}
       <div className="mb-6">
         <h2 className="text-text lg:text-[5rem] text-[3rem] leading-[1.1] tracking-tighter font-bold">
           Feed
         </h2>
       </div>
 
-      {/* Search */}
       <form onSubmit={handleSearch} className="mb-8">
         <div className="flex gap-3 items-center border-b border-gray-400 pb-2">
           <svg className="w-4 h-4 text-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -134,9 +145,28 @@ export default function HomePage() {
         </div>
       </form>
 
-      {/* Content */}
+      {popularPosts.length > 0 && (
+        <div className="mb-8">
+          <span className="text-xs font-mono text-muted uppercase tracking-wide mb-3 block">Popular</span>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            {popularPosts.map((post, index) => (
+              <Link
+                key={post.id}
+                to={`/posts/${post.id}`}
+                className="group flex flex-col gap-2 border border-gray-300 p-3 hover:border-gray-500 transition-colors"
+              >
+                <span className="font-mono text-xs text-muted">#{index + 1}</span>
+                <span className="font-mono text-sm text-text leading-snug line-clamp-2 group-hover:text-muted transition-colors">
+                  {post.title}
+                </span>
+                <span className="font-mono text-xs text-muted mt-auto">{post.viewCount} views</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="flex lg:flex-row flex-col lg:gap-x-10 gap-y-6">
-        {/* Category Filter (Sidebar) */}
         {categories.length > 0 && (
           <div className="flex flex-col lg:w-44 w-full shrink-0">
             <div className="flex items-center justify-between mb-3">
@@ -183,16 +213,13 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* Post List */}
         <div className="flex flex-col lg:w-0 flex-grow pb-16">
-          {/* Column Headers */}
           <div className="w-full flex h-8 text-xs font-mono text-muted uppercase tracking-wide border-b border-gray-400">
             <span className="w-28 shrink-0">Date</span>
             <span className="flex-1">Title</span>
             <span className="w-16 text-right hidden sm:block">Views</span>
           </div>
 
-          {/* Post Rows */}
           <div className="flex flex-col w-full">
             {postsLoading ? (
               <div className="flex justify-center py-16">
@@ -228,7 +255,6 @@ export default function HomePage() {
                   </Link>
                 ))}
 
-                {/* Pagination */}
                 {(currentPage > 0 || hasNext) && (
                   <div className="flex justify-center items-center gap-8 mt-10 pt-6 font-mono text-xs">
                     <button

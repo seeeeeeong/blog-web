@@ -1,7 +1,6 @@
 import { useState } from "react";
 import type { Comment } from "../../types";
-import { useGitHubAuth } from "../../contexts/GitHubAuthContext";
-import { useAlert } from "../../contexts/AlertContext";
+import { useGitHubAuth } from "../../contexts/useGitHubAuth";
 import CommentForm from "./CommentForm";
 
 interface CommentItemProps {
@@ -19,15 +18,11 @@ export default function CommentItem({
 }: CommentItemProps) {
   const [showReplyForm, setShowReplyForm] = useState(false);
   const { user } = useGitHubAuth();
-  const { showConfirm } = useAlert();
 
-  const isAuthor = user?.githubId === comment.githubId;
+  const isAuthor = user?.githubId === comment.oauthId;
 
-  const handleDelete = async () => {
-    const confirmed = await showConfirm("Are you sure you want to delete this comment?");
-    if (confirmed) {
-      onDelete(comment.id);
-    }
+  const handleDelete = () => {
+    onDelete(comment.id);
   };
 
   const handleReplySubmit = async (content: string) => {
@@ -52,20 +47,20 @@ export default function CommentItem({
   };
 
   return (
-    <div className="space-y-0">
-      <div className="border-b border-gray-300 py-4">
+    <div className="space-y-2">
+      <div className="rounded-md border border-gray-300 bg-white/70 px-4 py-3">
         <div className="flex gap-3">
           <div className="shrink-0">
-            {comment.githubAvatarUrl ? (
+            {comment.oauthAvatarUrl ? (
               <img
-                src={comment.githubAvatarUrl}
-                alt={comment.githubUsername}
-                className="w-8 h-8 rounded-full border border-border"
+                src={comment.oauthAvatarUrl}
+                alt={comment.oauthUsername}
+                className="h-9 w-9 rounded-full border border-border"
               />
             ) : (
-              <div className="w-8 h-8 rounded-full bg-text flex items-center justify-center">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-text">
                 <span className="text-white text-xs font-mono font-bold">
-                  {comment.githubUsername[0]}
+                  {comment.oauthUsername[0]}
                 </span>
               </div>
             )}
@@ -74,7 +69,7 @@ export default function CommentItem({
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2 flex-wrap">
               <span className="text-sm font-mono font-semibold text-text">
-                {comment.githubUsername}
+                {comment.oauthUsername}
               </span>
               {isAuthor && (
                 <span className="px-1.5 py-0.5 text-xs font-mono border border-border text-muted">
@@ -91,11 +86,11 @@ export default function CommentItem({
               dangerouslySetInnerHTML={{ __html: comment.contentHtml }}
             />
 
-            <div className="flex items-center gap-4 font-mono text-xs">
+            <div className="flex items-center gap-2 font-mono text-xs">
               {user && (
                 <button
                   onClick={() => setShowReplyForm(!showReplyForm)}
-                  className="text-gray-800 hover:text-text underline"
+                  className="rounded border border-gray-300 bg-gray-100 px-2 py-0.5 text-gray-800 transition-colors hover:bg-gray-200 hover:text-text"
                 >
                   {showReplyForm ? "CANCEL" : "REPLY"}
                 </button>
@@ -103,7 +98,7 @@ export default function CommentItem({
               {isAuthor && (
                 <button
                   onClick={handleDelete}
-                  className="text-red-600 hover:text-red-700 underline"
+                  className="rounded border border-red-200 bg-red-50 px-2 py-0.5 text-red-700 transition-colors hover:bg-red-100"
                 >
                   DELETE
                 </button>
@@ -114,7 +109,7 @@ export default function CommentItem({
       </div>
 
       {showReplyForm && (
-        <div className="ml-11 pl-4 border-l-2 border-gray-300 py-4">
+        <div className="ml-8 border-l border-gray-300 pl-4">
           <CommentForm
             onSubmit={handleReplySubmit}
             placeholder="Write a reply..."
@@ -125,7 +120,7 @@ export default function CommentItem({
       )}
 
       {comment.replies && comment.replies.length > 0 && (
-        <div className="ml-11 pl-4 border-l-2 border-gray-300">
+        <div className="ml-8 space-y-3 border-l border-gray-300 pl-4">
           {comment.replies.map((reply) => (
             <CommentItem
               key={reply.id}

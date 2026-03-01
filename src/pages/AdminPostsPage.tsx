@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { adminApi } from "../api/admin";
 import { postApi } from "../api/post";
-import type { Post } from "../types";
-import { useAlert } from "../contexts/AlertContext";
+import type { PostSummary } from "../types";
+import { useAlert } from "../contexts/useAlert";
 import PageLayout from "../components/common/PageLayout";
 import { PAGINATION } from "../constants/pagination";
 import { formatDate } from "../utils/format";
@@ -12,22 +12,18 @@ import Spinner from "../components/common/Spinner";
 type FilterType = "all" | "published" | "draft";
 
 export default function AdminPostsPage() {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<PostSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
   const [hasNext, setHasNext] = useState(false);
   const [filter, setFilter] = useState<FilterType>("all");
-  const { showSuccess, showError, showConfirm } = useAlert();
+  const { showError } = useAlert();
 
   useEffect(() => {
     setCurrentPage(0);
   }, [filter]);
 
-  useEffect(() => {
-    loadPosts();
-  }, [currentPage, filter]);
-
-  const loadPosts = async () => {
+  const loadPosts = useCallback(async () => {
     try {
       setLoading(true);
       if (filter === "draft") {
@@ -55,22 +51,22 @@ export default function AdminPostsPage() {
       setPosts(merged);
       setHasNext((published.hasNext || false) || (draft.hasNext || false));
     } catch {
-      showError("Failed to load posts.");
+      showError("게시글 목록을 불러오지 못했습니다.");
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, filter, showError]);
+
+  useEffect(() => {
+    void loadPosts();
+  }, [loadPosts]);
 
   const handleDelete = async (postId: number) => {
-    const confirmed = await showConfirm("Are you sure you want to delete this post?");
-    if (!confirmed) return;
-
     try {
       await adminApi.deletePost(postId);
-      showSuccess("Deleted successfully.");
-      loadPosts();
+      await loadPosts();
     } catch {
-      showError("Failed to delete post.");
+      showError("게시글 삭제에 실패했습니다.");
     }
   };
 
@@ -89,7 +85,6 @@ export default function AdminPostsPage() {
           </Link>
         </div>
 
-        {/* Filter */}
         <div className="flex items-center gap-4 mb-6 border-b border-gray-500 pb-3 font-mono text-sm">
           <span className="text-muted">Filter:</span>
           {(["all", "published", "draft"] as FilterType[]).map((f) => (
@@ -107,7 +102,6 @@ export default function AdminPostsPage() {
           ))}
         </div>
 
-        {/* Post Table */}
         {loading ? (
           <div className="flex justify-center py-16">
             <Spinner />
@@ -115,7 +109,6 @@ export default function AdminPostsPage() {
         ) : (
           <>
             <div className="w-full">
-              {/* Table Header */}
               <div className="flex items-center font-mono text-sm text-muted border-b border-gray-500 pb-2">
                 <span className="w-5/12">TITLE</span>
                 <span className="w-2/12">STATUS</span>
@@ -124,7 +117,6 @@ export default function AdminPostsPage() {
                 <span className="w-2/12 text-right">ACTIONS</span>
               </div>
 
-              {/* Table Rows */}
               {posts.length === 0 ? (
                 <div className="py-12 text-center">
                   <p className="text-sm font-mono text-muted">No posts found.</p>
@@ -171,7 +163,6 @@ export default function AdminPostsPage() {
               )}
             </div>
 
-            {/* Pagination */}
             {(currentPage > 0 || hasNext) && (
               <div className="flex justify-center items-center gap-8 mt-10 pt-6 font-mono text-sm">
                 <button

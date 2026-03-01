@@ -31,11 +31,11 @@ import {
   Highlighter,
   Minus,
 } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import TurndownService from 'turndown';
 import { marked } from 'marked';
 import { uploadImageDirectly } from '../../api/image';
-import { useAlert } from '../../contexts/AlertContext';
+import { useAlert } from '../../contexts/useAlert';
 
 interface TipTapEditorProps {
   value: string;
@@ -65,6 +65,8 @@ turndownService.addRule('images', {
 export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { showError } = useAlert();
+  const [showLinkInput, setShowLinkInput] = useState(false);
+  const [linkUrl, setLinkUrl] = useState("");
 
   const editor = useEditor({
     extensions: [
@@ -131,7 +133,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
                   editor.chain().focus().setImage({ src: imageUrl }).run();
                 })
                 .catch(() => {
-                  showError('Failed to upload image.');
+                  showError("이미지 업로드에 실패했습니다.");
                 });
             }
           }
@@ -173,26 +175,31 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         const imageUrl = await uploadImageDirectly(file);
         editor.chain().focus().setImage({ src: imageUrl }).run();
       } catch {
-        showError('Failed to upload image.');
+        showError("이미지 업로드에 실패했습니다.");
       }
     }
     event.target.value = '';
   };
 
   const setLink = () => {
-    const previousUrl = editor.getAttributes('link').href;
-    const url = window.prompt('Enter URL for link:', previousUrl);
-
-    if (url === null) {
+    if (showLinkInput) {
+      setShowLinkInput(false);
+      setLinkUrl("");
       return;
     }
+    const previousUrl = (editor.getAttributes('link').href as string) || "";
+    setLinkUrl(previousUrl);
+    setShowLinkInput(true);
+  };
 
-    if (url === '') {
+  const applyLink = () => {
+    if (linkUrl === "") {
       editor.chain().focus().extendMarkRange('link').unsetLink().run();
-      return;
+    } else {
+      editor.chain().focus().extendMarkRange('link').setLink({ href: linkUrl }).run();
     }
-
-    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+    setShowLinkInput(false);
+    setLinkUrl("");
   };
 
   const MenuButton = ({
@@ -387,6 +394,37 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
           <Redo size={18} />
         </MenuButton>
       </div>
+
+      {showLinkInput && (
+        <div className="border-b border-border bg-white px-4 py-2 flex items-center gap-2">
+          <input
+            type="url"
+            value={linkUrl}
+            onChange={(e) => setLinkUrl(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") { e.preventDefault(); applyLink(); }
+              if (e.key === "Escape") { setShowLinkInput(false); setLinkUrl(""); }
+            }}
+            placeholder="https://..."
+            className="flex-1 px-2 py-1 border border-border font-mono text-sm focus:outline-none focus:border-text bg-transparent"
+            autoFocus
+          />
+          <button
+            type="button"
+            onClick={applyLink}
+            className="font-mono text-xs px-3 py-1 bg-text text-white hover:bg-gray-800"
+          >
+            Apply
+          </button>
+          <button
+            type="button"
+            onClick={() => { setShowLinkInput(false); setLinkUrl(""); }}
+            className="font-mono text-xs px-3 py-1 border border-gray-300 text-muted hover:text-text"
+          >
+            Cancel
+          </button>
+        </div>
+      )}
 
       <EditorContent editor={editor} />
     </div>

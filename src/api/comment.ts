@@ -1,77 +1,72 @@
 import apiClient from "./client";
 import type { Comment, CreateCommentRequest, UpdateCommentRequest } from "../types";
 
-const mapComment = (comment: any): Comment => {
-  const githubId = comment.githubId ?? comment.oauthId;
-  const githubUsername = comment.githubUsername ?? comment.oauthUsername;
-  const githubAvatarUrl = comment.githubAvatarUrl ?? comment.oauthAvatarUrl ?? null;
-  const parentId = comment.parentId === 0 ? null : comment.parentId;
+interface CommentPayload {
+  id: number;
+  postId: number;
+  oauthId: string;
+  oauthUsername: string;
+  oauthAvatarUrl: string | null;
+  parentId: number | null;
+  content: string;
+  contentHtml: string;
+  createdAt: string;
+  updatedAt: string;
+  replies?: CommentPayload[];
+}
 
-  return {
-    id: comment.id,
-    postId: comment.postId,
-    githubId,
-    githubUsername,
-    githubAvatarUrl,
-    parentId,
-    content: comment.content,
-    contentHtml: comment.contentHtml,
-    createdAt: comment.createdAt,
-    updatedAt: comment.updatedAt,
-    replies: Array.isArray(comment.replies) ? comment.replies.map(mapComment) : [],
-  };
-};
+const mapComment = (comment: CommentPayload): Comment => ({
+  id: comment.id,
+  postId: comment.postId,
+  oauthId: comment.oauthId,
+  oauthUsername: comment.oauthUsername,
+  oauthAvatarUrl: comment.oauthAvatarUrl,
+  parentId: comment.parentId === 0 ? null : comment.parentId,
+  content: comment.content,
+  contentHtml: comment.contentHtml,
+  createdAt: comment.createdAt,
+  updatedAt: comment.updatedAt,
+  replies: Array.isArray(comment.replies) ? comment.replies.map(mapComment) : [],
+});
 
 export const commentApi = {
-  // 댓글 목록 조회
   getComments: async (postId: number): Promise<Comment[]> => {
-    const response = await apiClient.get(`/v1/posts/${postId}/comments`);
+    const response = await apiClient.get<CommentPayload[]>(`/v1/posts/${postId}/comments`);
     return response.data.map(mapComment);
   },
 
-  // 댓글 작성
   createComment: async (
     postId: number,
     data: CreateCommentRequest,
-    githubToken: string
+    oauthToken: string
   ): Promise<Comment> => {
-    const response = await apiClient.post(`/v1/posts/${postId}/comments`, data, {
-      headers: {
-        Authorization: `Bearer ${githubToken}`,
-      },
+    const response = await apiClient.post<CommentPayload>(`/v1/posts/${postId}/comments`, data, {
+      headers: { Authorization: `Bearer ${oauthToken}` },
     });
     return mapComment(response.data);
   },
 
-  // 댓글 수정
   updateComment: async (
     postId: number,
     commentId: number,
     data: UpdateCommentRequest,
-    githubToken: string
+    oauthToken: string
   ): Promise<Comment> => {
-    const response = await apiClient.put(
+    const response = await apiClient.put<CommentPayload>(
       `/v1/posts/${postId}/comments/${commentId}`,
       data,
-      {
-        headers: {
-          Authorization: `Bearer ${githubToken}`,
-        },
-      }
+      { headers: { Authorization: `Bearer ${oauthToken}` } }
     );
     return mapComment(response.data);
   },
 
-  // 댓글 삭제
   deleteComment: async (
     postId: number,
     commentId: number,
-    githubToken: string
+    oauthToken: string
   ): Promise<void> => {
     await apiClient.delete(`/v1/posts/${postId}/comments/${commentId}`, {
-      headers: {
-        Authorization: `Bearer ${githubToken}`,
-      },
+      headers: { Authorization: `Bearer ${oauthToken}` },
     });
   },
 };

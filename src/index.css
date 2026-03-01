@@ -42,7 +42,6 @@
   @apply outline-none ring-1 ring-gray-400 ring-offset-1;
 }
 
-/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -81,7 +80,6 @@
   transition: all 0.2s ease;
 }
 
-/* Spinner */
 .spinner-modern {
   width: 24px;
   height: 24px;
@@ -95,7 +93,6 @@
   to { transform: rotate(360deg); }
 }
 
-/* Alert animations */
 @keyframes slideInRight {
   from {
     opacity: 0;
@@ -111,23 +108,17 @@
   animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-[role="alert"] {
-  transition: all 0.2s ease;
+@keyframes toast-shrink {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
 }
 
 @media (max-width: 640px) {
-  .fixed.bottom-6.right-6 {
-    left: 1rem;
-    right: 1rem;
-    bottom: 1rem;
-  }
-
   [role="alert"] {
-    max-width: 100%;
+    width: calc(100vw - 2rem);
   }
 }
 
-/* Markdown Viewer */
 .markdown-viewer {
   font-size: 1.0625rem;
   line-height: 1.8;
@@ -357,7 +348,6 @@
   }
 }
 
-/* TipTap Editor */
 .ProseMirror {
   outline: none;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
@@ -514,7 +504,6 @@
   text-decoration: underline;
 }
 
-/* Comment Content */
 .comment-content ul,
 .comment-content ol {
   margin: 0.5rem 0;
@@ -589,7 +578,6 @@
   font-size: 0.875em;
 }
 
-/* UIW Markdown Editor */
 .w-md-editor {
   box-shadow: none !important;
   border: 1px solid #9ca3af !important;

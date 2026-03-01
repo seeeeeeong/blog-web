@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useGitHubAuth } from "../../contexts/GitHubAuthContext";
+import { useGitHubAuth } from "../../contexts/useGitHubAuth";
 
 interface CommentFormProps {
   onSubmit: (content: string) => void;
@@ -35,7 +35,7 @@ export default function CommentForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       {user && (
-        <div className="flex items-center gap-2 pb-3 mb-3 border-b border-gray-300">
+        <div className="mb-2 flex items-center gap-2">
           {user.githubAvatarUrl && (
             <img
               src={user.githubAvatarUrl}
@@ -56,7 +56,7 @@ export default function CommentForm({
         autoFocus={autoFocus}
         rows={3}
         maxLength={1000}
-        className="block w-full border border-gray-300 bg-white p-3 text-text placeholder:text-gray-400 focus:outline-none focus:border-text text-sm font-mono resize-none transition-colors"
+        className="block w-full resize-none rounded-md border border-gray-300 bg-white p-3 text-sm font-mono text-text placeholder:text-gray-400 transition-colors focus:border-text focus:outline-none"
       />
 
       <div className="flex justify-between items-center">
@@ -66,7 +66,7 @@ export default function CommentForm({
         <button
           type="submit"
           disabled={!content.trim() || isSubmitting}
-          className="font-mono text-sm px-4 py-1.5 bg-text text-white hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="rounded-md bg-text px-4 py-1.5 font-mono text-sm text-white transition-colors hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-40"
         >
           {isSubmitting ? "..." : buttonText}
         </button>

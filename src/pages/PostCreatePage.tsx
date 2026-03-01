@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { postApi } from "../api/post";
 import { categoryApi } from "../api/category";
 import type { Category } from "../types";
-import { useAlert } from "../contexts/AlertContext";
+import { useAlert } from "../contexts/useAlert";
 import TipTapEditor from "../components/editor/TipTapEditor";
 import PageLayout from "../components/common/PageLayout";
 
@@ -14,13 +14,9 @@ export default function PostCreatePage() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
-  const { showSuccess, showError, showWarning } = useAlert();
+  const { showError, showWarning } = useAlert();
 
-  useEffect(() => {
-    loadCategories();
-  }, []);
-
-  const loadCategories = async () => {
+  const loadCategories = useCallback(async () => {
     try {
       const data = await categoryApi.getCategories();
       setCategories(data);
@@ -28,21 +24,25 @@ export default function PostCreatePage() {
         setCategoryId(data[0].id);
       }
     } catch {
-      showError("Failed to load categories.");
+      showError("카테고리를 불러오지 못했습니다.");
     }
-  };
+  }, [showError]);
+
+  useEffect(() => {
+    void loadCategories();
+  }, [loadCategories]);
 
   const validateForm = (): boolean => {
     if (!categoryId) {
-      showWarning("Please select a category.");
+      showWarning("카테고리를 선택해 주세요.");
       return false;
     }
     if (!title.trim()) {
-      showWarning("Please enter a title.");
+      showWarning("제목을 입력해 주세요.");
       return false;
     }
     if (!content.trim()) {
-      showWarning("Please enter content.");
+      showWarning("본문을 입력해 주세요.");
       return false;
     }
     return true;
@@ -60,23 +60,16 @@ export default function PostCreatePage() {
         isDraft,
       });
 
-      showSuccess(isDraft ? "Saved as draft." : "Post created successfully.");
       navigate(isDraft ? "/admin/posts" : `/posts/${newPost.id}`);
     } catch {
-      showError("Failed to create post.");
+      showError("게시글 등록에 실패했습니다.");
     } finally {
       setLoading(false);
     }
   };
 
   const handleCancel = () => {
-    if (title || content) {
-      if (window.confirm("You have unsaved changes. Are you sure you want to leave?")) {
-        navigate("/");
-      }
-    } else {
-      navigate("/");
-    }
+    navigate("/");
   };
 
   return (

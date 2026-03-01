@@ -1,16 +1,18 @@
+import { lazy, Suspense, type JSX } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AlertProvider } from "./contexts/AlertContext";
 import { GitHubAuthProvider } from "./contexts/GitHubAuthContext";
-import HomePage from "./pages/HomePage";
-import LoginPage from "./pages/LoginPage";
-import PostDetailPage from "./pages/PostDetailPage";
-import PostCreatePage from "./pages/PostCreatePage";
-import PostEditPage from "./pages/PostEditPage";
-import AuthCallbackPage from "./pages/AuthCallbackPage";
-import AdminPostsPage from "./pages/AdminPostsPage";
 import Layout from "./components/common/Layout";
-import type { JSX } from "react";
 import { isAdminToken } from "./utils/authToken";
+import Spinner from "./components/common/Spinner";
+
+const HomePage = lazy(() => import("./pages/HomePage"));
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const PostDetailPage = lazy(() => import("./pages/PostDetailPage"));
+const PostCreatePage = lazy(() => import("./pages/PostCreatePage"));
+const PostEditPage = lazy(() => import("./pages/PostEditPage"));
+const AuthCallbackPage = lazy(() => import("./pages/AuthCallbackPage"));
+const AdminPostsPage = lazy(() => import("./pages/AdminPostsPage"));
 
 function PrivateRoute({ children }: { children: JSX.Element }) {
   const token = localStorage.getItem("accessToken");
@@ -28,39 +30,47 @@ function App() {
     <AlertProvider>
       <GitHubAuthProvider>
         <BrowserRouter>
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/auth/callback" element={<AuthCallbackPage />} />
+          <Suspense
+            fallback={
+              <div className="flex min-h-screen items-center justify-center">
+                <Spinner />
+              </div>
+            }
+          >
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/auth/callback" element={<AuthCallbackPage />} />
 
-            <Route element={<Layout />}>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/posts/:postId" element={<PostDetailPage />} />
-              <Route 
-                path="/posts/create" 
-                element={
-                  <PrivateRoute>
-                    <PostCreatePage />
-                  </PrivateRoute>
-                } 
-              />
-              <Route 
-                path="/posts/:postId/edit" 
-                element={
-                  <PrivateRoute>
-                    <PostEditPage />
-                  </PrivateRoute>
-                } 
-              />
-              <Route 
-                path="/admin/posts" 
-                element={
-                  <PrivateRoute>
-                    <AdminPostsPage />
-                  </PrivateRoute>
-                } 
-              />
-            </Route>
-          </Routes>
+              <Route element={<Layout />}>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/posts/:postId" element={<PostDetailPage />} />
+                <Route
+                  path="/posts/create"
+                  element={
+                    <PrivateRoute>
+                      <PostCreatePage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/posts/:postId/edit"
+                  element={
+                    <PrivateRoute>
+                      <PostEditPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/admin/posts"
+                  element={
+                    <PrivateRoute>
+                      <AdminPostsPage />
+                    </PrivateRoute>
+                  }
+                />
+              </Route>
+            </Routes>
+          </Suspense>
         </BrowserRouter>
       </GitHubAuthProvider>
     </AlertProvider>
