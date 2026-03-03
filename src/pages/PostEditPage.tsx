@@ -31,15 +31,7 @@ export default function PostEditPage() {
 
   const loadPost = useCallback(async () => {
     try {
-      const data = await postApi.getPost(Number(postId));
-      const userId = localStorage.getItem("userId");
-
-      if (String(data.userId) !== userId) {
-        showError("이 게시글을 수정할 권한이 없습니다.");
-        setLoadError(true);
-        setInitialLoading(false);
-        return;
-      }
+      const data = await postApi.getPostForAdmin(Number(postId));
 
       setCategoryId(data.categoryId);
       setTitle(data.title);

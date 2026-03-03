@@ -12,6 +12,11 @@ export const postApi = {
     return response.data;
   },
 
+  getPostForAdmin: async (postId: number): Promise<Post> => {
+    const response = await apiClient.get(`/v1/posts/${postId}/admin`);
+    return response.data;
+  },
+
   createPost: async (data: CreatePostRequest): Promise<Post> => {
     const response = await apiClient.post('/v1/posts', data);
     return response.data;
