@@ -74,6 +74,9 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
   const { showError } = useAlert();
   const [showLinkInput, setShowLinkInput] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
+  const [showTableInput, setShowTableInput] = useState(false);
+  const [tableRows, setTableRows] = useState("3");
+  const [tableCols, setTableCols] = useState("3");
 
   const editor = useEditor({
     extensions: [
@@ -214,6 +217,17 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
     }
     setShowLinkInput(false);
     setLinkUrl("");
+  };
+
+  const openTableInput = () => {
+    setShowTableInput((prev) => !prev);
+  };
+
+  const insertTable = () => {
+    const rows = Math.max(1, Math.min(20, Number.parseInt(tableRows, 10) || 3));
+    const cols = Math.max(1, Math.min(20, Number.parseInt(tableCols, 10) || 3));
+    editor.chain().focus().insertTable({ rows, cols, withHeaderRow: true }).run();
+    setShowTableInput(false);
   };
 
   const MenuButton = ({
@@ -393,9 +407,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         </MenuButton>
 
         <MenuButton
-          onClick={() =>
-            editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
-          }
+          onClick={openTableInput}
           isActive={editor.isActive('table')}
           title="Insert table"
         >
@@ -447,6 +459,93 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
           >
             Cancel
           </button>
+        </div>
+      )}
+
+      {(showTableInput || editor.isActive('table')) && (
+        <div className="border-b border-border bg-white px-4 py-2 flex flex-wrap items-center gap-2">
+          {showTableInput && (
+            <>
+              <span className="font-mono text-xs text-muted">Table</span>
+              <label className="font-mono text-xs text-muted flex items-center gap-1">
+                rows
+                <input
+                  type="number"
+                  min={1}
+                  max={20}
+                  value={tableRows}
+                  onChange={(e) => setTableRows(e.target.value)}
+                  className="w-16 px-2 py-1 border border-border text-sm focus:outline-none focus:border-text"
+                />
+              </label>
+              <label className="font-mono text-xs text-muted flex items-center gap-1">
+                cols
+                <input
+                  type="number"
+                  min={1}
+                  max={20}
+                  value={tableCols}
+                  onChange={(e) => setTableCols(e.target.value)}
+                  className="w-16 px-2 py-1 border border-border text-sm focus:outline-none focus:border-text"
+                />
+              </label>
+              <button
+                type="button"
+                onClick={insertTable}
+                className="font-mono text-xs px-3 py-1 bg-text text-white hover:bg-gray-800"
+              >
+                Insert
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowTableInput(false)}
+                className="font-mono text-xs px-3 py-1 border border-gray-300 text-muted hover:text-text"
+              >
+                Cancel
+              </button>
+            </>
+          )}
+
+          {editor.isActive('table') && (
+            <>
+              <div className="w-px h-5 bg-gray-200" />
+              <button
+                type="button"
+                onClick={() => editor.chain().focus().addRowBefore().run()}
+                className="font-mono text-xs px-2 py-1 border border-gray-300 text-muted hover:text-text"
+              >
+                +Row
+              </button>
+              <button
+                type="button"
+                onClick={() => editor.chain().focus().deleteRow().run()}
+                className="font-mono text-xs px-2 py-1 border border-gray-300 text-muted hover:text-text"
+              >
+                -Row
+              </button>
+              <button
+                type="button"
+                onClick={() => editor.chain().focus().addColumnBefore().run()}
+                className="font-mono text-xs px-2 py-1 border border-gray-300 text-muted hover:text-text"
+              >
+                +Col
+              </button>
+              <button
+                type="button"
+                onClick={() => editor.chain().focus().deleteColumn().run()}
+                className="font-mono text-xs px-2 py-1 border border-gray-300 text-muted hover:text-text"
+              >
+                -Col
+              </button>
+              <button
+                type="button"
+                onClick={() => editor.chain().focus().deleteTable().run()}
+                className="font-mono text-xs px-2 py-1 border border-red-300 text-red-600 hover:text-red-700"
+              >
+                Delete Table
+              </button>
+            </>
+          )}
         </div>
       )}
 
