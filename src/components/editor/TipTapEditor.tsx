@@ -9,6 +9,10 @@ import Link from '@tiptap/extension-link';
 import { TextStyle } from '@tiptap/extension-text-style';
 import Color from '@tiptap/extension-color';
 import Highlight from '@tiptap/extension-highlight';
+import { Table } from '@tiptap/extension-table';
+import TableRow from '@tiptap/extension-table-row';
+import TableHeader from '@tiptap/extension-table-header';
+import TableCell from '@tiptap/extension-table-cell';
 import {
   Bold,
   Italic,
@@ -30,9 +34,11 @@ import {
   LinkIcon,
   Highlighter,
   Minus,
+  Table as TableIcon,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import TurndownService from 'turndown';
+import { gfm } from 'turndown-plugin-gfm';
 import { marked } from 'marked';
 import { uploadImageDirectly } from '../../api/image';
 import { useAlert } from '../../contexts/useAlert';
@@ -47,6 +53,7 @@ const turndownService = new TurndownService({
   codeBlockStyle: 'fenced',
   bulletListMarker: '-',
 });
+turndownService.use(gfm);
 
 turndownService.addRule('images', {
   filter: 'img',
@@ -101,6 +108,13 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
       Highlight.configure({
         multicolor: true,
       }),
+      Table.configure({
+        resizable: false,
+        HTMLAttributes: { class: 'editor-table' },
+      }),
+      TableRow,
+      TableHeader,
+      TableCell,
     ],
     content: '',
     editorProps: {
@@ -376,6 +390,16 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
           title="Horizontal rule"
         >
           <Minus size={18} />
+        </MenuButton>
+
+        <MenuButton
+          onClick={() =>
+            editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
+          }
+          isActive={editor.isActive('table')}
+          title="Insert table"
+        >
+          <TableIcon size={18} />
         </MenuButton>
 
         <div className="w-px bg-gray-900 mx-1.5" />
