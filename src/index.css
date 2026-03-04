@@ -317,32 +317,53 @@
 /* ── 뷰어 표 ── */
 .markdown-viewer table {
   width: 100%;
-  border-collapse: collapse;
-  margin: 1.5rem 0;
-  font-size: 0.875rem;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 1.75rem 0;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  border: 1px solid #bfc2c0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f6f7f5;
 }
 
 .markdown-viewer thead {
-  background: #1a1a1a;
-  color: #f9fafb;
+  background: #1f2320;
+  color: #f5f6f4;
 }
 
 .markdown-viewer th {
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 0.9rem;
   text-align: left;
   font-weight: 600;
-  font-size: 0.8125rem;
-  border: none;
+  font-size: 0.825rem;
+  letter-spacing: 0.01em;
+  border-right: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.markdown-viewer th:last-child {
+  border-right: none;
 }
 
 .markdown-viewer td {
-  padding: 0.625rem 1rem;
-  border-bottom: 1px solid #d4d4d4;
-  color: #374151;
+  padding: 0.7rem 0.9rem;
+  color: #1f2937;
+  border-top: 1px solid #d5d8d6;
+  border-right: 1px solid #d5d8d6;
+  background: #ffffff;
 }
 
-.markdown-viewer tbody tr:hover {
-  background-color: #d4d5d4;
+.markdown-viewer td:last-child {
+  border-right: none;
+}
+
+.markdown-viewer tbody tr:nth-child(even) td {
+  background: #f3f5f2;
+}
+
+.markdown-viewer tbody tr:hover td {
+  background-color: #e9ece7;
 }
 
 .markdown-viewer hr {
@@ -387,6 +408,19 @@
     padding: 1rem;
     margin: 1rem -0.5rem;
     border-radius: 0;
+  }
+
+  .markdown-viewer table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+    border-radius: 10px;
+  }
+
+  .markdown-viewer th,
+  .markdown-viewer td {
+    min-width: 120px;
   }
 }
 
