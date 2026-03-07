@@ -118,6 +118,10 @@ export default function HomePage() {
         </h2>
       </div>
 
+      <section className="relative left-1/2 right-1/2 -mx-[50vw] w-screen mb-7 border-y border-gray-300/80">
+        <div aria-hidden="true" className="feed-cat-banner" />
+      </section>
+
       <form onSubmit={handleSearch} className="mb-8">
         <div className="flex gap-3 items-center border-b border-gray-400 pb-2">
           <svg className="w-4 h-4 text-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -146,9 +150,8 @@ export default function HomePage() {
       </form>
 
       {popularPosts.length > 0 && (
-        <section className="relative left-1/2 right-1/2 -mx-[50vw] w-screen mb-8 overflow-hidden">
-          <div aria-hidden="true" className="popular-cat-bg" />
-          <div className="relative lg:px-8 px-4 py-5 border-y border-gray-300/80 bg-transparent">
+        <section className="relative left-1/2 right-1/2 -mx-[50vw] w-screen mb-8">
+          <div className="lg:px-8 px-4 py-5 border-y border-gray-300/80 bg-transparent">
             <span className="text-xs font-mono text-muted uppercase tracking-wide mb-3 block">
               Popular
             </span>
