@@ -159,33 +159,35 @@
 
 /* Inline code */
 .markdown-viewer code {
-  background: #f0f0f8;
-  color: #5e6ad2;
-  padding: 0.15rem 0.45rem;
-  border-radius: 4px;
-  font-family: "JetBrains Mono", monospace;
-  font-size: 0.85em;
-  border: 1px solid #e4e4f0;
+  background: #f1f1ef;
+  color: #2f3437;
+  padding: 0.15rem 0.4rem;
+  border-radius: 5px;
+  font-family: "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 0.84em;
+  border: 1px solid #e8e7e4;
 }
 
 /* Code block */
 .markdown-viewer pre {
-  background: #16161e !important;
-  border: none;
-  border-radius: 10px;
-  padding: 1.2rem 1.4rem;
+  background: #f7f6f3 !important;
+  border: 1px solid #ebe9e6;
+  border-radius: 8px;
+  padding: 0.95rem 1rem;
   overflow-x: auto;
-  margin-bottom: 1.4rem;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255,255,255,0.04);
+  margin-bottom: 1.25rem;
+  box-shadow: none;
 }
 
 .markdown-viewer pre code {
   background: transparent !important;
-  color: #c9d1d9 !important;
+  color: #2f3437 !important;
   padding: 0;
   border: none;
-  font-size: 0.875em;
+  font-size: 0.86em;
   line-height: 1.7;
+  font-family: "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+  font-variant-ligatures: none;
 }
 
 /* Links */
@@ -330,10 +332,12 @@
 
 .tiptap-editor pre {
   margin: 1rem 0;
-  border-radius: 0.7rem;
-  background: #111827;
-  color: #e5e7eb;
-  padding: 1rem 1.1rem;
+  border-radius: 8px;
+  background: #f7f6f3;
+  color: #2f3437;
+  border: 1px solid #ebe9e6;
+  padding: 0.95rem 1rem;
+  box-shadow: none;
 }
 
 .tiptap-editor pre code {
@@ -341,13 +345,20 @@
   border: none;
   color: inherit;
   padding: 0;
+  font-family: "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+  font-variant-ligatures: none;
+  font-size: 0.9em;
+  line-height: 1.7;
 }
 
 .tiptap-editor code {
-  border-radius: 0.4rem;
-  border: 1px solid #d1d5db;
-  background: #f3f4f6;
-  padding: 0.1rem 0.35rem;
+  border-radius: 5px;
+  border: 1px solid #e8e7e4;
+  background: #f1f1ef;
+  color: #2f3437;
+  padding: 0.12rem 0.38rem;
+  font-family: "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 0.86em;
 }
 
 .tiptap-editor .editor-table {
