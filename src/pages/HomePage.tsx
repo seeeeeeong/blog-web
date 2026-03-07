@@ -146,24 +146,28 @@ export default function HomePage() {
       </form>
 
       {popularPosts.length > 0 && (
-        <div className="mb-8">
-          <span className="text-xs font-mono text-muted uppercase tracking-wide mb-3 block">Popular</span>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-            {popularPosts.map((post, index) => (
-              <Link
-                key={post.id}
-                to={`/posts/${post.id}`}
-                className="group flex flex-col gap-2 border border-gray-300 p-3 hover:border-gray-500 transition-colors"
-              >
-                <span className="font-mono text-xs text-muted">#{index + 1}</span>
-                <span className="font-mono text-sm text-text leading-snug line-clamp-2 group-hover:text-muted transition-colors">
-                  {post.title}
-                </span>
-                <span className="font-mono text-xs text-muted mt-auto">{post.viewCount} views</span>
-              </Link>
-            ))}
+        <section className="relative left-1/2 right-1/2 -mx-[50vw] w-screen mb-8">
+          <div className="lg:px-8 px-4 py-5 border-y border-gray-300/80 bg-transparent">
+            <span className="text-xs font-mono text-muted uppercase tracking-wide mb-3 block">
+              Popular
+            </span>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+              {popularPosts.map((post, index) => (
+                <Link
+                  key={post.id}
+                  to={`/posts/${post.id}`}
+                  className="group flex flex-col gap-2 border border-gray-300/80 bg-white/20 p-3 hover:border-gray-500 transition-colors"
+                >
+                  <span className="font-mono text-xs text-muted">#{index + 1}</span>
+                  <span className="font-mono text-sm text-text leading-snug line-clamp-2 group-hover:text-muted transition-colors">
+                    {post.title}
+                  </span>
+                  <span className="font-mono text-xs text-muted mt-auto">{post.viewCount} views</span>
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
+        </section>
       )}
 
       <div className="flex lg:flex-row flex-col lg:gap-x-10 gap-y-6">
