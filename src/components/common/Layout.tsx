@@ -61,7 +61,7 @@ export default function Layout() {
                 to="/"
                 className="font-mono text-sm font-semibold text-text hover:opacity-60 transition-opacity"
               >
-                Seeeeeeong.log
+                SEEEEEEONG.LOG
               </Link>
               <Link
                 to="/"
@@ -125,7 +125,7 @@ export default function Layout() {
       <footer className="border-t border-gray-300 mt-auto">
         <div className="w-full lg:px-8 px-4 py-6">
           <div className="flex justify-between items-center font-mono text-xs text-muted">
-            <span>&copy; 2025 Seeeeeeong.log</span>
+            <span>&copy; 2026 SEEEEEEONG.LOG</span>
             <div className="flex gap-4">
               <a
                 href="https://github.com/seeeeeeong"
@@ -145,6 +145,9 @@ export default function Layout() {
           </div>
         </div>
       </footer>
+      <div aria-hidden="true" className="floating-cat">
+        🐈
+      </div>
     </div>
   );
 }

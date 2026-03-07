@@ -14,7 +14,7 @@ export default function AuthLayout({ title, subtitle, children }: AuthLayoutProp
         <div className="text-center">
           <Link to="/" className="inline-block mb-6 hover:opacity-70 transition-opacity">
             <h1 className="text-2xl font-mono font-bold text-text tracking-tighter">
-              Seeeeeeong.log
+              SEEEEEEONG.LOG
             </h1>
           </Link>
           <h2 className="text-lg font-mono font-semibold text-text">{title}</h2>
