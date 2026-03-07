@@ -1,13 +1,17 @@
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useGitHubAuth } from "../../contexts/useGitHubAuth";
 import { authApi } from "../../api/auth";
 import { isAdminToken, isExpiredToken } from "../../utils/authToken";
+
+const CAT_GIF_URL =
+  "https://dszw1qtcnsa5e.cloudfront.net/community/20200813/db5c1766-f649-4481-855f-f941907987a6/4CB499DDCDD14524ADE779FF2C82EE57.gif";
 
 export default function Layout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isAdmin, setIsAdmin] = useState(false);
+  const pointerCatRef = useRef<HTMLImageElement | null>(null);
   const { isAuthenticated, user, logout } = useGitHubAuth();
 
   const clearAuthData = useCallback(() => {
@@ -36,6 +40,52 @@ export default function Layout() {
   useEffect(() => {
     checkTokenExpiration();
   }, [checkTokenExpiration, location.pathname]);
+
+  useEffect(() => {
+    const cat = pointerCatRef.current;
+
+    if (!cat) {
+      return;
+    }
+
+    const canTrackPointer =
+      window.matchMedia("(pointer: fine)").matches &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (!canTrackPointer) {
+      cat.style.display = "none";
+      return;
+    }
+
+    cat.style.display = "block";
+
+    const target = {
+      x: Math.max(window.innerWidth - 140, 40),
+      y: Math.max(window.innerHeight - 140, 40),
+    };
+    const current = { ...target };
+    let animationId = 0;
+
+    const animate = () => {
+      current.x += (target.x - current.x) * 0.14;
+      current.y += (target.y - current.y) * 0.14;
+      cat.style.transform = `translate3d(${current.x}px, ${current.y}px, 0)`;
+      animationId = window.requestAnimationFrame(animate);
+    };
+
+    const handleMouseMove = (event: MouseEvent) => {
+      target.x = Math.min(event.clientX + 18, window.innerWidth - 64);
+      target.y = Math.min(event.clientY + 20, window.innerHeight - 64);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    animationId = window.requestAnimationFrame(animate);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.cancelAnimationFrame(animationId);
+    };
+  }, []);
 
   const handleLogout = async () => {
     const refreshToken = localStorage.getItem("refreshToken");
@@ -145,9 +195,14 @@ export default function Layout() {
           </div>
         </div>
       </footer>
-      <div aria-hidden="true" className="floating-cat">
-        🐈
-      </div>
+      <div aria-hidden="true" className="background-cat" />
+      <img
+        ref={pointerCatRef}
+        className="pointer-cat"
+        src={CAT_GIF_URL}
+        alt=""
+        aria-hidden="true"
+      />
     </div>
   );
 }
