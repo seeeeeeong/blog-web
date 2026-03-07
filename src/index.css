@@ -234,8 +234,8 @@
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  margin-bottom: 1.4rem;
-  font-size: 0.875rem;
+  margin-bottom: 1.2rem;
+  font-size: 0.8125rem;
   background: #ffffff;
   border: 1px solid #e9e9e7;
   border-radius: 6px;
@@ -247,17 +247,19 @@
 }
 
 .markdown-viewer th {
-  padding: 0.55rem 0.75rem;
+  padding: 0.42rem 0.6rem;
   text-align: left;
   font-weight: 500;
   color: #37352f;
+  line-height: 1.35;
   border-bottom: 1px solid #e9e9e7;
   border-right: 1px solid #e9e9e7;
 }
 
 .markdown-viewer td {
-  padding: 0.55rem 0.75rem;
+  padding: 0.42rem 0.6rem;
   color: #37352f;
+  line-height: 1.35;
   border-bottom: 1px solid #efeeec;
   border-right: 1px solid #efeeec;
 }
