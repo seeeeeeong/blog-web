@@ -397,3 +397,27 @@
   background: #f3f4f6;
   font-weight: 700;
 }
+
+.popular-cat-bg {
+  position: absolute;
+  right: clamp(0.6rem, 2vw, 1.8rem);
+  top: 50%;
+  width: clamp(88px, 16vw, 160px);
+  aspect-ratio: 1 / 1;
+  transform: translateY(-50%);
+  background-image: url("https://dszw1qtcnsa5e.cloudfront.net/community/20200813/db5c1766-f649-4481-855f-f941907987a6/4CB499DDCDD14524ADE779FF2C82EE57.gif");
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.2;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+@media (max-width: 640px) {
+  .popular-cat-bg {
+    width: 84px;
+    opacity: 0.15;
+  }
+}

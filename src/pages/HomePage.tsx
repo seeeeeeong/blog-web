@@ -146,8 +146,9 @@ export default function HomePage() {
       </form>
 
       {popularPosts.length > 0 && (
-        <section className="relative left-1/2 right-1/2 -mx-[50vw] w-screen mb-8">
-          <div className="lg:px-8 px-4 py-5 border-y border-gray-300/80 bg-transparent">
+        <section className="relative left-1/2 right-1/2 -mx-[50vw] w-screen mb-8 overflow-hidden">
+          <div aria-hidden="true" className="popular-cat-bg" />
+          <div className="relative lg:px-8 px-4 py-5 border-y border-gray-300/80 bg-transparent">
             <span className="text-xs font-mono text-muted uppercase tracking-wide mb-3 block">
               Popular
             </span>
