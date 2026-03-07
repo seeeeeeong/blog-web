@@ -540,7 +540,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
               <button
                 type="button"
                 onClick={() => editor.chain().focus().deleteTable().run()}
-                className="font-mono text-xs px-2 py-1 border border-red-300 text-red-600 hover:text-red-700"
+                className="font-mono text-xs px-2 py-1 border border-red-400/45 text-red-300 hover:text-red-200"
               >
                 Delete Table
               </button>

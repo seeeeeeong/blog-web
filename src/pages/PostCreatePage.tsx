@@ -48,7 +48,7 @@ export default function PostCreatePage() {
     return true;
   };
 
-  const handleSubmit = async (isDraft: boolean = false) => {
+  const handleSubmit = async (isDraft = false) => {
     if (!validateForm()) return;
 
     setLoading(true);
@@ -68,17 +68,9 @@ export default function PostCreatePage() {
     }
   };
 
-  const handleCancel = () => {
-    navigate("/");
-  };
-
   return (
     <PageLayout title="Create Post">
-      <div className="max-w-3xl mx-auto">
-        <h2 className="text-2xl font-bold text-text tracking-tight mb-8">
-          New Post
-        </h2>
-
+      <div className="opl-card rounded-3xl p-5 sm:p-7">
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -86,12 +78,9 @@ export default function PostCreatePage() {
           }}
           className="space-y-6"
         >
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div className="sm:col-span-2">
-              <label
-                htmlFor="title"
-                className="block text-sm font-mono text-muted mb-2"
-              >
+              <label htmlFor="title" className="mb-2 block font-mono text-xs uppercase tracking-[0.15em] text-muted">
                 Title
               </label>
               <input
@@ -101,15 +90,15 @@ export default function PostCreatePage() {
                 onChange={(e) => setTitle(e.target.value)}
                 required
                 maxLength={200}
-                className="block w-full px-3 py-2 border-b border-gray-500 bg-transparent text-text font-mono placeholder:text-gray-400 focus:outline-none focus:border-text text-base transition-colors"
-                placeholder="Enter title..."
+                className="h-12 w-full rounded-xl border border-gray-300 bg-white px-4 text-sm text-text placeholder:text-muted focus:border-accent/80 focus:outline-none"
+                placeholder="What are you shipping today?"
               />
             </div>
 
             <div className="sm:col-span-1">
               <label
                 htmlFor="category"
-                className="block text-sm font-mono text-muted mb-2"
+                className="mb-2 block font-mono text-xs uppercase tracking-[0.15em] text-muted"
               >
                 Category
               </label>
@@ -117,7 +106,7 @@ export default function PostCreatePage() {
                 id="category"
                 value={categoryId}
                 onChange={(e) => setCategoryId(Number(e.target.value))}
-                className="block w-full px-3 py-2 border-b border-gray-500 bg-transparent text-text font-mono focus:outline-none focus:border-text text-base transition-colors cursor-pointer"
+                className="h-12 w-full rounded-xl border border-gray-300 bg-white px-4 text-sm text-text focus:border-accent/80 focus:outline-none"
               >
                 {categories.map((category) => (
                   <option key={category.id} value={category.id}>
@@ -129,33 +118,27 @@ export default function PostCreatePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-mono text-muted mb-3">
-              Content
-            </label>
+            <label className="mb-3 block font-mono text-xs uppercase tracking-[0.15em] text-muted">Content</label>
             <TipTapEditor value={content} onChange={setContent} />
           </div>
 
-          <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-6 border-t border-gray-300">
-            <button
-              type="button"
-              onClick={handleCancel}
-              className="font-mono text-sm text-muted hover:text-text underline"
-            >
+          <div className="flex flex-col-reverse items-stretch justify-between gap-3 border-t border-gray-300 pt-5 sm:flex-row sm:items-center">
+            <button type="button" onClick={() => navigate("/")} className="ui-btn ui-btn-ghost">
               Cancel
             </button>
-            <div className="flex gap-4">
+            <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => handleSubmit(true)}
                 disabled={loading}
-                className="font-mono text-sm text-gray-800 hover:text-text underline disabled:opacity-50 disabled:cursor-not-allowed"
+                className="ui-btn ui-btn-ghost disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading ? "Saving..." : "Save Draft"}
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="font-mono text-sm px-6 py-2 bg-text text-white hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="ui-btn ui-btn-primary disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading ? "Publishing..." : "Publish"}
               </button>
