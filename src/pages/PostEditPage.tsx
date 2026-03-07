@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { postApi } from "../api/post";
 import { categoryApi } from "../api/category";
@@ -19,6 +19,20 @@ export default function PostEditPage() {
   const [initialLoading, setInitialLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
   const { showError, showWarning } = useAlert();
+  const contentCharacters = content.trim().length;
+  const wordCount = useMemo(() => {
+    const plainText = content
+      .replace(/```[\s\S]*?```/g, " ")
+      .replace(/`[^`]*`/g, " ")
+      .replace(/!\[[^\]]*]\([^)]+\)/g, " ")
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+      .replace(/[#>*_~-]/g, " ")
+      .replace(/\n/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    return plainText ? plainText.split(" ").length : 0;
+  }, [content]);
 
   const loadCategories = useCallback(async () => {
     try {
@@ -98,11 +112,14 @@ export default function PostEditPage() {
 
   if (loadError) {
     return (
-      <PageLayout title="Edit Post">
-        <div className="opl-card rounded-2xl p-10 text-center">
-          <p className="mb-5 text-sm text-muted">Could not load post or you do not have permission to edit.</p>
-          <Link to="/" className="ui-btn ui-btn-ghost">
-            Home
+      <PageLayout title="게시글 수정">
+        <div className="rounded-2xl border border-gray-300 bg-white p-10 text-center shadow-sm">
+          <p className="mb-5 text-sm text-muted">게시글을 불러오지 못했거나 수정 권한이 없습니다.</p>
+          <Link
+            to="/"
+            className="inline-flex h-10 items-center justify-center rounded-xl border border-gray-300 px-4 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100"
+          >
+            홈으로
           </Link>
         </div>
       </PageLayout>
@@ -110,19 +127,31 @@ export default function PostEditPage() {
   }
 
   return (
-    <PageLayout title="Edit Post">
-      <div className="opl-card rounded-3xl p-5 sm:p-7">
+    <PageLayout title="게시글 수정">
+      <div className="mx-auto max-w-5xl rounded-3xl border border-gray-200 bg-white p-5 shadow-sm sm:p-8">
         <form
           onSubmit={(e) => {
             e.preventDefault();
             handleSubmit(false);
           }}
-          className="space-y-6"
+          className="space-y-8 pb-24"
         >
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div className="sm:col-span-2">
-              <label htmlFor="title" className="mb-2 block font-mono text-xs uppercase tracking-[0.15em] text-muted">
-                Title
+          <header className="space-y-2 border-b border-gray-200 pb-5">
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight text-gray-900">게시글 수정</h1>
+              <p className="text-sm text-gray-500">내용을 다듬고 발행하거나 임시저장 상태로 유지할 수 있습니다.</p>
+            </div>
+            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+              <span>제목 {title.length}/200</span>
+              <span>단어 {wordCount}</span>
+              <span>문자 {contentCharacters}</span>
+            </div>
+          </header>
+
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+            <div className="md:col-span-2">
+              <label htmlFor="title" className="mb-2 block text-sm font-semibold text-gray-700">
+                제목
               </label>
               <input
                 type="text"
@@ -131,23 +160,20 @@ export default function PostEditPage() {
                 onChange={(e) => setTitle(e.target.value)}
                 required
                 maxLength={200}
-                className="h-12 w-full rounded-xl border border-gray-300 bg-white px-4 text-sm text-text placeholder:text-muted focus:border-accent/80 focus:outline-none"
-                placeholder="Update title"
+                className="h-12 w-full rounded-xl border border-gray-300 bg-white px-4 text-base text-gray-900 placeholder:text-gray-400 transition-colors focus:border-accent/80 focus:outline-none"
+                placeholder="제목을 입력하세요"
               />
             </div>
 
-            <div className="sm:col-span-1">
-              <label
-                htmlFor="category"
-                className="mb-2 block font-mono text-xs uppercase tracking-[0.15em] text-muted"
-              >
-                Category
+            <div className="md:col-span-1">
+              <label htmlFor="category" className="mb-2 block text-sm font-semibold text-gray-700">
+                카테고리
               </label>
               <select
                 id="category"
                 value={categoryId}
                 onChange={(e) => setCategoryId(Number(e.target.value))}
-                className="h-12 w-full rounded-xl border border-gray-300 bg-white px-4 text-sm text-text focus:border-accent/80 focus:outline-none"
+                className="h-12 w-full rounded-xl border border-gray-300 bg-white px-4 text-base text-gray-900 transition-colors focus:border-accent/80 focus:outline-none"
               >
                 {categories.map((category) => (
                   <option key={category.id} value={category.id}>
@@ -158,31 +184,42 @@ export default function PostEditPage() {
             </div>
           </div>
 
-          <div>
-            <label className="mb-3 block font-mono text-xs uppercase tracking-[0.15em] text-muted">Content</label>
+          <div className="space-y-2">
+            <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+              <label className="text-sm font-semibold text-gray-700">본문</label>
+              <span className="text-xs text-gray-500">
+                이미지는 붙여넣기 또는 업로드 버튼으로 추가할 수 있습니다.
+              </span>
+            </div>
             <TipTapEditor value={content} onChange={setContent} />
           </div>
 
-          <div className="flex flex-col-reverse items-stretch justify-between gap-3 border-t border-gray-300 pt-5 sm:flex-row sm:items-center">
-            <button type="button" onClick={() => navigate(`/posts/${postId}`)} className="ui-btn ui-btn-ghost">
-              Cancel
-            </button>
-            <div className="flex items-center gap-2">
+          <div className="sticky bottom-3 z-20 rounded-2xl border border-gray-200 bg-white p-3 shadow-lg">
+            <div className="flex flex-col-reverse items-stretch justify-between gap-3 sm:flex-row sm:items-center">
               <button
                 type="button"
-                onClick={() => handleSubmit(true)}
-                disabled={loading}
-                className="ui-btn ui-btn-ghost disabled:cursor-not-allowed disabled:opacity-50"
+                onClick={() => navigate(`/posts/${postId}`)}
+                className="inline-flex h-10 items-center justify-center rounded-xl border border-gray-300 px-4 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100"
               >
-                {loading ? "Saving..." : "Save Draft"}
+                취소
               </button>
-              <button
-                type="submit"
-                disabled={loading}
-                className="ui-btn ui-btn-primary disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {loading ? "Updating..." : "Update Post"}
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleSubmit(true)}
+                  disabled={loading}
+                  className="inline-flex h-10 items-center justify-center rounded-xl border border-gray-300 px-4 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {loading ? "저장 중..." : "임시저장"}
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="inline-flex h-10 items-center justify-center rounded-xl border border-accent bg-accent px-4 text-sm font-semibold text-white transition-colors hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {loading ? "수정 중..." : "수정 완료"}
+                </button>
+              </div>
             </div>
           </div>
         </form>
