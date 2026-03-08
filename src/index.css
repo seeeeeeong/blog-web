@@ -398,21 +398,23 @@
   font-weight: 700;
 }
 
-.feed-cat-banner {
-  height: clamp(66px, 12vw, 110px);
+.popular-cat-banner {
+  height: clamp(98px, 18vw, 180px);
   background-image: url("https://dszw1qtcnsa5e.cloudfront.net/community/20200813/db5c1766-f649-4481-855f-f941907987a6/4CB499DDCDD14524ADE779FF2C82EE57.gif");
   background-position: center center;
   background-size: auto 100%;
   background-repeat: repeat-x;
-  opacity: 0.78;
+  opacity: 0.86;
+  border-top: 1px solid rgba(209, 213, 219, 0.8);
+  border-bottom: 1px solid rgba(209, 213, 219, 0.8);
   pointer-events: none;
   user-select: none;
 }
 
 @media (max-width: 640px) {
-  .feed-cat-banner {
-    height: 64px;
+  .popular-cat-banner {
+    height: 92px;
     background-size: auto 92%;
-    opacity: 0.72;
+    opacity: 0.8;
   }
 }
