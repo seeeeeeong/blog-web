@@ -397,14 +397,3 @@
   background: #f3f4f6;
   font-weight: 700;
 }
-
-.popular-cat-image {
-  display: block;
-  width: 100%;
-  height: clamp(120px, 20vw, 220px);
-  object-fit: cover;
-  object-position: center;
-  opacity: 0.9;
-  pointer-events: none;
-  user-select: none;
-}
