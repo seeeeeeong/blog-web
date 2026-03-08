@@ -7,6 +7,9 @@ import Spinner from "../components/common/Spinner";
 import { formatDate } from "../utils/format";
 import { PAGINATION } from "../constants/pagination";
 
+const POPULAR_CAT_GIF =
+  "https://dszw1qtcnsa5e.cloudfront.net/community/20200813/db5c1766-f649-4481-855f-f941907987a6/4CB499DDCDD14524ADE779FF2C82EE57.gif";
+
 export default function HomePage() {
   const [posts, setPosts] = useState<PostSummary[]>([]);
   const [popularPosts, setPopularPosts] = useState<PostSummary[]>([]);
@@ -147,11 +150,19 @@ export default function HomePage() {
 
       {popularPosts.length > 0 && (
         <section className="relative left-1/2 right-1/2 -mx-[50vw] w-screen mb-8">
-          <div aria-hidden="true" className="popular-cat-banner" />
           <div className="lg:px-8 px-4 py-5 border-b border-gray-300/80 bg-transparent">
             <span className="text-xs font-mono text-muted uppercase tracking-wide mb-3 block">
               Popular
             </span>
+            <div className="mb-4 border border-gray-300/80 overflow-hidden">
+              <img
+                src={POPULAR_CAT_GIF}
+                alt=""
+                aria-hidden="true"
+                className="popular-cat-image"
+                loading="lazy"
+              />
+            </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
               {popularPosts.map((post, index) => (
                 <Link
