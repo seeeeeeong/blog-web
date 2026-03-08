@@ -111,9 +111,9 @@ export default function HomePage() {
   }
 
   return (
-    <div className="flex flex-col h-full w-full lg:px-8 px-4 py-8">
+    <div className="flex flex-col h-full w-full lg:px-8 px-4 py-6 sm:py-8">
       <div className="mb-6">
-        <h2 className="text-text lg:text-[5rem] text-[3rem] leading-[1.1] tracking-tighter font-bold">
+        <h2 className="text-text lg:text-[5rem] sm:text-[3rem] text-[2.35rem] leading-[1.1] tracking-tighter font-bold">
           Feed
         </h2>
       </div>
@@ -146,12 +146,12 @@ export default function HomePage() {
       </form>
 
       {popularPosts.length > 0 && (
-        <section className="relative left-1/2 right-1/2 -mx-[50vw] w-screen mb-8">
+        <section className="mb-8">
           <div className="lg:px-8 px-4 py-5 border-b border-gray-300/80 bg-transparent">
             <span className="text-xs font-mono text-muted uppercase tracking-wide mb-3 block">
               Popular
             </span>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-3">
               {popularPosts.map((post, index) => (
                 <Link
                   key={post.id}
@@ -218,7 +218,7 @@ export default function HomePage() {
         )}
 
         <div className="flex flex-col lg:w-0 flex-grow pb-16">
-          <div className="w-full flex h-8 text-xs font-mono text-muted uppercase tracking-wide border-b border-gray-400">
+          <div className="hidden sm:flex w-full h-8 text-xs font-mono text-muted uppercase tracking-wide border-b border-gray-400">
             <span className="w-28 shrink-0">Date</span>
             <span className="flex-1">Title</span>
             <span className="w-16 text-right hidden sm:block">Views</span>
@@ -245,16 +245,19 @@ export default function HomePage() {
                   <Link
                     key={post.id}
                     to={`/posts/${post.id}`}
-                    className="flex items-center w-full py-3 border-b border-gray-300 hover:bg-hover/40 transition-colors group"
+                    className="w-full py-3 border-b border-gray-300 hover:bg-hover/40 transition-colors group flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-0"
                   >
-                    <span className="text-xs font-mono w-28 shrink-0 text-muted">
+                    <span className="hidden sm:block text-xs font-mono w-28 shrink-0 text-muted">
                       {formatDate(post.createdAt)}
                     </span>
-                    <span className="flex-1 lg:text-lg text-base tracking-tight font-medium truncate group-hover:text-muted transition-colors">
+                    <span className="w-full sm:flex-1 lg:text-lg text-base tracking-tight font-medium line-clamp-2 sm:line-clamp-1 sm:truncate group-hover:text-muted transition-colors">
                       {post.title}
                     </span>
                     <span className="w-16 text-right text-xs font-mono text-muted hidden sm:block">
                       {post.viewCount}
+                    </span>
+                    <span className="sm:hidden text-xs font-mono text-muted">
+                      {formatDate(post.createdAt)} · {post.viewCount} views
                     </span>
                   </Link>
                 ))}

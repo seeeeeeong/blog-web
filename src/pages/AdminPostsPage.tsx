@@ -73,7 +73,7 @@ export default function AdminPostsPage() {
   return (
     <PageLayout title="Admin">
       <div className="max-w-4xl mx-auto">
-        <div className="flex items-end justify-between mb-8">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between mb-8">
           <h2 className="text-2xl font-bold text-text tracking-tight">
             Admin
           </h2>
@@ -108,59 +108,61 @@ export default function AdminPostsPage() {
           </div>
         ) : (
           <>
-            <div className="w-full">
-              <div className="flex items-center font-mono text-sm text-muted border-b border-gray-500 pb-2">
-                <span className="w-5/12">TITLE</span>
-                <span className="w-2/12">STATUS</span>
-                <span className="w-1/12">VIEWS</span>
-                <span className="w-2/12">DATE</span>
-                <span className="w-2/12 text-right">ACTIONS</span>
-              </div>
-
-              {posts.length === 0 ? (
-                <div className="py-12 text-center">
-                  <p className="text-sm font-mono text-muted">No posts found.</p>
+            <div className="w-full overflow-x-auto">
+              <div className="min-w-[680px]">
+                <div className="flex items-center font-mono text-sm text-muted border-b border-gray-500 pb-2">
+                  <span className="w-5/12">TITLE</span>
+                  <span className="w-2/12">STATUS</span>
+                  <span className="w-1/12">VIEWS</span>
+                  <span className="w-2/12">DATE</span>
+                  <span className="w-2/12 text-right">ACTIONS</span>
                 </div>
-              ) : (
-                posts.map((post) => (
-                  <div
-                    key={post.id}
-                    className="flex items-center border-b border-gray-300 py-3 text-sm hover:bg-hover/50 transition-colors"
-                  >
-                    <div className="w-5/12 pr-4">
-                      <Link
-                        to={`/posts/${post.id}`}
-                        className="text-text hover:underline truncate block font-medium"
-                      >
-                        {post.title}
-                      </Link>
-                    </div>
-                    <div className="w-2/12 font-mono text-muted text-xs uppercase">
-                      {post.status}
-                    </div>
-                    <div className="w-1/12 font-mono text-muted text-xs">
-                      {post.viewCount}
-                    </div>
-                    <div className="w-2/12 font-mono text-muted text-xs">
-                      {formatDate(post.createdAt)}
-                    </div>
-                    <div className="w-2/12 flex justify-end gap-4 font-mono text-xs">
-                      <Link
-                        to={`/posts/${post.id}/edit`}
-                        className="text-gray-800 hover:text-text underline"
-                      >
-                        EDIT
-                      </Link>
-                      <button
-                        onClick={() => handleDelete(post.id)}
-                        className="text-red-600 hover:text-red-700 underline"
-                      >
-                        DEL
-                      </button>
-                    </div>
+
+                {posts.length === 0 ? (
+                  <div className="py-12 text-center">
+                    <p className="text-sm font-mono text-muted">No posts found.</p>
                   </div>
-                ))
-              )}
+                ) : (
+                  posts.map((post) => (
+                    <div
+                      key={post.id}
+                      className="flex items-center border-b border-gray-300 py-3 text-sm hover:bg-hover/50 transition-colors"
+                    >
+                      <div className="w-5/12 pr-4">
+                        <Link
+                          to={`/posts/${post.id}`}
+                          className="text-text hover:underline truncate block font-medium"
+                        >
+                          {post.title}
+                        </Link>
+                      </div>
+                      <div className="w-2/12 font-mono text-muted text-xs uppercase">
+                        {post.status}
+                      </div>
+                      <div className="w-1/12 font-mono text-muted text-xs">
+                        {post.viewCount}
+                      </div>
+                      <div className="w-2/12 font-mono text-muted text-xs">
+                        {formatDate(post.createdAt)}
+                      </div>
+                      <div className="w-2/12 flex justify-end gap-4 font-mono text-xs">
+                        <Link
+                          to={`/posts/${post.id}/edit`}
+                          className="text-gray-800 hover:text-text underline"
+                        >
+                          EDIT
+                        </Link>
+                        <button
+                          onClick={() => handleDelete(post.id)}
+                          className="text-red-600 hover:text-red-700 underline"
+                        >
+                          DEL
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
 
             {(currentPage > 0 || hasNext) && (

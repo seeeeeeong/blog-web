@@ -55,40 +55,40 @@ export default function Layout() {
     <div className="min-h-screen flex flex-col">
       <header className="w-full border-b border-gray-300">
         <nav className="w-full lg:px-8 px-4">
-          <div className="flex justify-between items-center h-12">
-            <div className="flex items-center gap-6">
+          <div className="flex justify-between items-center min-h-12 py-2 sm:h-12 sm:py-0">
+            <div className="flex items-center gap-3 sm:gap-6 min-w-0">
               <Link
                 to="/"
-                className="font-mono text-sm font-semibold text-text hover:opacity-60 transition-opacity"
+                className="font-mono text-xs sm:text-sm font-semibold text-text hover:opacity-60 transition-opacity truncate"
               >
                 SEEEEEEONG.LOG
               </Link>
               <Link
                 to="/"
-                className="font-mono text-xs text-muted hover:text-text transition-colors"
+                className="hidden sm:inline font-mono text-xs text-muted hover:text-text transition-colors"
               >
                 Feed
               </Link>
             </div>
 
-            <div className="flex items-center gap-4 font-mono text-xs">
+            <div className="flex items-center gap-2 sm:gap-4 font-mono text-[11px] sm:text-xs shrink-0">
               {isAdmin && (
                 <>
                   <Link
                     to="/admin/posts"
-                    className="text-muted hover:text-text transition-colors"
+                    className="text-muted hover:text-text transition-colors whitespace-nowrap"
                   >
                     Admin
                   </Link>
                   <Link
                     to="/posts/create"
-                    className="text-muted hover:text-text transition-colors"
+                    className="text-muted hover:text-text transition-colors whitespace-nowrap"
                   >
                     Write
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="text-muted hover:text-text transition-colors"
+                    className="text-muted hover:text-text transition-colors whitespace-nowrap"
                   >
                     Logout
                   </button>
@@ -96,11 +96,11 @@ export default function Layout() {
               )}
 
               {!isAdmin && isAuthenticated && user && (
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3">
                   <img
                     src={user.githubAvatarUrl || ""}
                     alt={user.githubUsername}
-                    className="w-5 h-5 rounded-full border border-gray-300"
+                    className="w-4 h-4 sm:w-5 sm:h-5 rounded-full border border-gray-300"
                   />
                   <span className="text-text hidden sm:inline">
                     {user.githubUsername}
@@ -124,7 +124,7 @@ export default function Layout() {
 
       <footer className="border-t border-gray-300 mt-auto">
         <div className="w-full lg:px-8 px-4 py-6">
-          <div className="flex justify-between items-center font-mono text-xs text-muted">
+          <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center font-mono text-xs text-muted">
             <span>&copy; 2026 SEEEEEEONG.LOG</span>
             <div className="flex gap-4">
               <a
