@@ -5,6 +5,7 @@ import type { Post } from "../types";
 import { useAlert } from "../contexts/useAlert";
 import MarkdownViewer from "../components/editor/MarkdownViewer";
 import CommentSection from "../components/comment/CommentSection";
+import SimilarArticles from "../components/post/SimilarArticles";
 import Spinner from "../components/common/Spinner";
 import { formatDate } from "../utils/format";
 
@@ -65,7 +66,7 @@ export default function PostDetailPage() {
 
   return (
     <div className="w-full lg:px-8 px-4 py-8">
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <Link
           to="/"
           className="font-mono text-sm text-gray-800 hover:text-text underline inline-block mb-8"
@@ -73,40 +74,50 @@ export default function PostDetailPage() {
           &larr; Feed
         </Link>
 
-        <div className="mb-8 pb-6 border-b border-gray-500">
-          <h1 className="text-3xl lg:text-4xl font-bold text-text tracking-tight leading-tight mb-4">
-            {post.title}
-          </h1>
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-            <div className="flex items-center gap-3 font-mono text-sm text-muted">
-              <time>{formatDate(post.createdAt)}</time>
-              <span>&middot;</span>
-              <span>{post.viewCount} views</span>
-            </div>
-            {isAuthor && (
-              <div className="flex items-center gap-4 font-mono text-sm">
-                <Link
-                  to={`/posts/${postId}/edit`}
-                  className="text-gray-800 hover:text-text underline"
-                >
-                  EDIT
-                </Link>
-                <button
-                  onClick={handleDelete}
-                  className="text-red-600 hover:text-red-700 underline"
-                >
-                  DELETE
-                </button>
+        <div className="flex gap-12 items-start">
+          {/* 본문 */}
+          <div className="flex-1 min-w-0">
+            <div className="mb-8 pb-6 border-b border-gray-500">
+              <h1 className="text-3xl lg:text-4xl font-bold text-text tracking-tight leading-tight mb-4">
+                {post.title}
+              </h1>
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <div className="flex items-center gap-3 font-mono text-sm text-muted">
+                  <time>{formatDate(post.createdAt)}</time>
+                  <span>&middot;</span>
+                  <span>{post.viewCount} views</span>
+                </div>
+                {isAuthor && (
+                  <div className="flex items-center gap-4 font-mono text-sm">
+                    <Link
+                      to={`/posts/${postId}/edit`}
+                      className="text-gray-800 hover:text-text underline"
+                    >
+                      EDIT
+                    </Link>
+                    <button
+                      onClick={handleDelete}
+                      className="text-red-600 hover:text-red-700 underline"
+                    >
+                      DELETE
+                    </button>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
+
+            <article className="pb-12 mb-8 border-b border-gray-300">
+              <MarkdownViewer contentHtml={post.contentHtml} />
+            </article>
+
+            <CommentSection postId={Number(postId)} />
           </div>
+
+          {/* 우측 사이드바: 관련 기술글 */}
+          <aside className="hidden xl:block w-72 shrink-0 sticky top-8">
+            <SimilarArticles title={post.title} content={post.content} />
+          </aside>
         </div>
-
-        <article className="pb-12 mb-8 border-b border-gray-300">
-          <MarkdownViewer contentHtml={post.contentHtml} />
-        </article>
-
-        <CommentSection postId={Number(postId)} />
       </div>
     </div>
   );
