@@ -4,16 +4,17 @@ import { fetchSimilarArticles, type SimilarArticle } from "../../api/similar";
 interface Props {
   title: string;
   content: string;
+  topicHints: string[];
 }
 
-export default function SimilarArticles({ title, content }: Props) {
+export default function SimilarArticles({ title, content, topicHints }: Props) {
   const [articles, setArticles] = useState<SimilarArticle[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
 
-    fetchSimilarArticles(title, content)
+    fetchSimilarArticles(title, content, topicHints)
       .then((items) => {
         if (!cancelled) setArticles(items);
       })
@@ -27,14 +28,17 @@ export default function SimilarArticles({ title, content }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [title, content]);
+  }, [title, content, topicHints]);
 
   if (loading || articles.length === 0) return null;
 
   return (
     <section>
       <p className="font-mono text-xs font-semibold text-muted uppercase tracking-widest mb-4">
-        관련 기업 기술글
+        함께 읽을 만한 기업 기술글
+      </p>
+      <p className="text-xs text-muted leading-relaxed mb-4">
+        제목, 핵심 토픽, 본문 문맥이 겹치는 글을 우선 보여줍니다.
       </p>
       <ul className="space-y-4">
         {articles.map((article) => (

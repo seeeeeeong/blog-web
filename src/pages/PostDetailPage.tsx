@@ -115,7 +115,11 @@ export default function PostDetailPage() {
 
           {/* 우측 사이드바: 관련 기술글 */}
           <aside className="hidden xl:block w-72 shrink-0 sticky top-8">
-            <SimilarArticles title={post.title} content={post.content} />
+            <SimilarArticles
+              title={post.title}
+              content={post.content}
+              topicHints={post.topicHints}
+            />
           </aside>
         </div>
       </div>

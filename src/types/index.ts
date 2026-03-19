@@ -58,6 +58,7 @@ export interface PostSummary {
 export interface Post extends PostSummary {
   content: string;
   contentHtml: string;
+  topicHints: string[];
 }
 
 export interface CreatePostRequest {
