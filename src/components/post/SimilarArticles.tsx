@@ -37,9 +37,6 @@ export default function SimilarArticles({ title, content, topicHints }: Props) {
       <p className="font-mono text-xs font-semibold text-muted uppercase tracking-widest mb-4">
         함께 읽을 만한 기업 기술글
       </p>
-      <p className="text-xs text-muted leading-relaxed mb-4">
-        제목, 핵심 토픽, 본문 문맥이 겹치는 글을 우선 보여줍니다.
-      </p>
       <ul className="space-y-4">
         {articles.map((article) => (
           <li key={article.articleId}>
