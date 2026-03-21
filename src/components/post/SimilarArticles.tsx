@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 import { fetchSimilarArticles, type SimilarArticle } from "../../api/similar";
 
 interface Props {
@@ -12,21 +13,28 @@ export default function SimilarArticles({ title, content, topicHints }: Props) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let cancelled = false;
+    const controller = new AbortController();
+    setLoading(true);
 
-    fetchSimilarArticles(title, content, topicHints)
+    fetchSimilarArticles(title, content, topicHints, 5, controller.signal)
       .then((items) => {
-        if (!cancelled) setArticles(items);
+        setArticles(items);
       })
-      .catch(() => {
+      .catch((error: unknown) => {
+        if (axios.isAxiosError(error) && error.code === "ERR_CANCELED") {
+          return;
+        }
         // 실패해도 본문은 정상 노출, 섹션만 숨김
+        setArticles([]);
       })
       .finally(() => {
-        if (!cancelled) setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       });
 
     return () => {
-      cancelled = true;
+      controller.abort();
     };
   }, [title, content, topicHints]);
 

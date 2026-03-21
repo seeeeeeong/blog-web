@@ -29,13 +29,17 @@ export async function fetchSimilarArticles(
   title: string,
   content: string,
   topicHints: string[] = [],
-  topK = 5
+  topK = 5,
+  signal?: AbortSignal
 ): Promise<SimilarArticle[]> {
   const payload = buildSimilarRequestPayload(title, content, topicHints, topK);
   const res = await axios.post<{ items: SimilarArticle[] }>(
     `${DEVLOG_ARCHIVE_URL}/api/v1/similar`,
     payload,
-    { timeout: 5000 }
+    {
+      timeout: 5000,
+      signal,
+    }
   );
   return res.data.items;
 }
