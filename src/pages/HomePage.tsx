@@ -23,10 +23,6 @@ export default function HomePage() {
     categoryApi.getCategories().then(setCategories).catch(() => {});
   }, []);
 
-  const categoryName = (categoryId: number) => {
-    return categories.find((c) => c.id === categoryId)?.name ?? "Etc";
-  };
-
   const categorySlug = (categoryId: number) => {
     const name = categories.find((c) => c.id === categoryId)?.name ?? "etc";
     return name.toLowerCase();
