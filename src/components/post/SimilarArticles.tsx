@@ -43,8 +43,14 @@ export default function SimilarArticles({ title, content, topicHints }: Props) {
 
   if (loading || articles.length === 0) return null;
 
-  const handleClick = (article: SimilarArticle) => {
-    recordSimilarClick(article.articleId, title);
+  const handleClick = (article: SimilarArticle, index: number) => {
+    recordSimilarClick(
+      article.articleId,
+      title,
+      index + 1,
+      articles.length,
+      article.similarity,
+    );
   };
 
   return (
@@ -53,13 +59,13 @@ export default function SimilarArticles({ title, content, topicHints }: Props) {
         함께 읽을 만한 기업 기술글
       </p>
       <ul className="space-y-3">
-        {articles.map((article) => (
+        {articles.map((article, index) => (
           <li key={article.articleId}>
             <a
               href={article.url}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => handleClick(article)}
+              onClick={() => handleClick(article, index)}
               className="group block p-3 border-[1.5px] border-ink-ghost rounded-lg hover:border-ink hover:-translate-y-px hover:shadow-sm transition-all"
             >
               <p className="text-sm font-medium text-ink group-hover:underline leading-snug line-clamp-2">

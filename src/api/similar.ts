@@ -47,13 +47,17 @@ export async function fetchSimilarArticles(
 export function recordSimilarClick(
   articleId: number,
   sourceTitle?: string,
-  stage?: string,
+  position?: number,
+  totalResults?: number,
+  rrfScore?: number,
 ): void {
   axios
     .post(`${DEVLOG_ARCHIVE_URL}/api/v1/similar/click`, {
       articleId,
       sourceTitle,
-      stage,
+      position,
+      totalResults,
+      rrfScore,
     })
     .catch(() => {});
 }
