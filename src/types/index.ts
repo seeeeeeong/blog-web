@@ -110,16 +110,5 @@ export interface ImagePresignedUrlResponse {
   uploadUrl: string;
   fileUrl: string;
   key: string;
-  uploadToken: string;
   expiresInSeconds: number;
-}
-
-export interface ImagePresignedUrlCompleteRequest {
-  uploadToken: string;
-  key: string;
-}
-
-export interface ImagePresignedUrlCompleteResponse {
-  fileUrl: string;
-  key: string;
 }

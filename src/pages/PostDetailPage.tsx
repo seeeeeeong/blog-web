@@ -21,7 +21,6 @@ export default function PostDetailPage() {
     try {
       const data = await postApi.getPost(Number(postId));
       setPost(data);
-
       const userId = localStorage.getItem("userId");
       setIsAuthor(userId === String(data.userId));
     } catch {
@@ -32,9 +31,7 @@ export default function PostDetailPage() {
     }
   }, [navigate, postId, showError]);
 
-  useEffect(() => {
-    void loadPost();
-  }, [loadPost]);
+  useEffect(() => { void loadPost(); }, [loadPost]);
 
   const handleDelete = async () => {
     try {
@@ -45,84 +42,56 @@ export default function PostDetailPage() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <Spinner />
-      </div>
-    );
-  }
+  if (loading) return <div className="flex justify-center items-center min-h-[60vh]"><Spinner /></div>;
 
   if (!post) {
     return (
-      <div className="w-full lg:px-8 px-4 py-20 text-center">
-        <p className="text-sm font-mono text-muted mb-6">Post not found.</p>
-        <Link to="/" className="font-mono text-sm text-gray-800 underline hover:text-text">
-          Home
-        </Link>
+      <div className="py-12">
+        <p className="text-danger text-sm mb-4">Post not found.</p>
+        <Link to="/" className="text-sm text-ink hover:opacity-60">&larr; Back</Link>
       </div>
     );
   }
 
   return (
-    <div className="w-full lg:px-8 px-4 py-8">
-      <div className="max-w-6xl mx-auto">
-        <Link
-          to="/"
-          className="font-mono text-sm text-gray-800 hover:text-text underline inline-block mb-8"
-        >
-          &larr; Feed
-        </Link>
+    <div className="animate-fade-in">
+      <Link to="/" className="text-xs text-ink-light hover:text-ink transition-colors">&larr; Back</Link>
 
-        <div className="flex gap-12 items-start">
-          {/* 본문 */}
-          <div className="flex-1 min-w-0">
-            <div className="mb-8 pb-6 border-b border-gray-500">
-              <h1 className="text-3xl lg:text-4xl font-bold text-text tracking-tight leading-tight mb-4">
-                {post.title}
-              </h1>
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                <div className="flex items-center gap-3 font-mono text-sm text-muted">
-                  <time>{formatDate(post.createdAt)}</time>
-                  <span>&middot;</span>
-                  <span>{post.viewCount} views</span>
-                </div>
-                {isAuthor && (
-                  <div className="flex items-center gap-4 font-mono text-sm">
-                    <Link
-                      to={`/posts/${postId}/edit`}
-                      className="text-gray-800 hover:text-text underline"
-                    >
-                      EDIT
-                    </Link>
-                    <button
-                      onClick={handleDelete}
-                      className="text-red-600 hover:text-red-700 underline"
-                    >
-                      DELETE
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <article className="pb-12 mb-8 border-b border-gray-300">
-              <MarkdownViewer contentHtml={post.contentHtml} />
-            </article>
-
-            <CommentSection postId={Number(postId)} />
+      {/* Post Header */}
+      <div className="mt-4 mb-6 pb-6 border-b border-ink-ghost">
+        <h1 className="text-xl sm:text-2xl font-bold mb-3 leading-tight">{post.title}</h1>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-xs text-ink-light">
+          <div className="flex items-center gap-3">
+            <span>{formatDate(post.createdAt)}</span>
+            <span className="font-mono">{post.viewCount} views</span>
           </div>
-
-          {/* 우측 사이드바: 관련 기술글 */}
-          <aside className="hidden xl:block w-72 shrink-0 sticky top-8">
-            <SimilarArticles
-              title={post.title}
-              content={post.content}
-              topicHints={post.topicHints}
-            />
-          </aside>
+          {isAuthor && (
+            <div className="flex items-center gap-3 sm:ml-auto">
+              <Link to={`/posts/${postId}/edit`} className="text-info hover:opacity-70 transition-opacity">Edit</Link>
+              <button onClick={handleDelete} className="text-danger hover:opacity-70 transition-opacity">Delete</button>
+            </div>
+          )}
         </div>
       </div>
+
+      <article className="mb-8">
+        <MarkdownViewer contentHtml={post.contentHtml} />
+      </article>
+
+      {post.content && (
+        <>
+          <hr className="border-ink-ghost mb-6" />
+          <SimilarArticles
+            title={post.title}
+            content={post.content}
+            topicHints={post.topicHints}
+          />
+        </>
+      )}
+
+      <hr className="border-ink-ghost mb-6" />
+
+      <CommentSection postId={Number(postId)} />
     </div>
   );
 }

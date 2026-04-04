@@ -95,7 +95,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
       }),
       Image.configure({
         HTMLAttributes: {
-          class: 'rounded-lg max-w-full h-auto',
+          class: 'rounded max-w-full h-auto',
         },
         inline: true,
         allowBase64: false,
@@ -103,7 +103,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
-          class: 'text-blue-600 underline hover:text-blue-800',
+          class: 'text-info underline hover:opacity-70',
         },
       }),
       TextStyle,
@@ -122,7 +122,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
     content: '',
     editorProps: {
       attributes: {
-        class: 'tiptap-editor focus:outline-none min-h-[440px] p-5 text-gray-900 font-sans text-base leading-relaxed sm:min-h-[560px] sm:p-8',
+        class: 'tiptap-editor focus:outline-none min-h-[440px] p-4 text-ink text-sm leading-relaxed sm:min-h-[560px] sm:p-6',
       },
       handlePaste: (_view, event) => {
         const items = event.clipboardData?.items;
@@ -243,10 +243,10 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
   }) => (
     <button
       onClick={onClick}
-      className={`inline-flex h-8 w-8 items-center justify-center rounded-md border text-text transition-all ${
+      className={`inline-flex h-7 w-7 items-center justify-center rounded transition-all ${
         isActive
-          ? 'border-accent bg-accent text-white shadow-sm'
-          : 'border-transparent bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-100 hover:text-gray-900'
+          ? 'bg-ink text-white'
+          : 'text-ink-light hover:text-ink hover:bg-surface-alt'
       }`}
       type="button"
       title={title}
@@ -257,7 +257,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
   );
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-gray-300 bg-white shadow-sm">
+    <div className="overflow-hidden rounded-md border-[1.5px] border-ink-ghost bg-white">
       <input
         type="file"
         ref={fileInputRef}
@@ -265,21 +265,21 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         accept="image/*"
         style={{ display: 'none' }}
       />
-      <div className="flex items-center justify-between border-b border-gray-200 bg-gray-50 px-4 py-2.5">
-        <span className="text-sm font-semibold text-gray-700">마크다운 에디터</span>
-        <span className="hidden text-xs text-gray-500 sm:block">
-          단축키: Ctrl+B, Ctrl+I
+      <div className="flex items-center justify-between border-b border-ink-ghost px-3 py-2">
+        <span className="text-[10px] font-medium text-ink-light">EDITOR</span>
+        <span className="hidden text-[10px] text-ink-faint sm:block">
+          Ctrl+B, Ctrl+I
         </span>
       </div>
 
-      <div className="overflow-x-auto border-b border-gray-200 bg-white">
-        <div className="flex min-w-max items-center gap-1 px-3 py-2.5 sm:px-4">
+      <div className="overflow-x-auto border-b border-ink-ghost">
+        <div className="flex min-w-max items-center gap-0.5 px-2 py-1.5 sm:px-3">
         <MenuButton
           onClick={() => editor.chain().focus().toggleBold().run()}
           isActive={editor.isActive('bold')}
           title="Bold (Ctrl+B)"
         >
-          <Bold size={16} />
+          <Bold size={14} />
         </MenuButton>
 
         <MenuButton
@@ -287,7 +287,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
           isActive={editor.isActive('italic')}
           title="Italic (Ctrl+I)"
         >
-          <Italic size={16} />
+          <Italic size={14} />
         </MenuButton>
 
         <MenuButton
@@ -295,7 +295,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
           isActive={editor.isActive('underline')}
           title="Underline (Ctrl+U)"
         >
-          <UnderlineIcon size={16} />
+          <UnderlineIcon size={14} />
         </MenuButton>
 
         <MenuButton
@@ -303,7 +303,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
           isActive={editor.isActive('strike')}
           title="Strikethrough"
         >
-          <Strikethrough size={16} />
+          <Strikethrough size={14} />
         </MenuButton>
 
         <MenuButton
@@ -311,17 +311,17 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
           isActive={editor.isActive('highlight')}
           title="Highlight"
         >
-          <Highlighter size={16} />
+          <Highlighter size={14} />
         </MenuButton>
 
-        <div className="mx-1.5 h-6 w-px bg-gray-200" />
+        <div className="mx-1 h-5 w-px bg-ink-ghost" />
 
         <MenuButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
           isActive={editor.isActive('heading', { level: 1 })}
           title="Heading 1"
         >
-          <Heading1 size={16} />
+          <Heading1 size={14} />
         </MenuButton>
 
         <MenuButton
@@ -329,7 +329,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
           isActive={editor.isActive('heading', { level: 2 })}
           title="Heading 2"
         >
-          <Heading2 size={16} />
+          <Heading2 size={14} />
         </MenuButton>
 
         <MenuButton
@@ -337,17 +337,17 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
           isActive={editor.isActive('heading', { level: 3 })}
           title="Heading 3"
         >
-          <Heading3 size={16} />
+          <Heading3 size={14} />
         </MenuButton>
 
-        <div className="mx-1.5 h-6 w-px bg-gray-200" />
+        <div className="mx-1 h-5 w-px bg-ink-ghost" />
 
         <MenuButton
           onClick={() => editor.chain().focus().setTextAlign('left').run()}
           isActive={editor.isActive({ textAlign: 'left' })}
           title="Align left"
         >
-          <AlignLeft size={16} />
+          <AlignLeft size={14} />
         </MenuButton>
 
         <MenuButton
@@ -355,7 +355,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
           isActive={editor.isActive({ textAlign: 'center' })}
           title="Align center"
         >
-          <AlignCenter size={16} />
+          <AlignCenter size={14} />
         </MenuButton>
 
         <MenuButton
@@ -363,17 +363,17 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
           isActive={editor.isActive({ textAlign: 'right' })}
           title="Align right"
         >
-          <AlignRight size={16} />
+          <AlignRight size={14} />
         </MenuButton>
 
-        <div className="mx-1.5 h-6 w-px bg-gray-200" />
+        <div className="mx-1 h-5 w-px bg-ink-ghost" />
 
         <MenuButton
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           isActive={editor.isActive('bulletList')}
           title="Bullet list"
         >
-          <List size={16} />
+          <List size={14} />
         </MenuButton>
 
         <MenuButton
@@ -381,7 +381,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
           isActive={editor.isActive('orderedList')}
           title="Numbered list"
         >
-          <ListOrdered size={16} />
+          <ListOrdered size={14} />
         </MenuButton>
 
         <MenuButton
@@ -389,7 +389,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
           isActive={editor.isActive('blockquote')}
           title="Blockquote"
         >
-          <Quote size={16} />
+          <Quote size={14} />
         </MenuButton>
 
         <MenuButton
@@ -397,24 +397,24 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
           isActive={editor.isActive('codeBlock')}
           title="Code block"
         >
-          <Code size={16} />
+          <Code size={14} />
         </MenuButton>
 
-        <div className="mx-1.5 h-6 w-px bg-gray-200" />
+        <div className="mx-1 h-5 w-px bg-ink-ghost" />
 
         <MenuButton onClick={setLink} isActive={editor.isActive('link')} title="Insert link">
-          <LinkIcon size={16} />
+          <LinkIcon size={14} />
         </MenuButton>
 
         <MenuButton onClick={addImage} title="Insert image">
-          <ImageIcon size={16} />
+          <ImageIcon size={14} />
         </MenuButton>
 
         <MenuButton
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
           title="Horizontal rule"
         >
-          <Minus size={16} />
+          <Minus size={14} />
         </MenuButton>
 
         <MenuButton
@@ -422,29 +422,29 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
           isActive={editor.isActive('table')}
           title="Insert table"
         >
-          <TableIcon size={16} />
+          <TableIcon size={14} />
         </MenuButton>
 
-        <div className="mx-1.5 h-6 w-px bg-gray-200" />
+        <div className="mx-1 h-5 w-px bg-ink-ghost" />
 
         <MenuButton
           onClick={() => editor.chain().focus().undo().run()}
           title="Undo (Ctrl+Z)"
         >
-          <Undo size={16} />
+          <Undo size={14} />
         </MenuButton>
 
         <MenuButton
           onClick={() => editor.chain().focus().redo().run()}
           title="Redo (Ctrl+Y)"
         >
-          <Redo size={16} />
+          <Redo size={14} />
         </MenuButton>
         </div>
       </div>
 
       {showLinkInput && (
-        <div className="flex flex-wrap items-center gap-2 border-b border-gray-200 bg-gray-50 px-3 py-2.5 sm:px-4">
+        <div className="flex flex-wrap items-center gap-2 border-b border-ink-ghost px-3 py-2">
           <input
             type="url"
             value={linkUrl}
@@ -454,107 +454,107 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
               if (e.key === "Escape") { setShowLinkInput(false); setLinkUrl(""); }
             }}
             placeholder="https://..."
-            className="h-9 min-w-[14rem] flex-1 rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-accent/80 focus:outline-none"
+            className="h-8 min-w-[14rem] flex-1 rounded-md border-[1.5px] border-ink-ghost bg-white px-2 text-xs text-ink placeholder:text-ink-faint focus:border-ink focus:outline-none"
             autoFocus
           />
           <button
             type="button"
             onClick={applyLink}
-            className="inline-flex h-9 items-center justify-center rounded-lg border border-accent bg-accent px-3 text-sm font-medium text-white transition-colors hover:bg-accent/90"
+            className="inline-flex h-8 items-center justify-center rounded-md bg-accent px-3 text-xs font-medium text-accent-text transition-opacity hover:opacity-80"
           >
-            적용
+            Apply
           </button>
           <button
             type="button"
             onClick={() => { setShowLinkInput(false); setLinkUrl(""); }}
-            className="inline-flex h-9 items-center justify-center rounded-lg border border-gray-300 bg-white px-3 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
+            className="inline-flex h-8 items-center justify-center rounded-md border-[1.5px] border-ink-ghost px-3 text-xs text-ink-light transition-colors hover:text-ink"
           >
-            취소
+            Cancel
           </button>
         </div>
       )}
 
       {(showTableInput || editor.isActive('table')) && (
-        <div className="flex flex-wrap items-center gap-2 border-b border-gray-200 bg-gray-50 px-3 py-2.5 sm:px-4">
+        <div className="flex flex-wrap items-center gap-2 border-b border-ink-ghost px-3 py-2">
           {showTableInput && (
             <>
-              <span className="text-sm font-medium text-gray-600">표</span>
-              <label className="flex items-center gap-1 text-xs text-gray-600">
-                행
+              <span className="text-xs font-medium text-ink">Table</span>
+              <label className="flex items-center gap-1 text-[10px] text-ink-light">
+                rows
                 <input
                   type="number"
                   min={1}
                   max={20}
                   value={tableRows}
                   onChange={(e) => setTableRows(e.target.value)}
-                  className="h-8 w-16 rounded-md border border-gray-300 px-2 text-sm focus:border-accent/80 focus:outline-none"
+                  className="h-7 w-14 rounded border-[1.5px] border-ink-ghost bg-white px-2 text-xs text-ink focus:border-ink focus:outline-none"
                 />
               </label>
-              <label className="flex items-center gap-1 text-xs text-gray-600">
-                열
+              <label className="flex items-center gap-1 text-[10px] text-ink-light">
+                cols
                 <input
                   type="number"
                   min={1}
                   max={20}
                   value={tableCols}
                   onChange={(e) => setTableCols(e.target.value)}
-                  className="h-8 w-16 rounded-md border border-gray-300 px-2 text-sm focus:border-accent/80 focus:outline-none"
+                  className="h-7 w-14 rounded border-[1.5px] border-ink-ghost bg-white px-2 text-xs text-ink focus:border-ink focus:outline-none"
                 />
               </label>
               <button
                 type="button"
                 onClick={insertTable}
-                className="inline-flex h-8 items-center justify-center rounded-md border border-accent bg-accent px-3 text-xs font-medium text-white transition-colors hover:bg-accent/90"
+                className="inline-flex h-7 items-center justify-center rounded bg-accent px-2 text-[10px] font-medium text-accent-text transition-opacity hover:opacity-80"
               >
-                삽입
+                Insert
               </button>
               <button
                 type="button"
                 onClick={() => setShowTableInput(false)}
-                className="inline-flex h-8 items-center justify-center rounded-md border border-gray-300 bg-white px-3 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
+                className="inline-flex h-7 items-center justify-center rounded border-[1.5px] border-ink-ghost px-2 text-[10px] text-ink-light transition-colors hover:text-ink"
               >
-                취소
+                Cancel
               </button>
             </>
           )}
 
           {editor.isActive('table') && (
             <>
-              <div className="h-5 w-px bg-gray-300" />
+              <div className="h-4 w-px bg-ink-ghost" />
               <button
                 type="button"
                 onClick={() => editor.chain().focus().addRowBefore().run()}
-                className="inline-flex h-8 items-center justify-center rounded-md border border-gray-300 bg-white px-2.5 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
+                className="inline-flex h-7 items-center justify-center rounded border-[1.5px] border-ink-ghost px-2 text-[10px] text-ink-light transition-colors hover:text-ink hover:bg-surface-alt"
               >
-                행 +
+                row+
               </button>
               <button
                 type="button"
                 onClick={() => editor.chain().focus().deleteRow().run()}
-                className="inline-flex h-8 items-center justify-center rounded-md border border-gray-300 bg-white px-2.5 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
+                className="inline-flex h-7 items-center justify-center rounded border-[1.5px] border-ink-ghost px-2 text-[10px] text-ink-light transition-colors hover:text-ink hover:bg-surface-alt"
               >
-                행 -
+                row-
               </button>
               <button
                 type="button"
                 onClick={() => editor.chain().focus().addColumnBefore().run()}
-                className="inline-flex h-8 items-center justify-center rounded-md border border-gray-300 bg-white px-2.5 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
+                className="inline-flex h-7 items-center justify-center rounded border-[1.5px] border-ink-ghost px-2 text-[10px] text-ink-light transition-colors hover:text-ink hover:bg-surface-alt"
               >
-                열 +
+                col+
               </button>
               <button
                 type="button"
                 onClick={() => editor.chain().focus().deleteColumn().run()}
-                className="inline-flex h-8 items-center justify-center rounded-md border border-gray-300 bg-white px-2.5 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
+                className="inline-flex h-7 items-center justify-center rounded border-[1.5px] border-ink-ghost px-2 text-[10px] text-ink-light transition-colors hover:text-ink hover:bg-surface-alt"
               >
-                열 -
+                col-
               </button>
               <button
                 type="button"
                 onClick={() => editor.chain().focus().deleteTable().run()}
-                className="inline-flex h-8 items-center justify-center rounded-md border border-red-300 bg-white px-2.5 text-xs font-medium text-red-500 transition-colors hover:bg-red-50 hover:text-red-600"
+                className="inline-flex h-7 items-center justify-center rounded border-[1.5px] border-danger/30 px-2 text-[10px] text-danger transition-colors hover:bg-red-50"
               >
-                표 삭제
+                rm table
               </button>
             </>
           )}

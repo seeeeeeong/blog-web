@@ -4,7 +4,6 @@ import { adminApi } from "../api/admin";
 import { postApi } from "../api/post";
 import type { PostSummary } from "../types";
 import { useAlert } from "../contexts/useAlert";
-import PageLayout from "../components/common/PageLayout";
 import { PAGINATION } from "../constants/pagination";
 import { formatDate } from "../utils/format";
 import Spinner from "../components/common/Spinner";
@@ -19,35 +18,25 @@ export default function AdminPostsPage() {
   const [filter, setFilter] = useState<FilterType>("all");
   const { showError } = useAlert();
 
-  useEffect(() => {
-    setCurrentPage(0);
-  }, [filter]);
+  useEffect(() => { setCurrentPage(0); }, [filter]);
 
   const loadPosts = useCallback(async () => {
     try {
       setLoading(true);
       if (filter === "draft") {
         const data = await postApi.getDraftPosts(currentPage, PAGINATION.ADMIN_POSTS_PER_PAGE);
-        setPosts(data.content);
-        setHasNext(data.hasNext || false);
-        return;
+        setPosts(data.content); setHasNext(data.hasNext || false); return;
       }
-
       if (filter === "published") {
         const data = await adminApi.getAllPosts(currentPage, PAGINATION.ADMIN_POSTS_PER_PAGE);
-        setPosts(data.content);
-        setHasNext(data.hasNext || false);
-        return;
+        setPosts(data.content); setHasNext(data.hasNext || false); return;
       }
-
       const [published, draft] = await Promise.all([
         adminApi.getAllPosts(currentPage, PAGINATION.ADMIN_POSTS_PER_PAGE),
         postApi.getDraftPosts(currentPage, PAGINATION.ADMIN_POSTS_PER_PAGE),
       ]);
-
       const merged = [...published.content, ...draft.content]
         .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-
       setPosts(merged);
       setHasNext((published.hasNext || false) || (draft.hasNext || false));
     } catch {
@@ -57,138 +46,72 @@ export default function AdminPostsPage() {
     }
   }, [currentPage, filter, showError]);
 
-  useEffect(() => {
-    void loadPosts();
-  }, [loadPosts]);
+  useEffect(() => { void loadPosts(); }, [loadPosts]);
 
   const handleDelete = async (postId: number) => {
-    try {
-      await adminApi.deletePost(postId);
-      await loadPosts();
-    } catch {
-      showError("게시글 삭제에 실패했습니다.");
-    }
+    try { await adminApi.deletePost(postId); await loadPosts(); }
+    catch { showError("게시글 삭제에 실패했습니다."); }
   };
 
   return (
-    <PageLayout title="Admin">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between mb-8">
-          <h2 className="text-2xl font-bold text-text tracking-tight">
-            Admin
-          </h2>
-          <Link
-            to="/posts/create"
-            className="font-mono text-sm text-gray-800 hover:text-text underline"
+    <div className="animate-fade-in">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-bold">Admin Posts</h2>
+        <Link to="/posts/create" className="text-xs font-medium text-accent-text bg-accent px-3 py-1.5 rounded-md hover:opacity-80 transition-opacity">
+          + New Post
+        </Link>
+      </div>
+
+      {/* Filters */}
+      <div className="flex gap-1.5 mb-5">
+        {(["all", "published", "draft"] as FilterType[]).map((f) => (
+          <button
+            key={f}
+            onClick={() => setFilter(f)}
+            className={`px-3.5 py-1 rounded text-xs font-medium transition-colors ${
+              filter === f ? "bg-accent text-accent-text" : "bg-surface-alt text-ink-light hover:bg-surface-hover hover:text-ink"
+            }`}
           >
-            + NEW POST
-          </Link>
-        </div>
+            {f}
+          </button>
+        ))}
+      </div>
 
-        <div className="flex items-center gap-4 mb-6 border-b border-gray-500 pb-3 font-mono text-sm">
-          <span className="text-muted">Filter:</span>
-          {(["all", "published", "draft"] as FilterType[]).map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`uppercase ${
-                filter === f
-                  ? "text-text font-semibold underline"
-                  : "text-gray-800 hover:text-text"
-              }`}
-            >
-              {f}
-            </button>
-          ))}
-        </div>
-
-        {loading ? (
-          <div className="flex justify-center py-16">
-            <Spinner />
-          </div>
-        ) : (
-          <>
-            <div className="w-full overflow-x-auto">
-              <div className="min-w-[680px]">
-                <div className="flex items-center font-mono text-sm text-muted border-b border-gray-500 pb-2">
-                  <span className="w-5/12">TITLE</span>
-                  <span className="w-2/12">STATUS</span>
-                  <span className="w-1/12">VIEWS</span>
-                  <span className="w-2/12">DATE</span>
-                  <span className="w-2/12 text-right">ACTIONS</span>
-                </div>
-
-                {posts.length === 0 ? (
-                  <div className="py-12 text-center">
-                    <p className="text-sm font-mono text-muted">No posts found.</p>
-                  </div>
-                ) : (
-                  posts.map((post) => (
-                    <div
-                      key={post.id}
-                      className="flex items-center border-b border-gray-300 py-3 text-sm hover:bg-hover/50 transition-colors"
-                    >
-                      <div className="w-5/12 pr-4">
-                        <Link
-                          to={`/posts/${post.id}`}
-                          className="text-text hover:underline truncate block font-medium"
-                        >
-                          {post.title}
-                        </Link>
-                      </div>
-                      <div className="w-2/12 font-mono text-muted text-xs uppercase">
-                        {post.status}
-                      </div>
-                      <div className="w-1/12 font-mono text-muted text-xs">
-                        {post.viewCount}
-                      </div>
-                      <div className="w-2/12 font-mono text-muted text-xs">
-                        {formatDate(post.createdAt)}
-                      </div>
-                      <div className="w-2/12 flex justify-end gap-4 font-mono text-xs">
-                        <Link
-                          to={`/posts/${post.id}/edit`}
-                          className="text-gray-800 hover:text-text underline"
-                        >
-                          EDIT
-                        </Link>
-                        <button
-                          onClick={() => handleDelete(post.id)}
-                          className="text-red-600 hover:text-red-700 underline"
-                        >
-                          DEL
-                        </button>
-                      </div>
-                    </div>
-                  ))
-                )}
+      {loading ? (
+        <div className="py-8"><Spinner /></div>
+      ) : posts.length === 0 ? (
+        <div className="py-8 text-ink-light text-sm">No posts found.</div>
+      ) : (
+        <>
+          {posts.map((post) => (
+            <div key={post.id} className="flex items-center gap-3 py-3 border-b border-ink-ghost text-sm group">
+              <Link to={`/posts/${post.id}`} className="flex-1 min-w-0 font-medium truncate group-hover:opacity-70 transition-opacity">
+                {post.title}
+              </Link>
+              <span className={`text-[10px] font-semibold px-2 py-0.5 rounded shrink-0 ${
+                post.status === "DRAFT" ? "bg-yellow-100 text-draft" : "bg-green-50 text-success"
+              }`}>
+                {post.status.toLowerCase()}
+              </span>
+              <span className="font-mono text-xs text-ink-faint shrink-0 hidden sm:block">{post.viewCount}</span>
+              <span className="text-xs text-ink-lighter shrink-0 hidden sm:block w-20 text-right">{formatDate(post.createdAt)}</span>
+              <div className="flex gap-2 shrink-0 text-xs">
+                <Link to={`/posts/${post.id}/edit`} className="text-info hover:opacity-70">edit</Link>
+                <button onClick={() => handleDelete(post.id)} className="text-danger hover:opacity-70">del</button>
               </div>
             </div>
+          ))}
 
-            {(currentPage > 0 || hasNext) && (
-              <div className="flex justify-center items-center gap-8 mt-10 pt-6 font-mono text-sm">
-                <button
-                  onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
-                  disabled={currentPage === 0}
-                  className="text-gray-800 hover:text-text underline disabled:opacity-30 disabled:no-underline disabled:cursor-not-allowed"
-                >
-                  &larr; PREV
-                </button>
-                <span className="text-muted">
-                  PAGE {currentPage + 1}
-                </span>
-                <button
-                  onClick={() => setCurrentPage((prev) => prev + 1)}
-                  disabled={!hasNext}
-                  className="text-gray-800 hover:text-text underline disabled:opacity-30 disabled:no-underline disabled:cursor-not-allowed"
-                >
-                  NEXT &rarr;
-                </button>
-              </div>
-            )}
-          </>
-        )}
-      </div>
-    </PageLayout>
+          <div className="text-ink-light text-xs mt-4">{posts.length} posts &middot; Page {currentPage + 1}</div>
+
+          {(currentPage > 0 || hasNext) && (
+            <div className="flex gap-6 mt-3 text-xs">
+              <button onClick={() => setCurrentPage(p => Math.max(0, p - 1))} disabled={currentPage === 0} className="text-ink hover:opacity-60 disabled:text-ink-faint disabled:cursor-not-allowed">&larr; prev</button>
+              <button onClick={() => setCurrentPage(p => p + 1)} disabled={!hasNext} className="text-ink hover:opacity-60 disabled:text-ink-faint disabled:cursor-not-allowed">next &rarr;</button>
+            </div>
+          )}
+        </>
+      )}
+    </div>
   );
 }

@@ -1,17 +1,13 @@
 import type React from "react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import type { AxiosError } from "axios";
 import { authApi } from "../api/auth";
-import AuthLayout from "../components/common/AuthLayout";
 import { getUserIdFromToken } from "../utils/authToken";
 import { extractApiErrorMessage } from "../utils/error";
 
 interface LoginApiError {
-  error?: {
-    code?: string;
-    message?: string;
-  };
+  error?: { code?: string; message?: string };
   message?: string;
 }
 
@@ -30,21 +26,17 @@ export default function LoginPage() {
     try {
       const response = await authApi.login({ email, password });
       const userId = getUserIdFromToken(response.accessToken);
-
       localStorage.setItem("accessToken", response.accessToken);
       localStorage.setItem("refreshToken", response.refreshToken);
-      if (userId) {
-        localStorage.setItem("userId", userId);
-      }
-
+      if (userId) localStorage.setItem("userId", userId);
       navigate("/");
     } catch (err) {
       const axiosError = err as AxiosError<LoginApiError>;
       const errorCode = axiosError.response?.data?.error?.code;
       if (errorCode === "AUTH_009") {
-        setErrorMessage("로그인 시도가 너무 많습니다. 잠시 후 다시 시도해 주세요.");
+        setErrorMessage("Too many login attempts. Please try again later.");
       } else {
-        setErrorMessage(extractApiErrorMessage(err, "로그인에 실패했습니다."));
+        setErrorMessage(extractApiErrorMessage(err, "Login failed."));
       }
     } finally {
       setLoading(false);
@@ -52,60 +44,47 @@ export default function LoginPage() {
   };
 
   return (
-    <AuthLayout title="Admin Login" subtitle="Access the admin dashboard">
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label
-            htmlFor="email"
-            className="block text-sm font-mono text-muted mb-2"
+    <div className="min-h-screen bg-white flex items-center justify-center px-4">
+      <div className="w-full max-w-sm">
+        <h1 className="text-xl font-bold mb-1">Login</h1>
+        <p className="text-sm text-ink-light mb-6">Admin authentication</p>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="email" className="block text-xs font-medium text-ink-light mb-1">Email</label>
+            <input
+              id="email" name="email" type="email" autoComplete="email" required
+              value={email} onChange={(e) => setEmail(e.target.value)}
+              className="w-full h-10 px-3 border-[1.5px] border-ink-ghost rounded-md text-sm outline-none focus:border-ink transition-colors"
+              placeholder="admin@example.com"
+            />
+          </div>
+          <div>
+            <label htmlFor="password" className="block text-xs font-medium text-ink-light mb-1">Password</label>
+            <input
+              id="password" name="password" type="password" autoComplete="current-password" required
+              value={password} onChange={(e) => setPassword(e.target.value)}
+              className="w-full h-10 px-3 border-[1.5px] border-ink-ghost rounded-md text-sm outline-none focus:border-ink transition-colors"
+              placeholder="••••••••"
+            />
+          </div>
+
+          {errorMessage && (
+            <div className="text-danger text-xs">{errorMessage}</div>
+          )}
+
+          <button
+            type="submit" disabled={loading}
+            className="w-full h-10 text-sm font-semibold bg-accent text-accent-text rounded-md hover:opacity-80 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
           >
-            Email
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3 py-2 border-b border-gray-500 bg-transparent font-mono text-base text-text placeholder:text-gray-400 focus:outline-none focus:border-text transition-colors"
-            placeholder="admin@example.com"
-          />
+            {loading ? "..." : "Login"}
+          </button>
+        </form>
+
+        <div className="mt-4 text-center">
+          <Link to="/" className="text-xs text-ink-light hover:text-ink transition-colors">&larr; Back to blog</Link>
         </div>
-
-        <div>
-          <label
-            htmlFor="password"
-            className="block text-sm font-mono text-muted mb-2"
-          >
-            Password
-          </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3 py-2 border-b border-gray-500 bg-transparent font-mono text-base text-text placeholder:text-gray-400 focus:outline-none focus:border-text transition-colors"
-            placeholder="••••••••"
-          />
-        </div>
-
-        {errorMessage && (
-          <p className="font-mono text-sm text-red-600">{errorMessage}</p>
-        )}
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-3 font-mono text-sm font-semibold text-white bg-text hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          {loading ? "Logging in..." : "LOGIN"}
-        </button>
-      </form>
-    </AuthLayout>
+      </div>
+    </div>
   );
 }

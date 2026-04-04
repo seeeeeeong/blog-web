@@ -6,9 +6,6 @@ export const formatDate = (date: string): string => {
   return `${year}.${month}.${day}`;
 };
 
-export const formatShortDate = (date: string): string => {
-  return formatDate(date);
-};
 
 export const extractPreview = (content: string, maxLength: number = 150): string => {
   return content

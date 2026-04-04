@@ -11,20 +11,28 @@ interface AlertProps {
   showCloseButton?: boolean;
 }
 
-const LABEL: Record<AlertType, string> = {
-  success: "완료",
-  error:   "오류",
-  warning: "주의",
-  info:    "안내",
-  confirm: "확인",
+const ACCENT: Record<AlertType, string> = {
+  success: "border-l-success",
+  error:   "border-l-danger",
+  warning: "border-l-warning",
+  info:    "border-l-info",
+  confirm: "border-l-ink",
 };
 
-const ACCENT: Record<AlertType, string> = {
-  success: "border-l-gray-900",
-  error:   "border-l-gray-600",
-  warning: "border-l-gray-500",
-  info:    "border-l-gray-400",
-  confirm: "border-l-gray-900",
+const LABEL: Record<AlertType, string> = {
+  success: "OK",
+  error:   "ERR",
+  warning: "WARN",
+  info:    "INFO",
+  confirm: "CONFIRM",
+};
+
+const LABEL_COLOR: Record<AlertType, string> = {
+  success: "text-success",
+  error:   "text-danger",
+  warning: "text-warning",
+  info:    "text-info",
+  confirm: "text-ink",
 };
 
 export default function Alert({
@@ -42,34 +50,24 @@ export default function Alert({
     }
   }, [duration, onClose, type]);
 
-  const base = `w-72 border border-gray-400 border-l-2 ${ACCENT[type]} bg-[#edeeec] animate-fade-in`;
+  const base = `w-72 border border-ink-ghost border-l-2 ${ACCENT[type]} bg-white shadow-sm animate-fade-in rounded-md`;
 
   if (type === "confirm") {
     return (
       <div className={base} role="alertdialog">
-        <div className="px-3.5 py-3">
-          <span className="font-mono text-[11px] font-semibold text-gray-500">
-            [{LABEL[type]}]
-          </span>
-          <p className="mt-1.5 font-mono text-[13px] leading-relaxed text-gray-900">
-            {message}
-          </p>
+        <div className="px-3 py-2.5">
+          <span className={`text-[10px] font-bold ${LABEL_COLOR[type]}`}>[{LABEL[type]}]</span>
+          <p className="mt-1 text-xs text-ink leading-relaxed">{message}</p>
         </div>
-        <div className="flex justify-end gap-3 border-t border-gray-300 px-3.5 py-2">
-          <button
-            onClick={onClose}
-            className="font-mono text-xs text-gray-500 transition-colors hover:text-gray-900"
-          >
-            취소
+        <div className="flex justify-end gap-3 border-t border-ink-ghost px-3 py-2">
+          <button onClick={onClose} className="text-[11px] text-ink-light hover:text-ink transition-colors">
+            Cancel
           </button>
           <button
-            onClick={() => {
-              onConfirm?.();
-              onClose();
-            }}
-            className="font-mono text-xs font-semibold text-gray-900 transition-colors hover:text-gray-600"
+            onClick={() => { onConfirm?.(); onClose(); }}
+            className="text-[11px] font-medium text-ink hover:opacity-70 transition-opacity"
           >
-            확인
+            Confirm
           </button>
         </div>
       </div>
@@ -78,22 +76,18 @@ export default function Alert({
 
   return (
     <div className={base} role="alert">
-      <div className="flex items-start justify-between gap-3 px-3.5 py-3">
+      <div className="flex items-start justify-between gap-2 px-3 py-2.5">
         <div className="flex items-baseline gap-2">
-          <span className="flex-shrink-0 font-mono text-[11px] font-semibold text-gray-500">
-            [{LABEL[type]}]
-          </span>
-          <p className="font-mono text-[13px] leading-relaxed text-gray-900">
-            {message}
-          </p>
+          <span className={`text-[10px] font-bold shrink-0 ${LABEL_COLOR[type]}`}>[{LABEL[type]}]</span>
+          <p className="text-xs text-ink leading-relaxed">{message}</p>
         </div>
         {showCloseButton && (
           <button
             onClick={onClose}
-            className="flex-shrink-0 font-mono text-base leading-none text-gray-400 transition-colors hover:text-gray-900"
-            aria-label="닫기"
+            className="shrink-0 text-sm text-ink-light hover:text-ink transition-colors"
+            aria-label="close"
           >
-            ×
+            &times;
           </button>
         )}
       </div>

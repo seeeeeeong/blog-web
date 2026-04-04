@@ -13,6 +13,7 @@ const PostCreatePage = lazy(() => import("./pages/PostCreatePage"));
 const PostEditPage = lazy(() => import("./pages/PostEditPage"));
 const AuthCallbackPage = lazy(() => import("./pages/AuthCallbackPage"));
 const AdminPostsPage = lazy(() => import("./pages/AdminPostsPage"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
 function PrivateRoute({ children }: { children: JSX.Element }) {
   const token = localStorage.getItem("accessToken");
@@ -68,6 +69,10 @@ function App() {
                     </PrivateRoute>
                   }
                 />
+              </Route>
+
+              <Route element={<Layout />}>
+                <Route path="*" element={<NotFoundPage />} />
               </Route>
             </Routes>
           </Suspense>

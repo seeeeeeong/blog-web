@@ -1,11 +1,6 @@
 import apiClient from "./client";
 import imageCompression from "browser-image-compression";
-import type {
-  ImageUploadResponse,
-  ImagePresignedUrlResponse,
-  ImagePresignedUrlCompleteRequest,
-  ImagePresignedUrlCompleteResponse,
-} from "../types";
+import type { ImageUploadResponse, ImagePresignedUrlResponse } from "../types";
 
 export const uploadImage = async (file: File): Promise<ImageUploadResponse> => {
   const formData = new FormData();
@@ -28,16 +23,6 @@ export const getPresignedUrl = async (
   const response = await apiClient.get<ImagePresignedUrlResponse>("/images/presigned-url", {
     params: { contentType, folder },
   });
-  return response.data;
-};
-
-export const completePresignedUpload = async (
-  payload: ImagePresignedUrlCompleteRequest
-): Promise<ImagePresignedUrlCompleteResponse> => {
-  const response = await apiClient.post<ImagePresignedUrlCompleteResponse>(
-    "/images/presigned-url/complete",
-    payload
-  );
   return response.data;
 };
 
@@ -70,11 +55,7 @@ export const uploadImageDirectly = async (file: File): Promise<string> => {
     throw new Error("Image upload failed");
   }
 
-  const completed = await completePresignedUpload({
-    uploadToken: presigned.uploadToken,
-    key: presigned.key,
-  });
-  return completed.fileUrl;
+  return presigned.fileUrl;
 };
 
 export const deleteImage = async (key: string): Promise<boolean> => {

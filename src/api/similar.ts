@@ -44,6 +44,20 @@ export async function fetchSimilarArticles(
   return res.data.items;
 }
 
+export function recordSimilarClick(
+  articleId: number,
+  sourceTitle?: string,
+  stage?: string,
+): void {
+  axios
+    .post(`${DEVLOG_ARCHIVE_URL}/api/v1/similar/click`, {
+      articleId,
+      sourceTitle,
+      stage,
+    })
+    .catch(() => {});
+}
+
 function buildSimilarRequestPayload(
   title: string,
   content: string,

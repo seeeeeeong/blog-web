@@ -11,7 +11,7 @@ interface CommentFormProps {
 export default function CommentForm({
   onSubmit,
   placeholder = "Leave a comment...",
-  buttonText = "Post",
+  buttonText = "Send",
   autoFocus = false,
 }: CommentFormProps) {
   const [content, setContent] = useState("");
@@ -20,9 +20,7 @@ export default function CommentForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!content.trim()) return;
-
     setIsSubmitting(true);
     try {
       await onSubmit(content.trim());
@@ -33,19 +31,17 @@ export default function CommentForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
+    <form onSubmit={handleSubmit} className="space-y-2">
       {user && (
-        <div className="mb-2 flex items-center gap-2">
+        <div className="flex items-center gap-2 text-xs mb-1">
           {user.githubAvatarUrl && (
             <img
               src={user.githubAvatarUrl}
               alt={user.githubUsername}
-              className="w-5 h-5 rounded-full border border-border"
+              className="w-4 h-4 rounded-full"
             />
           )}
-          <span className="text-sm font-mono font-semibold text-text">
-            {user.githubUsername}
-          </span>
+          <span className="text-ink font-medium">{user.githubUsername}</span>
         </div>
       )}
 
@@ -56,17 +52,15 @@ export default function CommentForm({
         autoFocus={autoFocus}
         rows={3}
         maxLength={1000}
-        className="block w-full resize-none rounded-md border border-gray-300 bg-white p-3 text-sm font-mono text-text placeholder:text-gray-400 transition-colors focus:border-text focus:outline-none"
+        className="block w-full resize-none rounded-md border-[1.5px] border-ink-ghost bg-white p-2.5 text-xs text-ink placeholder:text-ink-faint focus:border-ink focus:outline-none transition-colors"
       />
 
       <div className="flex justify-between items-center">
-        <p className="text-xs font-mono text-muted">
-          {content.length} / 1000
-        </p>
+        <span className="text-[10px] text-ink-faint">{content.length}/1000</span>
         <button
           type="submit"
           disabled={!content.trim() || isSubmitting}
-          className="rounded-md bg-text px-4 py-1.5 font-mono text-sm text-white transition-colors hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-40"
+          className="bg-accent text-accent-text rounded-md px-3 py-1 text-xs font-medium hover:opacity-80 disabled:opacity-30 disabled:cursor-not-allowed transition-opacity"
         >
           {isSubmitting ? "..." : buttonText}
         </button>

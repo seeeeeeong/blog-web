@@ -5,7 +5,6 @@ import { categoryApi } from "../api/category";
 import type { Category } from "../types";
 import { useAlert } from "../contexts/useAlert";
 import TipTapEditor from "../components/editor/TipTapEditor";
-import PageLayout from "../components/common/PageLayout";
 
 export default function PostCreatePage() {
   const navigate = useNavigate();
@@ -83,103 +82,99 @@ export default function PostCreatePage() {
   };
 
   return (
-    <PageLayout title="새 글 작성">
-      <div className="mx-auto max-w-5xl rounded-3xl border border-gray-200 bg-white p-5 shadow-sm sm:p-8">
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSubmit(false);
-          }}
-          className="space-y-8 pb-24"
-        >
-          <header className="space-y-2 border-b border-gray-200 pb-5">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight text-gray-900">새 글 작성</h1>
-              <p className="text-sm text-gray-500">제목, 카테고리, 본문을 입력한 뒤 바로 발행하거나 임시저장할 수 있습니다.</p>
-            </div>
-            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
-              <span>제목 {title.length}/200</span>
-              <span>단어 {wordCount}</span>
-              <span>문자 {contentCharacters}</span>
-            </div>
-          </header>
+    <div className="animate-fade-in">
+      <h2 className="text-xl font-bold mb-1">New Post</h2>
+      <div className="flex flex-wrap items-center gap-4 text-xs text-ink-light font-mono mb-6">
+        <span>title {title.length}/200</span>
+        <span>words {wordCount}</span>
+        <span>chars {contentCharacters}</span>
+      </div>
 
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-            <div className="md:col-span-2">
-              <label htmlFor="title" className="mb-2 block text-sm font-semibold text-gray-700">
-                제목
-              </label>
-              <input
-                type="text"
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-                maxLength={200}
-                className="h-12 w-full rounded-xl border border-gray-300 bg-white px-4 text-base text-gray-900 placeholder:text-gray-400 transition-colors focus:border-accent/80 focus:outline-none"
-                placeholder="제목을 입력하세요"
-              />
-            </div>
-
-            <div className="md:col-span-1">
-              <label htmlFor="category" className="mb-2 block text-sm font-semibold text-gray-700">
-                카테고리
-              </label>
-              <select
-                id="category"
-                value={categoryId}
-                onChange={(e) => setCategoryId(Number(e.target.value))}
-                className="h-12 w-full rounded-xl border border-gray-300 bg-white px-4 text-base text-gray-900 transition-colors focus:border-accent/80 focus:outline-none"
-              >
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit(false);
+        }}
+        className="space-y-5 pb-20"
+      >
+        {/* Title & Category */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div className="md:col-span-2">
+            <label htmlFor="title" className="mb-1.5 block text-xs font-medium text-ink-light">
+              Title
+            </label>
+            <input
+              type="text"
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              maxLength={200}
+              className="h-10 w-full rounded-md border-[1.5px] border-ink-ghost bg-white px-3 text-sm text-ink placeholder:text-ink-faint transition-colors focus:border-ink focus:outline-none"
+              placeholder="제목을 입력하세요"
+            />
           </div>
 
-          <div className="space-y-2">
-            <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-              <label className="text-sm font-semibold text-gray-700">본문</label>
-              <span className="text-xs text-gray-500">
-                이미지는 붙여넣기 또는 업로드 버튼으로 추가할 수 있습니다.
-              </span>
-            </div>
-            <TipTapEditor value={content} onChange={setContent} />
+          <div className="md:col-span-1">
+            <label htmlFor="category" className="mb-1.5 block text-xs font-medium text-ink-light">
+              Category
+            </label>
+            <select
+              id="category"
+              value={categoryId}
+              onChange={(e) => setCategoryId(Number(e.target.value))}
+              className="h-10 w-full rounded-md border-[1.5px] border-ink-ghost bg-white px-3 text-sm text-ink transition-colors focus:border-ink focus:outline-none"
+            >
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
           </div>
+        </div>
 
-          <div className="sticky bottom-3 z-20 rounded-2xl border border-gray-200 bg-white p-3 shadow-lg">
-            <div className="flex flex-col-reverse items-stretch justify-between gap-3 sm:flex-row sm:items-center">
+        {/* Editor */}
+        <div className="space-y-1.5">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+            <label className="text-xs font-medium text-ink-light">Content</label>
+            <span className="text-[10px] text-ink-faint">
+              이미지는 붙여넣기 또는 업로드 버튼으로 추가
+            </span>
+          </div>
+          <TipTapEditor value={content} onChange={setContent} />
+        </div>
+
+        {/* Action Bar */}
+        <div className="sticky bottom-3 z-20 rounded-md border-[1.5px] border-ink-ghost bg-white p-3 shadow-sm">
+          <div className="flex flex-col-reverse items-stretch justify-between gap-3 sm:flex-row sm:items-center">
+            <button
+              type="button"
+              onClick={() => navigate("/")}
+              className="inline-flex h-9 items-center justify-center rounded-md border-[1.5px] border-ink-ghost px-4 text-xs font-medium text-ink-light transition-colors hover:text-ink hover:border-ink"
+            >
+              Cancel
+            </button>
+            <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => navigate("/")}
-                className="inline-flex h-10 items-center justify-center rounded-xl border border-gray-300 px-4 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100"
+                onClick={() => handleSubmit(true)}
+                disabled={loading}
+                className="inline-flex h-9 items-center justify-center rounded-md border-[1.5px] border-ink-ghost px-4 text-xs font-medium text-warning transition-colors hover:bg-yellow-50 disabled:cursor-not-allowed disabled:opacity-30"
               >
-                취소
+                {loading ? "..." : "Save Draft"}
               </button>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleSubmit(true)}
-                  disabled={loading}
-                  className="inline-flex h-10 items-center justify-center rounded-xl border border-gray-300 px-4 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {loading ? "저장 중..." : "임시저장"}
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="inline-flex h-10 items-center justify-center rounded-xl border border-accent bg-accent px-4 text-sm font-semibold text-white transition-colors hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {loading ? "발행 중..." : "발행하기"}
-                </button>
-              </div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="inline-flex h-9 items-center justify-center rounded-md bg-accent px-4 text-xs font-medium text-accent-text transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-30"
+              >
+                {loading ? "..." : "Publish"}
+              </button>
             </div>
           </div>
-        </form>
-      </div>
-    </PageLayout>
+        </div>
+      </form>
+    </div>
   );
 }

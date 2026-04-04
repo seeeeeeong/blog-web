@@ -2,292 +2,141 @@ import { useCallback, useEffect, useState } from "react";
 import { postApi } from "../api/post";
 import { categoryApi } from "../api/category";
 import type { PostSummary, Category } from "../types";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import Spinner from "../components/common/Spinner";
 import { formatDate } from "../utils/format";
 import { PAGINATION } from "../constants/pagination";
 
 export default function HomePage() {
+  const [searchParams] = useSearchParams();
+  const categoryParam = searchParams.get("category");
   const [posts, setPosts] = useState<PostSummary[]>([]);
-  const [popularPosts, setPopularPosts] = useState<PostSummary[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [hasNext, setHasNext] = useState(false);
-  const [postsLoading, setPostsLoading] = useState(true);
-  const [initialLoading, setInitialLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const loadCategories = useCallback(async () => {
-    try {
-      const data = await categoryApi.getCategories();
-      setCategories(data || []);
-    } catch {
-      setError("Failed to load categories.");
-    }
+  useEffect(() => {
+    categoryApi.getCategories().then(setCategories).catch(() => {});
   }, []);
 
-  const loadPopularPosts = useCallback(async () => {
-    try {
-      const data = await postApi.getPopularPosts(PAGINATION.POPULAR_POSTS_LIMIT);
-      setPopularPosts(data || []);
-    } catch {
-      setPopularPosts([]);
-    }
-  }, []);
+  const categoryName = (categoryId: number) => {
+    return categories.find((c) => c.id === categoryId)?.name ?? "Etc";
+  };
 
   const loadPosts = useCallback(async () => {
     try {
-      setPostsLoading(true);
+      setLoading(true);
       setError(null);
-
+      const catId = categoryParam ? Number(categoryParam) : undefined;
       const data = searchQuery.trim()
-        ? await postApi.searchPosts(searchQuery, selectedCategory || undefined, currentPage, PAGINATION.POSTS_PER_PAGE)
-        : selectedCategory
-          ? await postApi.getPostsByCategory(selectedCategory, currentPage, PAGINATION.POSTS_PER_PAGE)
+        ? await postApi.searchPosts(searchQuery, catId, currentPage, PAGINATION.POSTS_PER_PAGE)
+        : catId
+          ? await postApi.getPostsByCategory(catId, currentPage, PAGINATION.POSTS_PER_PAGE)
           : await postApi.getPosts(currentPage, PAGINATION.POSTS_PER_PAGE);
-
       setPosts(data.content || []);
       setHasNext(data.hasNext || false);
     } catch {
       setError("Failed to load posts.");
     } finally {
-      setPostsLoading(false);
+      setLoading(false);
     }
-  }, [currentPage, searchQuery, selectedCategory]);
+  }, [currentPage, searchQuery, categoryParam]);
 
-  useEffect(() => {
-    const init = async () => {
-      try {
-        await Promise.all([loadCategories(), loadPopularPosts()]);
-      } finally {
-        setInitialLoading(false);
-      }
-    };
-    void init();
-  }, [loadCategories, loadPopularPosts]);
-
-  useEffect(() => {
-    setCurrentPage(0);
-  }, [selectedCategory, searchQuery]);
-
-  useEffect(() => {
-    void loadPosts();
-  }, [loadPosts]);
+  useEffect(() => { setCurrentPage(0); }, [categoryParam, searchQuery]);
+  useEffect(() => { void loadPosts(); }, [loadPosts]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setSearchQuery(searchKeyword.trim());
   };
 
-  const handleCategoryClick = (categoryId: number | null) => {
-    setSelectedCategory(categoryId);
-    setSearchKeyword("");
-    setSearchQuery("");
-  };
-
-  if (initialLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <Spinner />
-      </div>
-    );
-  }
-
-  if (error && posts.length === 0) {
-    return (
-      <div className="w-full lg:px-8 px-4 py-20 text-center">
-        <p className="text-sm font-mono text-red-600 mb-6">{error}</p>
-        <button
-          onClick={loadPosts}
-          className="font-mono text-sm text-muted hover:text-text transition-colors"
-        >
-          Try Again
-        </button>
-      </div>
-    );
-  }
-
   return (
-    <div className="flex flex-col h-full w-full lg:px-8 px-4 py-6 sm:py-8">
-      <div className="mb-6">
-        <h2 className="text-text lg:text-[5rem] sm:text-[3rem] text-[2.35rem] leading-[1.1] tracking-tighter font-bold">
-          Feed
-        </h2>
-      </div>
+    <div className="animate-fade-in">
+      <h2 className="text-2xl font-bold mb-1">Posts</h2>
+      <p className="text-[13px] text-ink-light mb-6">
+        {posts.length > 0 ? `${posts.length}${hasNext ? "+" : ""} articles` : "Loading..."}
+        {searchQuery && <> matching &ldquo;{searchQuery}&rdquo;</>}
+      </p>
 
-      <form onSubmit={handleSearch} className="mb-8">
-        <div className="flex gap-3 items-center border-b border-gray-400 pb-2">
-          <svg className="w-4 h-4 text-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+      {/* Search */}
+      <form onSubmit={handleSearch} className="mb-5">
+        <div className="relative">
           <input
             type="text"
             value={searchKeyword}
             onChange={(e) => setSearchKeyword(e.target.value)}
-            placeholder="Search posts..."
-            className="w-full bg-transparent font-mono text-sm text-text placeholder:text-gray-400 focus:outline-none"
+            placeholder="Search..."
+            className="w-full h-10 border-[1.5px] border-ink-ghost rounded-md px-3.5 text-[13px] bg-white text-ink placeholder:text-ink-faint outline-none transition-colors focus:border-ink"
           />
           {searchQuery && (
             <button
               type="button"
-              onClick={() => {
-                setSearchKeyword("");
-                setSearchQuery("");
-              }}
-              className="font-mono text-xs text-muted hover:text-text transition-colors shrink-0"
+              onClick={() => { setSearchKeyword(""); setSearchQuery(""); }}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-light hover:text-ink text-xs"
             >
-              Clear
+              clear
             </button>
           )}
         </div>
       </form>
 
-      {popularPosts.length > 0 && (
-        <section className="mb-8">
-          <div className="lg:px-8 px-4 py-5 border-b border-gray-300/80 bg-transparent">
-            <span className="text-xs font-mono text-muted uppercase tracking-wide mb-3 block">
-              Popular
-            </span>
-            <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-              {popularPosts.map((post, index) => (
-                <Link
-                  key={post.id}
-                  to={`/posts/${post.id}`}
-                  className="group flex flex-col gap-2 border border-gray-300/80 bg-white/20 p-3 hover:border-gray-500 transition-colors"
-                >
-                  <span className="font-mono text-xs text-muted">#{index + 1}</span>
-                  <span className="font-mono text-sm text-text leading-snug line-clamp-2 group-hover:text-muted transition-colors">
-                    {post.title}
-                  </span>
-                  <span className="font-mono text-xs text-muted mt-auto">{post.viewCount} views</span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      <div className="flex lg:flex-row flex-col lg:gap-x-10 gap-y-6">
-        {categories.length > 0 && (
-          <div className="flex flex-col lg:w-44 w-full shrink-0">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-mono text-muted uppercase tracking-wide">Filter</span>
-              {selectedCategory !== null && (
-                <button
-                  type="button"
-                  className="text-xs font-mono text-muted hover:text-text transition-colors"
-                  onClick={() => handleCategoryClick(null)}
-                >
-                  Clear
-                </button>
-              )}
-            </div>
-            <div className="flex flex-col gap-y-0.5">
-              <button
-                type="button"
-                className={`text-left font-mono text-sm py-1 transition-colors ${
-                  selectedCategory === null
-                    ? "text-text font-semibold"
-                    : "text-muted hover:text-text"
-                }`}
-                onClick={() => handleCategoryClick(null)}
-              >
-                {selectedCategory === null && <span className="mr-1.5">&bull;</span>}
-                All
-              </button>
-              {categories.map((category) => (
-                <button
-                  key={category.id}
-                  type="button"
-                  className={`text-left font-mono text-sm py-1 transition-colors ${
-                    selectedCategory === category.id
-                      ? "text-text font-semibold"
-                      : "text-muted hover:text-text"
-                  }`}
-                  onClick={() => handleCategoryClick(category.id)}
-                >
-                  {selectedCategory === category.id && <span className="mr-1.5">&bull;</span>}
-                  {category.name}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div className="flex flex-col lg:w-0 flex-grow pb-16">
-          <div className="hidden sm:flex w-full h-8 text-xs font-mono text-muted uppercase tracking-wide border-b border-gray-400">
-            <span className="w-28 shrink-0">Date</span>
-            <span className="flex-1">Title</span>
-            <span className="w-16 text-right hidden sm:block">Views</span>
-          </div>
-
-          <div className="flex flex-col w-full">
-            {postsLoading ? (
-              <div className="flex justify-center py-16">
-                <Spinner />
-              </div>
-            ) : error ? (
-              <div className="py-12 text-center">
-                <p className="text-sm font-mono text-red-600">{error}</p>
-              </div>
-            ) : posts.length === 0 ? (
-              <div className="py-12 text-center">
-                <p className="text-sm font-mono text-muted">
-                  {searchQuery ? "No search results found." : "No posts yet."}
-                </p>
-              </div>
-            ) : (
-              <>
-                {posts.map((post) => (
-                  <Link
-                    key={post.id}
-                    to={`/posts/${post.id}`}
-                    className="w-full py-3 border-b border-gray-300 hover:bg-hover/40 transition-colors group flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-0"
-                  >
-                    <span className="hidden sm:block text-xs font-mono w-28 shrink-0 text-muted">
-                      {formatDate(post.createdAt)}
-                    </span>
-                    <span className="w-full sm:flex-1 lg:text-lg text-base tracking-tight font-medium line-clamp-2 sm:line-clamp-1 sm:truncate group-hover:text-muted transition-colors">
-                      {post.title}
-                    </span>
-                    <span className="w-16 text-right text-xs font-mono text-muted hidden sm:block">
-                      {post.viewCount}
-                    </span>
-                    <span className="sm:hidden text-xs font-mono text-muted">
-                      {formatDate(post.createdAt)} · {post.viewCount} views
-                    </span>
-                  </Link>
-                ))}
-
-                {(currentPage > 0 || hasNext) && (
-                  <div className="flex justify-center items-center gap-8 mt-10 pt-6 font-mono text-xs">
-                    <button
-                      onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
-                      disabled={currentPage === 0}
-                      className="text-muted hover:text-text transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                    >
-                      &larr; Prev
-                    </button>
-                    <span className="text-muted">
-                      {currentPage + 1}
-                    </span>
-                    <button
-                      onClick={() => setCurrentPage((prev) => prev + 1)}
-                      disabled={!hasNext}
-                      className="text-muted hover:text-text transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                    >
-                      Next &rarr;
-                    </button>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
+      {/* Posts */}
+      {loading ? (
+        <div className="py-12"><Spinner /></div>
+      ) : error ? (
+        <div className="py-8 text-danger text-sm">{error}</div>
+      ) : posts.length === 0 ? (
+        <div className="py-8 text-ink-light text-sm">
+          {searchQuery ? "No results found." : "No posts yet."}
         </div>
-      </div>
+      ) : (
+        <div className="flex flex-col gap-3">
+          {posts.map((post) => (
+            <Link
+              key={post.id}
+              to={`/posts/${post.id}`}
+              className="block p-5 border-[1.5px] border-ink-ghost rounded-lg hover:border-ink hover:-translate-y-px hover:shadow-sm transition-all"
+            >
+              <div className="flex justify-between items-center mb-1.5">
+                <span className="text-[10px] font-semibold text-accent-text bg-accent px-2 py-0.5 rounded">
+                  {categoryName(post.categoryId)}
+                </span>
+                <span className="text-[11px] text-ink-lighter">{formatDate(post.createdAt)}</span>
+              </div>
+              <h3 className="text-base font-semibold mb-1 leading-snug">{post.title}</h3>
+              <p className="text-[13px] text-ink-light">{post.excerpt}</p>
+              <div className="font-mono text-[11px] text-ink-faint mt-2">{post.viewCount} views</div>
+            </Link>
+          ))}
+
+          <div className="text-ink-light text-xs mt-2">
+            {posts.length} posts &middot; Page {currentPage + 1}
+          </div>
+
+          {(currentPage > 0 || hasNext) && (
+            <div className="flex items-center gap-6 mt-2 text-[13px]">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
+                disabled={currentPage === 0}
+                className="text-ink hover:opacity-60 disabled:text-ink-faint disabled:cursor-not-allowed transition-opacity"
+              >
+                &larr; Prev
+              </button>
+              <button
+                onClick={() => setCurrentPage((p) => p + 1)}
+                disabled={!hasNext}
+                className="text-ink hover:opacity-60 disabled:text-ink-faint disabled:cursor-not-allowed transition-opacity"
+              >
+                Next &rarr;
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
