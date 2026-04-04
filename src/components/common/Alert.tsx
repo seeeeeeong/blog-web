@@ -12,11 +12,11 @@ interface AlertProps {
 }
 
 const ACCENT: Record<AlertType, string> = {
-  success: "border-l-success",
+  success: "border-l-term-green",
   error:   "border-l-danger",
-  warning: "border-l-warning",
-  info:    "border-l-info",
-  confirm: "border-l-ink",
+  warning: "border-l-term-amber",
+  info:    "border-l-term-blue",
+  confirm: "border-l-term-white",
 };
 
 const LABEL: Record<AlertType, string> = {
@@ -28,11 +28,11 @@ const LABEL: Record<AlertType, string> = {
 };
 
 const LABEL_COLOR: Record<AlertType, string> = {
-  success: "text-success",
+  success: "text-term-green",
   error:   "text-danger",
-  warning: "text-warning",
-  info:    "text-info",
-  confirm: "text-ink",
+  warning: "text-term-amber",
+  info:    "text-term-blue",
+  confirm: "text-term-white",
 };
 
 export default function Alert({
@@ -50,7 +50,7 @@ export default function Alert({
     }
   }, [duration, onClose, type]);
 
-  const base = `w-72 border border-ink-ghost border-l-2 ${ACCENT[type]} bg-white shadow-sm animate-fade-in rounded-md`;
+  const base = `w-72 border border-ink-ghost border-l-2 ${ACCENT[type]} bg-surface shadow-sm animate-fade-in rounded`;
 
   if (type === "confirm") {
     return (
@@ -60,14 +60,14 @@ export default function Alert({
           <p className="mt-1 text-xs text-ink leading-relaxed">{message}</p>
         </div>
         <div className="flex justify-end gap-3 border-t border-ink-ghost px-3 py-2">
-          <button onClick={onClose} className="text-[11px] text-ink-light hover:text-ink transition-colors">
-            Cancel
+          <button onClick={onClose} className="text-[11px] text-ink-faint hover:text-ink transition-colors">
+            cancel
           </button>
           <button
             onClick={() => { onConfirm?.(); onClose(); }}
-            className="text-[11px] font-medium text-ink hover:opacity-70 transition-opacity"
+            className="text-[11px] font-medium text-term-green hover:opacity-70 transition-opacity"
           >
-            Confirm
+            confirm
           </button>
         </div>
       </div>
@@ -84,7 +84,7 @@ export default function Alert({
         {showCloseButton && (
           <button
             onClick={onClose}
-            className="shrink-0 text-sm text-ink-light hover:text-ink transition-colors"
+            className="shrink-0 text-sm text-ink-faint hover:text-ink transition-colors"
             aria-label="close"
           >
             &times;

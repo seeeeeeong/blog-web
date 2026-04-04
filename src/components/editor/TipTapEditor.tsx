@@ -245,8 +245,8 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
       onClick={onClick}
       className={`inline-flex h-7 w-7 items-center justify-center rounded transition-all ${
         isActive
-          ? 'bg-ink text-white'
-          : 'text-ink-light hover:text-ink hover:bg-surface-alt'
+          ? 'bg-term-green text-panel'
+          : 'text-ink-faint hover:text-term-green hover:bg-surface-alt'
       }`}
       type="button"
       title={title}
@@ -257,7 +257,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
   );
 
   return (
-    <div className="overflow-hidden rounded-md border-[1.5px] border-ink-ghost bg-white">
+    <div className="overflow-hidden rounded-md border border-ink-ghost bg-panel">
       <input
         type="file"
         ref={fileInputRef}
@@ -266,7 +266,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         style={{ display: 'none' }}
       />
       <div className="flex items-center justify-between border-b border-ink-ghost px-3 py-2">
-        <span className="text-[10px] font-medium text-ink-light">EDITOR</span>
+        <span className="text-[10px] font-medium text-term-green">EDITOR</span>
         <span className="hidden text-[10px] text-ink-faint sm:block">
           Ctrl+B, Ctrl+I
         </span>
@@ -454,7 +454,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
               if (e.key === "Escape") { setShowLinkInput(false); setLinkUrl(""); }
             }}
             placeholder="https://..."
-            className="h-8 min-w-[14rem] flex-1 rounded-md border-[1.5px] border-ink-ghost bg-white px-2 text-xs text-ink placeholder:text-ink-faint focus:border-ink focus:outline-none"
+            className="h-8 min-w-[14rem] flex-1 rounded border border-ink-ghost bg-surface px-2 text-xs text-term-white placeholder:text-ink-faint focus:border-term-green focus:outline-none"
             autoFocus
           />
           <button
@@ -487,7 +487,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
                   max={20}
                   value={tableRows}
                   onChange={(e) => setTableRows(e.target.value)}
-                  className="h-7 w-14 rounded border-[1.5px] border-ink-ghost bg-white px-2 text-xs text-ink focus:border-ink focus:outline-none"
+                  className="h-7 w-14 rounded border border-ink-ghost bg-surface px-2 text-xs text-term-white focus:border-term-green focus:outline-none"
                 />
               </label>
               <label className="flex items-center gap-1 text-[10px] text-ink-light">
@@ -498,7 +498,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
                   max={20}
                   value={tableCols}
                   onChange={(e) => setTableCols(e.target.value)}
-                  className="h-7 w-14 rounded border-[1.5px] border-ink-ghost bg-white px-2 text-xs text-ink focus:border-ink focus:outline-none"
+                  className="h-7 w-14 rounded border border-ink-ghost bg-surface px-2 text-xs text-term-white focus:border-term-green focus:outline-none"
                 />
               </label>
               <button
@@ -561,7 +561,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         </div>
       )}
 
-      <div className="bg-white">
+      <div className="bg-panel">
         <EditorContent editor={editor} />
       </div>
     </div>

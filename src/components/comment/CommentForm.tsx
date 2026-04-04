@@ -11,7 +11,7 @@ interface CommentFormProps {
 export default function CommentForm({
   onSubmit,
   placeholder = "Leave a comment...",
-  buttonText = "Send",
+  buttonText = "send",
   autoFocus = false,
 }: CommentFormProps) {
   const [content, setContent] = useState("");
@@ -41,7 +41,7 @@ export default function CommentForm({
               className="w-4 h-4 rounded-full"
             />
           )}
-          <span className="text-ink font-medium">{user.githubUsername}</span>
+          <span className="text-term-white font-medium">{user.githubUsername}</span>
         </div>
       )}
 
@@ -52,7 +52,7 @@ export default function CommentForm({
         autoFocus={autoFocus}
         rows={3}
         maxLength={1000}
-        className="block w-full resize-none rounded-md border-[1.5px] border-ink-ghost bg-white p-2.5 text-xs text-ink placeholder:text-ink-faint focus:border-ink focus:outline-none transition-colors"
+        className="block w-full resize-none rounded border border-ink-ghost bg-panel p-2.5 text-xs text-ink placeholder:text-ink-faint focus:border-term-green focus:outline-none transition-colors"
       />
 
       <div className="flex justify-between items-center">
@@ -60,7 +60,7 @@ export default function CommentForm({
         <button
           type="submit"
           disabled={!content.trim() || isSubmitting}
-          className="bg-accent text-accent-text rounded-md px-3 py-1 text-xs font-medium hover:opacity-80 disabled:opacity-30 disabled:cursor-not-allowed transition-opacity"
+          className="bg-term-green text-panel rounded px-3 py-1 text-xs font-medium hover:opacity-80 disabled:opacity-30 disabled:cursor-not-allowed transition-opacity"
         >
           {isSubmitting ? "..." : buttonText}
         </button>

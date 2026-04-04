@@ -55,21 +55,28 @@ export default function AdminPostsPage() {
 
   return (
     <div className="animate-fade-in">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold">Admin Posts</h2>
-        <Link to="/posts/create" className="text-xs font-medium text-accent-text bg-accent px-3 py-1.5 rounded-md hover:opacity-80 transition-opacity">
-          + New Post
+      <div className="flex items-center justify-between mb-5">
+        <div>
+          <div className="text-xs text-ink-faint mb-1">
+            <span className="text-term-blue">~/blog</span> <span className="text-term-green">$</span> <span className="text-term-amber">admin</span> --posts
+          </div>
+          <h2 className="text-sm font-bold text-term-white">Admin Posts</h2>
+        </div>
+        <Link to="/posts/create" className="text-[11px] font-medium text-panel bg-term-green px-2.5 py-1 rounded hover:opacity-80 transition-opacity">
+          + new
         </Link>
       </div>
 
       {/* Filters */}
-      <div className="flex gap-1.5 mb-5">
+      <div className="flex gap-1 mb-5">
         {(["all", "published", "draft"] as FilterType[]).map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`px-3.5 py-1 rounded text-xs font-medium transition-colors ${
-              filter === f ? "bg-accent text-accent-text" : "bg-surface-alt text-ink-light hover:bg-surface-hover hover:text-ink"
+            className={`px-2.5 py-1 rounded text-[11px] font-medium transition-colors ${
+              filter === f
+                ? "bg-term-green text-panel"
+                : "bg-surface text-ink-faint hover:text-term-green hover:border-term-green border border-ink-ghost"
             }`}
           >
             {f}
@@ -80,34 +87,48 @@ export default function AdminPostsPage() {
       {loading ? (
         <div className="py-8"><Spinner /></div>
       ) : posts.length === 0 ? (
-        <div className="py-8 text-ink-light text-sm">No posts found.</div>
+        <div className="py-8 text-ink-faint text-xs">No posts found.</div>
       ) : (
         <>
           {posts.map((post) => (
-            <div key={post.id} className="flex items-center gap-3 py-3 border-b border-ink-ghost text-sm group">
-              <Link to={`/posts/${post.id}`} className="flex-1 min-w-0 font-medium truncate group-hover:opacity-70 transition-opacity">
+            <div key={post.id} className="flex items-center gap-3 py-2.5 border-b border-ink-ghost text-xs group">
+              <Link to={`/posts/${post.id}`} className="flex-1 min-w-0 font-medium text-term-white truncate group-hover:text-term-green transition-colors">
                 {post.title}
               </Link>
-              <span className={`text-[10px] font-semibold px-2 py-0.5 rounded shrink-0 ${
-                post.status === "DRAFT" ? "bg-yellow-100 text-draft" : "bg-green-50 text-success"
+              <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded border shrink-0 ${
+                post.status === "DRAFT"
+                  ? "text-term-amber border-[#78350f]"
+                  : "text-term-green border-term-green-dim"
               }`}>
                 {post.status.toLowerCase()}
               </span>
-              <span className="font-mono text-xs text-ink-faint shrink-0 hidden sm:block">{post.viewCount}</span>
-              <span className="text-xs text-ink-lighter shrink-0 hidden sm:block w-20 text-right">{formatDate(post.createdAt)}</span>
-              <div className="flex gap-2 shrink-0 text-xs">
-                <Link to={`/posts/${post.id}/edit`} className="text-info hover:opacity-70">edit</Link>
+              <span className="text-[11px] text-ink-faint shrink-0 hidden sm:block">{post.viewCount}</span>
+              <span className="text-[11px] text-ink-faint shrink-0 hidden sm:block w-20 text-right">{formatDate(post.createdAt)}</span>
+              <div className="flex gap-2 shrink-0 text-[11px]">
+                <Link to={`/posts/${post.id}/edit`} className="text-term-blue hover:opacity-70">edit</Link>
                 <button onClick={() => handleDelete(post.id)} className="text-danger hover:opacity-70">del</button>
               </div>
             </div>
           ))}
 
-          <div className="text-ink-light text-xs mt-4">{posts.length} posts &middot; Page {currentPage + 1}</div>
+          <div className="text-ink-faint text-[11px] mt-4">{posts.length} posts · page {currentPage + 1}</div>
 
           {(currentPage > 0 || hasNext) && (
-            <div className="flex gap-6 mt-3 text-xs">
-              <button onClick={() => setCurrentPage(p => Math.max(0, p - 1))} disabled={currentPage === 0} className="text-ink hover:opacity-60 disabled:text-ink-faint disabled:cursor-not-allowed">&larr; prev</button>
-              <button onClick={() => setCurrentPage(p => p + 1)} disabled={!hasNext} className="text-ink hover:opacity-60 disabled:text-ink-faint disabled:cursor-not-allowed">next &rarr;</button>
+            <div className="flex gap-2 mt-3">
+              <button
+                onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
+                disabled={currentPage === 0}
+                className="bg-surface border border-ink-ghost rounded px-2.5 py-1 text-[11px] text-ink-faint hover:border-term-green hover:text-term-green disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              >
+                prev
+              </button>
+              <button
+                onClick={() => setCurrentPage(p => p + 1)}
+                disabled={!hasNext}
+                className="bg-surface border border-ink-ghost rounded px-2.5 py-1 text-[11px] text-ink-faint hover:border-term-green hover:text-term-green disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              >
+                next
+              </button>
             </div>
           )}
         </>

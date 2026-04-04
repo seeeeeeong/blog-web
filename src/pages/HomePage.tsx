@@ -27,6 +27,11 @@ export default function HomePage() {
     return categories.find((c) => c.id === categoryId)?.name ?? "Etc";
   };
 
+  const categorySlug = (categoryId: number) => {
+    const name = categories.find((c) => c.id === categoryId)?.name ?? "etc";
+    return name.toLowerCase();
+  };
+
   const loadPosts = useCallback(async () => {
     try {
       setLoading(true);
@@ -56,87 +61,135 @@ export default function HomePage() {
 
   return (
     <div className="animate-fade-in">
-      <h2 className="text-2xl font-bold mb-1">Posts</h2>
-      <p className="text-[13px] text-ink-light mb-6">
-        {posts.length > 0 ? `${posts.length}${hasNext ? "+" : ""} articles` : "Loading..."}
+      {/* Prompt */}
+      <div className="flex items-baseline gap-2 text-xs mb-1">
+        <span className="text-term-blue">~/blog</span>
+        <span className="text-term-pink">git:(main)</span>
+        <span className="text-term-green">$</span>
+        <span className="text-term-white">ls -la posts/</span>
+      </div>
+      <p className="text-[11px] text-ink-faint mb-4">
+        {posts.length > 0 ? `${posts.length}${hasNext ? "+" : ""} articles` : "loading..."}
         {searchQuery && <> matching &ldquo;{searchQuery}&rdquo;</>}
       </p>
 
-      {/* Search */}
+      {/* Search (grep style) */}
       <form onSubmit={handleSearch} className="mb-5">
-        <div className="relative">
-          <input
-            type="text"
-            value={searchKeyword}
-            onChange={(e) => setSearchKeyword(e.target.value)}
-            placeholder="Search..."
-            className="w-full h-10 border-[1.5px] border-ink-ghost rounded-md px-3.5 text-[13px] bg-white text-ink placeholder:text-ink-faint outline-none transition-colors focus:border-ink"
-          />
-          {searchQuery && (
-            <button
-              type="button"
-              onClick={() => { setSearchKeyword(""); setSearchQuery(""); }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-light hover:text-ink text-xs"
-            >
-              clear
-            </button>
-          )}
+        <div className="flex items-center gap-2">
+          <span className="text-term-amber text-xs flex-shrink-0">grep -i</span>
+          <div className="relative flex-1">
+            <input
+              type="text"
+              value={searchKeyword}
+              onChange={(e) => setSearchKeyword(e.target.value)}
+              placeholder="search posts..."
+              className="w-full h-9 bg-surface border border-ink-ghost rounded px-3 text-xs text-term-white placeholder:text-ink-faint outline-none transition-colors focus:border-term-green"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => { setSearchKeyword(""); setSearchQuery(""); }}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ink-faint hover:text-term-green text-[10px]"
+              >
+                clear
+              </button>
+            )}
+          </div>
         </div>
       </form>
 
-      {/* Posts */}
+      {/* Posts - file listing */}
       {loading ? (
         <div className="py-12"><Spinner /></div>
       ) : error ? (
-        <div className="py-8 text-danger text-sm">{error}</div>
+        <div className="py-8 text-danger text-xs">{error}</div>
       ) : posts.length === 0 ? (
-        <div className="py-8 text-ink-light text-sm">
+        <div className="py-8 text-ink-faint text-xs">
           {searchQuery ? "No results found." : "No posts yet."}
         </div>
       ) : (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col">
           {posts.map((post) => (
             <Link
               key={post.id}
               to={`/posts/${post.id}`}
-              className="block p-5 border-[1.5px] border-ink-ghost rounded-lg hover:border-ink hover:-translate-y-px hover:shadow-sm transition-all"
+              className="grid grid-cols-[1fr_auto] sm:grid-cols-[auto_1fr_auto_auto] gap-x-3 items-baseline py-2.5 px-2 border-b border-ink-ghost rounded hover:bg-[rgba(74,222,128,0.08)] transition-colors"
             >
-              <div className="flex justify-between items-center mb-1.5">
-                <span className="text-[10px] font-semibold text-accent-text bg-accent px-2 py-0.5 rounded">
-                  {categoryName(post.categoryId)}
+              {/* Permissions + Category (hidden on mobile) */}
+              <span className="hidden sm:flex items-center gap-2 text-[11px] text-ink-faint whitespace-nowrap">
+                -rw-r--r--
+                <CatTag name={categorySlug(post.categoryId)} />
+              </span>
+
+              {/* Title + excerpt */}
+              <span className="min-w-0">
+                <span className="text-xs font-medium text-term-white block truncate">
+                  {post.title}
                 </span>
-                <span className="text-[11px] text-ink-lighter">{formatDate(post.createdAt)}</span>
-              </div>
-              <h3 className="text-base font-semibold mb-1 leading-snug">{post.title}</h3>
-              <p className="text-[13px] text-ink-light">{post.excerpt}</p>
-              <div className="font-mono text-[11px] text-ink-faint mt-2">{post.viewCount} views</div>
+                <span className="text-[11px] text-ink-faint block truncate sm:hidden mt-0.5">
+                  <CatTag name={categorySlug(post.categoryId)} />
+                </span>
+              </span>
+
+              {/* Views */}
+              <span className="text-[11px] text-term-amber text-right whitespace-nowrap">
+                {post.viewCount} views
+              </span>
+
+              {/* Date */}
+              <span className="hidden sm:block text-[11px] text-ink-faint text-right whitespace-nowrap">
+                {formatDate(post.createdAt)}
+              </span>
             </Link>
           ))}
 
-          <div className="text-ink-light text-xs mt-2">
-            {posts.length} posts &middot; Page {currentPage + 1}
+          {/* Info + pagination */}
+          <div className="flex items-center gap-4 mt-4 text-[11px]">
+            <span className="text-ink-faint">
+              showing {posts.length} posts · page {currentPage + 1}
+            </span>
+            {(currentPage > 0 || hasNext) && (
+              <div className="flex gap-2 ml-auto">
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
+                  disabled={currentPage === 0}
+                  className="bg-surface border border-ink-ghost rounded px-2.5 py-1 text-ink-faint hover:border-term-green hover:text-term-green disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  prev
+                </button>
+                <button
+                  onClick={() => setCurrentPage((p) => p + 1)}
+                  disabled={!hasNext}
+                  className="bg-surface border border-ink-ghost rounded px-2.5 py-1 text-ink-faint hover:border-term-green hover:text-term-green disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  next
+                </button>
+              </div>
+            )}
           </div>
 
-          {(currentPage > 0 || hasNext) && (
-            <div className="flex items-center gap-6 mt-2 text-[13px]">
-              <button
-                onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
-                disabled={currentPage === 0}
-                className="text-ink hover:opacity-60 disabled:text-ink-faint disabled:cursor-not-allowed transition-opacity"
-              >
-                &larr; Prev
-              </button>
-              <button
-                onClick={() => setCurrentPage((p) => p + 1)}
-                disabled={!hasNext}
-                className="text-ink hover:opacity-60 disabled:text-ink-faint disabled:cursor-not-allowed transition-opacity"
-              >
-                Next &rarr;
-              </button>
-            </div>
-          )}
+          {/* Cursor */}
+          <div className="flex items-baseline gap-2 text-xs mt-6 mb-4">
+            <span className="text-term-blue">~/blog</span>
+            <span className="text-term-green">$</span>
+            <span className="term-cursor" />
+          </div>
         </div>
       )}
     </div>
+  );
+}
+
+function CatTag({ name }: { name: string }) {
+  const colorMap: Record<string, string> = {
+    spring: "text-term-green border-term-green-dim",
+    infra: "text-term-amber border-[#78350f]",
+    cs: "text-term-blue border-[#1e40af]",
+  };
+  const color = colorMap[name] || "text-ink-faint border-ink-ghost";
+  return (
+    <span className={`inline-block text-[10px] px-1.5 py-px border rounded ${color}`}>
+      {name}
+    </span>
   );
 }

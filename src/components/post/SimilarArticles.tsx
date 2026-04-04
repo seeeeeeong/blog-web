@@ -55,10 +55,10 @@ export default function SimilarArticles({ title, content, topicHints }: Props) {
 
   return (
     <section className="mb-6">
-      <p className="font-mono text-xs font-semibold text-ink-light uppercase tracking-widest mb-4">
-        함께 읽을 만한 기업 기술글
+      <p className="text-[11px] font-semibold text-term-green uppercase tracking-widest mb-4">
+        $ similar --articles
       </p>
-      <ul className="space-y-3">
+      <ul className="space-y-2">
         {articles.map((article, index) => (
           <li key={article.articleId}>
             <a
@@ -66,13 +66,13 @@ export default function SimilarArticles({ title, content, topicHints }: Props) {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => handleClick(article, index)}
-              className="group block p-3 border-[1.5px] border-ink-ghost rounded-lg hover:border-ink hover:-translate-y-px hover:shadow-sm transition-all"
+              className="group block p-3 border border-ink-ghost rounded hover:border-term-green hover:bg-[rgba(74,222,128,0.08)] transition-all"
             >
-              <p className="text-sm font-medium text-ink group-hover:underline leading-snug line-clamp-2">
+              <p className="text-xs font-medium text-term-white group-hover:text-term-green leading-snug line-clamp-2 transition-colors">
                 {article.title}
               </p>
-              <div className="flex items-center gap-1.5 mt-1.5 font-mono text-xs text-ink-lighter">
-                <span className="text-[10px] font-semibold text-accent-text bg-accent px-1.5 py-0.5 rounded">
+              <div className="flex items-center gap-2 mt-1.5 text-[10px] text-ink-faint">
+                <span className="text-term-amber border border-[#78350f] px-1.5 py-px rounded">
                   {article.company}
                 </span>
                 {article.publishedAt && (

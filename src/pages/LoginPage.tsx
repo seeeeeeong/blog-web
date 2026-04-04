@@ -44,45 +44,59 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center px-4">
+    <div className="min-h-screen bg-panel flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        <h1 className="text-xl font-bold mb-1">Login</h1>
-        <p className="text-sm text-ink-light mb-6">Admin authentication</p>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="email" className="block text-xs font-medium text-ink-light mb-1">Email</label>
-            <input
-              id="email" name="email" type="email" autoComplete="email" required
-              value={email} onChange={(e) => setEmail(e.target.value)}
-              className="w-full h-10 px-3 border-[1.5px] border-ink-ghost rounded-md text-sm outline-none focus:border-ink transition-colors"
-              placeholder="admin@example.com"
-            />
-          </div>
-          <div>
-            <label htmlFor="password" className="block text-xs font-medium text-ink-light mb-1">Password</label>
-            <input
-              id="password" name="password" type="password" autoComplete="current-password" required
-              value={password} onChange={(e) => setPassword(e.target.value)}
-              className="w-full h-10 px-3 border-[1.5px] border-ink-ghost rounded-md text-sm outline-none focus:border-ink transition-colors"
-              placeholder="••••••••"
-            />
+        {/* Terminal window */}
+        <div className="border border-ink-ghost rounded-lg overflow-hidden">
+          {/* Title bar */}
+          <div className="bg-surface flex items-center gap-1.5 px-3 py-2">
+            <div className="w-[10px] h-[10px] rounded-full bg-[#ff5f57]" />
+            <div className="w-[10px] h-[10px] rounded-full bg-[#febc2e]" />
+            <div className="w-[10px] h-[10px] rounded-full bg-[#28c840]" />
+            <span className="text-[10px] text-ink-faint ml-2">login — zsh</span>
           </div>
 
-          {errorMessage && (
-            <div className="text-danger text-xs">{errorMessage}</div>
-          )}
+          {/* Body */}
+          <div className="bg-panel p-5">
+            <div className="text-xs text-term-green mb-1">$ sudo authenticate</div>
+            <p className="text-[11px] text-ink-faint mb-5">Admin authentication required</p>
 
-          <button
-            type="submit" disabled={loading}
-            className="w-full h-10 text-sm font-semibold bg-accent text-accent-text rounded-md hover:opacity-80 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
-          >
-            {loading ? "..." : "Login"}
-          </button>
-        </form>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label htmlFor="email" className="block text-[11px] text-ink-faint mb-1">email:</label>
+                <input
+                  id="email" name="email" type="email" autoComplete="email" required
+                  value={email} onChange={(e) => setEmail(e.target.value)}
+                  className="w-full h-9 px-3 bg-surface border border-ink-ghost rounded text-xs text-term-white outline-none focus:border-term-green transition-colors"
+                  placeholder="admin@example.com"
+                />
+              </div>
+              <div>
+                <label htmlFor="password" className="block text-[11px] text-ink-faint mb-1">password:</label>
+                <input
+                  id="password" name="password" type="password" autoComplete="current-password" required
+                  value={password} onChange={(e) => setPassword(e.target.value)}
+                  className="w-full h-9 px-3 bg-surface border border-ink-ghost rounded text-xs text-term-white outline-none focus:border-term-green transition-colors"
+                  placeholder="••••••••"
+                />
+              </div>
 
-        <div className="mt-4 text-center">
-          <Link to="/" className="text-xs text-ink-light hover:text-ink transition-colors">&larr; Back to blog</Link>
+              {errorMessage && (
+                <div className="text-danger text-xs">[ERR] {errorMessage}</div>
+              )}
+
+              <button
+                type="submit" disabled={loading}
+                className="w-full h-9 text-xs font-semibold bg-term-green text-panel rounded hover:opacity-80 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+              >
+                {loading ? "authenticating..." : "login"}
+              </button>
+            </form>
+
+            <div className="mt-4 text-center">
+              <Link to="/" className="text-[11px] text-ink-faint hover:text-term-green transition-colors">$ cd ~/blog</Link>
+            </div>
+          </div>
         </div>
       </div>
     </div>

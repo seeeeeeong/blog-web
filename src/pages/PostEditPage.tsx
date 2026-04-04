@@ -112,13 +112,10 @@ export default function PostEditPage() {
   if (loadError) {
     return (
       <div className="animate-fade-in">
-        <h2 className="text-xl font-bold mb-4">Post not found</h2>
-        <p className="mb-4 text-sm text-ink-light">게시글을 불러오지 못했거나 수정 권한이 없습니다.</p>
-        <Link
-          to="/"
-          className="text-sm text-ink hover:opacity-60 transition-opacity"
-        >
-          &larr; Back
+        <p className="text-danger text-xs mb-4">[ERR] Post not found</p>
+        <p className="mb-4 text-xs text-ink-faint">게시글을 불러오지 못했거나 수정 권한이 없습니다.</p>
+        <Link to="/" className="text-xs text-ink-faint hover:text-term-green transition-colors">
+          $ cd ~/blog
         </Link>
       </div>
     );
@@ -126,8 +123,11 @@ export default function PostEditPage() {
 
   return (
     <div className="animate-fade-in">
-      <h2 className="text-xl font-bold mb-1">Edit Post</h2>
-      <div className="flex flex-wrap items-center gap-4 text-xs text-ink-light font-mono mb-6">
+      <div className="text-xs text-ink-faint mb-1">
+        <span className="text-term-blue">~/blog</span> <span className="text-term-green">$</span> <span className="text-term-white">edit post</span>
+      </div>
+      <h2 className="text-sm font-bold text-term-white mb-1">Edit Post</h2>
+      <div className="flex flex-wrap items-center gap-4 text-[11px] text-ink-faint mb-6">
         <span>title {title.length}/200</span>
         <span>words {wordCount}</span>
         <span>chars {contentCharacters}</span>
@@ -153,7 +153,7 @@ export default function PostEditPage() {
               onChange={(e) => setTitle(e.target.value)}
               required
               maxLength={200}
-              className="h-10 w-full rounded-md border-[1.5px] border-ink-ghost bg-white px-3 text-sm text-ink placeholder:text-ink-faint transition-colors focus:border-ink focus:outline-none"
+              className="h-9 w-full rounded border border-ink-ghost bg-surface px-3 text-xs text-term-white placeholder:text-ink-faint transition-colors focus:border-term-green focus:outline-none"
               placeholder="제목을 입력하세요"
             />
           </div>
@@ -166,7 +166,7 @@ export default function PostEditPage() {
               id="category"
               value={categoryId}
               onChange={(e) => setCategoryId(Number(e.target.value))}
-              className="h-10 w-full rounded-md border-[1.5px] border-ink-ghost bg-white px-3 text-sm text-ink transition-colors focus:border-ink focus:outline-none"
+              className="h-9 w-full rounded border border-ink-ghost bg-surface px-3 text-xs text-term-white transition-colors focus:border-term-green focus:outline-none"
             >
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
@@ -189,30 +189,30 @@ export default function PostEditPage() {
         </div>
 
         {/* Action Bar */}
-        <div className="sticky bottom-3 z-20 rounded-md border-[1.5px] border-ink-ghost bg-white p-3 shadow-sm">
+        <div className="sticky bottom-3 z-20 rounded border border-ink-ghost bg-surface p-3">
           <div className="flex flex-col-reverse items-stretch justify-between gap-3 sm:flex-row sm:items-center">
             <button
               type="button"
               onClick={() => navigate(`/posts/${postId}`)}
-              className="inline-flex h-9 items-center justify-center rounded-md border-[1.5px] border-ink-ghost px-4 text-xs font-medium text-ink-light transition-colors hover:text-ink hover:border-ink"
+              className="inline-flex h-8 items-center justify-center rounded border border-ink-ghost px-4 text-[11px] text-ink-faint transition-colors hover:text-term-white hover:border-ink-faint"
             >
-              Cancel
+              cancel
             </button>
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => handleSubmit(true)}
                 disabled={loading}
-                className="inline-flex h-9 items-center justify-center rounded-md border-[1.5px] border-ink-ghost px-4 text-xs font-medium text-warning transition-colors hover:bg-yellow-50 disabled:cursor-not-allowed disabled:opacity-30"
+                className="inline-flex h-8 items-center justify-center rounded border border-ink-ghost px-4 text-[11px] font-medium text-term-amber transition-colors hover:border-term-amber disabled:cursor-not-allowed disabled:opacity-30"
               >
-                {loading ? "..." : "Save Draft"}
+                {loading ? "..." : "save draft"}
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="inline-flex h-9 items-center justify-center rounded-md bg-accent px-4 text-xs font-medium text-accent-text transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-30"
+                className="inline-flex h-8 items-center justify-center rounded bg-term-green px-4 text-[11px] font-medium text-panel transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-30"
               >
-                {loading ? "..." : "Update"}
+                {loading ? "..." : "update"}
               </button>
             </div>
           </div>

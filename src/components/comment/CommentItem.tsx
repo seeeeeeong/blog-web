@@ -36,7 +36,7 @@ export default function CommentItem({ comment, postId, onDelete, onReply }: Comm
 
   return (
     <div className="space-y-2">
-      <div className="border-[1.5px] border-ink-ghost rounded-lg p-3 hover:border-ink-faint transition-colors">
+      <div className="border border-ink-ghost rounded p-3 hover:border-ink-faint transition-colors">
         {/* Author line */}
         <div className="flex items-center gap-2 mb-2 text-xs">
           {comment.oauthAvatarUrl ? (
@@ -47,18 +47,18 @@ export default function CommentItem({ comment, postId, onDelete, onReply }: Comm
             />
           ) : (
             <div className="w-5 h-5 rounded-full bg-surface-alt flex items-center justify-center">
-              <span className="text-ink-light text-[10px] font-bold">
+              <span className="text-ink-faint text-[10px] font-bold">
                 {comment.oauthUsername[0]}
               </span>
             </div>
           )}
-          <span className="text-ink font-semibold">{comment.oauthUsername}</span>
+          <span className="text-term-white font-semibold">{comment.oauthUsername}</span>
           {isAuthor && (
-            <span className="text-[10px] font-medium text-info border border-info/30 rounded px-1">
+            <span className="text-[10px] font-medium text-term-blue border border-term-blue/30 rounded px-1">
               you
             </span>
           )}
-          <span className="text-ink-lighter">{formatDate(comment.createdAt)}</span>
+          <span className="text-ink-faint">{formatDate(comment.createdAt)}</span>
         </div>
 
         {/* Content */}
@@ -72,7 +72,7 @@ export default function CommentItem({ comment, postId, onDelete, onReply }: Comm
           {user && (
             <button
               onClick={() => setShowReplyForm(!showReplyForm)}
-              className="text-info hover:opacity-70 transition-opacity"
+              className="text-term-blue hover:opacity-70 transition-opacity"
             >
               {showReplyForm ? "cancel" : "reply"}
             </button>
@@ -94,7 +94,7 @@ export default function CommentItem({ comment, postId, onDelete, onReply }: Comm
           <CommentForm
             onSubmit={handleReplySubmit}
             placeholder="Write a reply..."
-            buttonText="Reply"
+            buttonText="reply"
             autoFocus
           />
         </div>
