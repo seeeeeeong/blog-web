@@ -54,7 +54,7 @@ export default function SimilarArticles({ title, content, topicHints }: Props) {
   };
 
   return (
-    <section className="mb-6">
+    <section className="mb-6 lg:mb-0">
       <p className="text-[11px] font-semibold text-term-green uppercase tracking-widest mb-4">
         $ similar --articles
       </p>
