@@ -24,7 +24,7 @@ export default function PostDetailPage() {
       const userId = localStorage.getItem("userId");
       setIsAuthor(userId === String(data.userId));
     } catch {
-      showError("게시글을 찾을 수 없습니다.");
+      showError("Post not found.");
       navigate("/");
     } finally {
       setLoading(false);
@@ -38,7 +38,7 @@ export default function PostDetailPage() {
       await postApi.deletePost(Number(postId));
       navigate("/");
     } catch {
-      showError("게시글 삭제에 실패했습니다.");
+      showError("Failed to delete post.");
     }
   };
 

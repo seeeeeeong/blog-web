@@ -86,7 +86,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         },
       }),
       Placeholder.configure({
-        placeholder: '본문을 입력해 주세요...',
+        placeholder: 'Start writing...',
       }),
       Typography,
       Underline,
@@ -150,7 +150,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
                   editor.chain().focus().setImage({ src: imageUrl }).run();
                 })
                 .catch(() => {
-                  showError("이미지 업로드에 실패했습니다.");
+                  showError("Failed to upload image.");
                 });
             }
           }
@@ -192,7 +192,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         const imageUrl = await uploadImageDirectly(file);
         editor.chain().focus().setImage({ src: imageUrl }).run();
       } catch {
-        showError("이미지 업로드에 실패했습니다.");
+        showError("Failed to upload image.");
       }
     }
     event.target.value = '';

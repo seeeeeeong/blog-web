@@ -38,7 +38,7 @@ export default function PostEditPage() {
       const data = await categoryApi.getCategories();
       setCategories(data);
     } catch {
-      showError("카테고리를 불러오지 못했습니다.");
+      showError("Failed to load categories.");
     }
   }, [showError]);
 
@@ -50,7 +50,7 @@ export default function PostEditPage() {
       setTitle(data.title);
       setContent(data.content);
     } catch {
-      showError("게시글을 찾을 수 없습니다.");
+      showError("Post not found.");
       setLoadError(true);
     } finally {
       setInitialLoading(false);
@@ -67,15 +67,15 @@ export default function PostEditPage() {
 
   const validateForm = (): boolean => {
     if (!categoryId) {
-      showWarning("카테고리를 선택해 주세요.");
+      showWarning("Please select a category.");
       return false;
     }
     if (!title.trim()) {
-      showWarning("제목을 입력해 주세요.");
+      showWarning("Please enter a title.");
       return false;
     }
     if (!content.trim()) {
-      showWarning("본문을 입력해 주세요.");
+      showWarning("Please enter the content.");
       return false;
     }
     return true;
@@ -95,7 +95,7 @@ export default function PostEditPage() {
 
       navigate(isDraft ? "/admin/posts" : `/posts/${postId}`);
     } catch {
-      showError("게시글 수정에 실패했습니다.");
+      showError("Failed to update post.");
     } finally {
       setLoading(false);
     }
@@ -113,7 +113,7 @@ export default function PostEditPage() {
     return (
       <div className="animate-fade-in">
         <p className="text-danger text-xs mb-4">[ERR] Post not found</p>
-        <p className="mb-4 text-xs text-ink-faint">게시글을 불러오지 못했거나 수정 권한이 없습니다.</p>
+        <p className="mb-4 text-xs text-ink-faint">Could not load the post or you do not have permission to edit.</p>
         <Link to="/" className="text-xs text-ink-faint hover:text-term-green transition-colors">
           $ cd ~/blog
         </Link>
@@ -154,7 +154,7 @@ export default function PostEditPage() {
               required
               maxLength={200}
               className="h-9 w-full rounded border border-ink-ghost bg-surface px-3 text-xs text-term-white placeholder:text-ink-faint transition-colors focus:border-term-green focus:outline-none"
-              placeholder="제목을 입력하세요"
+              placeholder="Enter title"
             />
           </div>
 
@@ -182,7 +182,7 @@ export default function PostEditPage() {
           <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
             <label className="text-xs font-medium text-ink-light">Content</label>
             <span className="text-[10px] text-ink-faint">
-              이미지는 붙여넣기 또는 업로드 버튼으로 추가
+              Add images by pasting or using the upload button
             </span>
           </div>
           <TipTapEditor value={content} onChange={setContent} />

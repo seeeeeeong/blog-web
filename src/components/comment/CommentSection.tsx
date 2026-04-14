@@ -26,7 +26,7 @@ export default function CommentSection({ postId }: CommentSectionProps) {
       const data = await commentApi.getComments(postId);
       setComments(data);
     } catch {
-      showError("댓글을 불러오지 못했습니다.");
+      showError("Failed to load comments.");
     } finally {
       setLoading(false);
     }
@@ -39,7 +39,7 @@ export default function CommentSection({ postId }: CommentSectionProps) {
       await commentApi.createComment(postId, { nickname, password, content, parentId: parentId ?? null });
       await loadComments();
     } catch (error: unknown) {
-      showError(extractApiErrorMessage(error, "댓글 등록에 실패했습니다."));
+      showError(extractApiErrorMessage(error, "Failed to add comment."));
     }
   };
 
@@ -48,7 +48,7 @@ export default function CommentSection({ postId }: CommentSectionProps) {
       await commentApi.deleteComment(postId, commentId, { password });
       await loadComments();
     } catch (error: unknown) {
-      showError(extractApiErrorMessage(error, "댓글 삭제에 실패했습니다."));
+      showError(extractApiErrorMessage(error, "Failed to delete comment."));
     }
   };
 
@@ -57,7 +57,7 @@ export default function CommentSection({ postId }: CommentSectionProps) {
       await commentApi.deleteCommentByAdmin(postId, commentId);
       await loadComments();
     } catch (error: unknown) {
-      showError(extractApiErrorMessage(error, "댓글 삭제에 실패했습니다."));
+      showError(extractApiErrorMessage(error, "Failed to delete comment."));
     }
   };
 

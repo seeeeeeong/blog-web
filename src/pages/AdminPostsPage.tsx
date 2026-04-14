@@ -40,7 +40,7 @@ export default function AdminPostsPage() {
       setPosts(merged);
       setHasNext((published.hasNext || false) || (draft.hasNext || false));
     } catch {
-      showError("게시글 목록을 불러오지 못했습니다.");
+      showError("Failed to load posts.");
     } finally {
       setLoading(false);
     }
@@ -50,7 +50,7 @@ export default function AdminPostsPage() {
 
   const handleDelete = async (postId: number) => {
     try { await adminApi.deletePost(postId); await loadPosts(); }
-    catch { showError("게시글 삭제에 실패했습니다."); }
+    catch { showError("Failed to delete post."); }
   };
 
   return (
