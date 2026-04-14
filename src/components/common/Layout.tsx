@@ -5,6 +5,7 @@ import { authApi } from "../../api/auth";
 import { isAdminToken, isExpiredToken } from "../../utils/authToken";
 import { categoryApi } from "../../api/category";
 import type { Category } from "../../types";
+import { useTheme } from "../../hooks/useTheme";
 
 export default function Layout() {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ export default function Layout() {
   const { isAuthenticated, user, logout } = useGitHubAuth();
   const [categories, setCategories] = useState<Category[]>([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   const clearAuthData = useCallback(() => {
     localStorage.removeItem("accessToken");
@@ -70,13 +72,22 @@ export default function Layout() {
           zsh
         </div>
 
-        {/* Mobile menu toggle */}
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="lg:hidden ml-auto text-ink-faint text-sm"
-        >
-          {mobileMenuOpen ? "✕" : "≡"}
-        </button>
+        {/* Theme toggle + Mobile menu toggle */}
+        <div className="flex items-center gap-2 ml-auto">
+          <button
+            onClick={toggleTheme}
+            className="text-ink-faint hover:text-term-green transition-colors text-[11px]"
+            title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {theme === "dark" ? "light" : "dark"}
+          </button>
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="lg:hidden text-ink-faint text-sm"
+          >
+            {mobileMenuOpen ? "✕" : "≡"}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
@@ -119,7 +130,6 @@ export default function Layout() {
               <Link to="/" className="text-sm font-bold text-term-white hover:text-term-green transition-colors">
                 seeeeeeong
               </Link>
-              <span className="text-[11px] text-ink-faint">Backend Developer</span>
               <div className="hidden sm:flex items-center gap-3 ml-auto text-[11px]">
                 <a
                   href="https://github.com/seeeeeeong"
