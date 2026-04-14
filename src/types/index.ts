@@ -58,7 +58,6 @@ export interface PostSummary {
 export interface Post extends PostSummary {
   content: string;
   contentHtml: string;
-  topicHints: string[];
 }
 
 export interface CreatePostRequest {
@@ -80,9 +79,7 @@ export interface UpdatePostRequest {
 export interface Comment {
   id: number;
   postId: number;
-  oauthId: string;
-  oauthUsername: string;
-  oauthAvatarUrl: string | null;
+  nickname: string;
   parentId: number | null;
   content: string;
   contentHtml: string;
@@ -92,18 +89,19 @@ export interface Comment {
 }
 
 export interface CreateCommentRequest {
+  nickname: string;
+  password: string;
   content: string;
   parentId?: number | null;
 }
 
 export interface UpdateCommentRequest {
+  password: string;
   content: string;
 }
 
-export interface ImageUploadResponse {
-  url: string;
-  key: string;
-  format: string;
+export interface DeleteCommentRequest {
+  password: string;
 }
 
 export interface ImagePresignedUrlResponse {

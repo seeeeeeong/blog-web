@@ -1,20 +1,6 @@
-import apiClient from "./client";
 import imageCompression from "browser-image-compression";
-import type { ImageUploadResponse, ImagePresignedUrlResponse } from "../types";
-
-export const uploadImage = async (file: File): Promise<ImageUploadResponse> => {
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("folder", "blog");
-
-  const response = await apiClient.post<ImageUploadResponse>("/images/upload", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
-
-  return response.data;
-};
+import apiClient from "./client";
+import type { ImagePresignedUrlResponse } from "../types";
 
 export const getPresignedUrl = async (
   contentType: string,

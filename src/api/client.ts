@@ -125,13 +125,7 @@ apiClient.interceptors.response.use(
 
     const isUserAuthEndpoint =
       requestUrl.includes("/v1/users/login") ||
-      requestUrl.includes("/v1/users/refresh") ||
-      requestUrl.includes("/v1/users/logout");
-
-    if (status === 401 && requestUrl.includes("/comments")) {
-      localStorage.removeItem("githubUser");
-      return Promise.reject(error);
-    }
+      requestUrl.includes("/v1/users/refresh");
 
     if (status === 401 && (isUserAuthEndpoint || currentPath === "/login")) {
       return Promise.reject(error);

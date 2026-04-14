@@ -1,23 +1,34 @@
 import { useState } from "react";
 import type { Comment } from "../../types";
-import { useGitHubAuth } from "../../contexts/useGitHubAuth";
+import { isAdminToken } from "../../utils/authToken";
 import CommentForm from "./CommentForm";
 
 interface CommentItemProps {
   comment: Comment;
   postId: number;
-  onDelete: (commentId: number) => void;
-  onReply: (content: string) => void;
+  onDelete: (commentId: number, password: string) => void;
+  onAdminDelete?: (commentId: number) => void;
+  onReply: (nickname: string, password: string, content: string) => void;
 }
 
-export default function CommentItem({ comment, postId, onDelete, onReply }: CommentItemProps) {
+export default function CommentItem({ comment, postId, onDelete, onAdminDelete, onReply }: CommentItemProps) {
   const [showReplyForm, setShowReplyForm] = useState(false);
-  const { user } = useGitHubAuth();
-  const isAuthor = user?.githubId === comment.oauthId;
+  const [showDeleteInput, setShowDeleteInput] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
 
-  const handleReplySubmit = async (content: string) => {
-    await onReply(content);
+  const token = localStorage.getItem("accessToken");
+  const isAdmin = token ? isAdminToken(token) : false;
+
+  const handleReplySubmit = async (nickname: string, password: string, content: string) => {
+    await onReply(nickname, password, content);
     setShowReplyForm(false);
+  };
+
+  const handleDelete = () => {
+    if (!deletePassword.trim()) return;
+    onDelete(comment.id, deletePassword.trim());
+    setShowDeleteInput(false);
+    setDeletePassword("");
   };
 
   const formatDate = (dateString: string) => {
@@ -39,25 +50,12 @@ export default function CommentItem({ comment, postId, onDelete, onReply }: Comm
       <div className="border border-ink-ghost rounded p-3 hover:border-ink-faint transition-colors">
         {/* Author line */}
         <div className="flex items-center gap-2 mb-2 text-xs">
-          {comment.oauthAvatarUrl ? (
-            <img
-              src={comment.oauthAvatarUrl}
-              alt={comment.oauthUsername}
-              className="w-5 h-5 rounded-full"
-            />
-          ) : (
-            <div className="w-5 h-5 rounded-full bg-surface-alt flex items-center justify-center">
-              <span className="text-ink-faint text-[10px] font-bold">
-                {comment.oauthUsername[0]}
-              </span>
-            </div>
-          )}
-          <span className="text-term-white font-semibold">{comment.oauthUsername}</span>
-          {isAuthor && (
-            <span className="text-[10px] font-medium text-term-blue border border-term-blue/30 rounded px-1">
-              you
+          <div className="w-5 h-5 rounded-full bg-surface-alt flex items-center justify-center">
+            <span className="text-ink-faint text-[10px] font-bold">
+              {comment.nickname[0]}
             </span>
-          )}
+          </div>
+          <span className="text-term-white font-semibold">{comment.nickname}</span>
           <span className="text-ink-faint">{formatDate(comment.createdAt)}</span>
         </div>
 
@@ -69,23 +67,48 @@ export default function CommentItem({ comment, postId, onDelete, onReply }: Comm
 
         {/* Actions */}
         <div className="flex items-center gap-3 text-[11px]">
-          {user && (
+          <button
+            onClick={() => setShowReplyForm(!showReplyForm)}
+            className="text-term-blue hover:opacity-70 transition-opacity"
+          >
+            {showReplyForm ? "cancel" : "reply"}
+          </button>
+          <button
+            onClick={() => { setShowDeleteInput(!showDeleteInput); setDeletePassword(""); }}
+            className="text-danger hover:opacity-70 transition-opacity"
+          >
+            {showDeleteInput ? "cancel" : "delete"}
+          </button>
+          {isAdmin && onAdminDelete && (
             <button
-              onClick={() => setShowReplyForm(!showReplyForm)}
-              className="text-term-blue hover:opacity-70 transition-opacity"
-            >
-              {showReplyForm ? "cancel" : "reply"}
-            </button>
-          )}
-          {isAuthor && (
-            <button
-              onClick={() => onDelete(comment.id)}
+              onClick={() => onAdminDelete(comment.id)}
               className="text-danger hover:opacity-70 transition-opacity"
             >
-              delete
+              admin-delete
             </button>
           )}
         </div>
+
+        {/* Delete password input */}
+        {showDeleteInput && (
+          <div className="flex items-center gap-2 mt-2">
+            <input
+              type="password"
+              value={deletePassword}
+              onChange={(e) => setDeletePassword(e.target.value)}
+              placeholder="password"
+              onKeyDown={(e) => e.key === "Enter" && handleDelete()}
+              className="rounded border border-ink-ghost bg-panel px-2 py-1 text-xs text-ink placeholder:text-ink-faint focus:border-danger focus:outline-none transition-colors"
+            />
+            <button
+              onClick={handleDelete}
+              disabled={!deletePassword.trim()}
+              className="text-danger text-xs hover:opacity-70 disabled:opacity-30 transition-opacity"
+            >
+              confirm
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Reply Form */}
@@ -109,6 +132,7 @@ export default function CommentItem({ comment, postId, onDelete, onReply }: Comm
               comment={reply}
               postId={postId}
               onDelete={onDelete}
+              onAdminDelete={onAdminDelete}
               onReply={onReply}
             />
           ))}

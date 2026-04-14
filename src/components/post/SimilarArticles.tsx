@@ -1,24 +1,21 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { fetchSimilarArticles, recordSimilarClick, type SimilarArticle } from "../../api/similar";
 
 interface Props {
   title: string;
   content: string;
-  topicHints: string[];
 }
 
-export default function SimilarArticles({ title, content, topicHints }: Props) {
+export default function SimilarArticles({ title, content }: Props) {
   const [articles, setArticles] = useState<SimilarArticle[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const stableTopicHints = useMemo(() => topicHints, [JSON.stringify(topicHints)]);
 
   useEffect(() => {
     const controller = new AbortController();
     setLoading(true);
 
-    fetchSimilarArticles(title, content, stableTopicHints, 5, controller.signal)
+    fetchSimilarArticles(title, content, [], 5, controller.signal)
       .then((items) => {
         if (!controller.signal.aborted) {
           setArticles(items);
@@ -39,7 +36,7 @@ export default function SimilarArticles({ title, content, topicHints }: Props) {
     return () => {
       controller.abort();
     };
-  }, [title, content, stableTopicHints]);
+  }, [title, content]);
 
   if (loading || articles.length === 0) return null;
 

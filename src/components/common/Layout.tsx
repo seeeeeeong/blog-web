@@ -1,7 +1,5 @@
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
-import { useGitHubAuth } from "../../contexts/useGitHubAuth";
-import { authApi } from "../../api/auth";
 import { isAdminToken, isExpiredToken } from "../../utils/authToken";
 import { categoryApi } from "../../api/category";
 import type { Category } from "../../types";
@@ -11,7 +9,6 @@ export default function Layout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isAdmin, setIsAdmin] = useState(false);
-  const { isAuthenticated, user, logout } = useGitHubAuth();
   const [categories, setCategories] = useState<Category[]>([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
@@ -42,15 +39,9 @@ export default function Layout() {
     categoryApi.getCategories().then(setCategories).catch(() => {});
   }, []);
 
-  const handleLogout = async () => {
-    const refreshToken = localStorage.getItem("refreshToken");
-    try {
-      if (refreshToken) await authApi.logout(refreshToken);
-    } finally {
-      clearAuthData();
-      logout();
-      navigate("/");
-    }
+  const handleLogout = () => {
+    clearAuthData();
+    navigate("/");
   };
 
   const isActivePath = (path: string) => location.pathname === path;
@@ -187,17 +178,6 @@ export default function Layout() {
                   >
                     logout
                   </button>
-                </>
-              )}
-
-              {!isAdmin && isAuthenticated && user && (
-                <>
-                  <span className="text-ink-ghost">|</span>
-                  <span className="text-ink-faint flex items-center gap-1.5">
-                    <img src={user.githubAvatarUrl || ""} alt={user.githubUsername} className="w-3.5 h-3.5 rounded-full" />
-                    {user.githubUsername}
-                  </span>
-                  <button onClick={logout} className="text-ink-faint hover:text-danger text-[10px]">×</button>
                 </>
               )}
             </nav>

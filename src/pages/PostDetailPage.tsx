@@ -93,7 +93,6 @@ export default function PostDetailPage() {
           <SimilarArticles
             title={post.title}
             content={post.content}
-            topicHints={post.topicHints}
           />
         </aside>
       )}

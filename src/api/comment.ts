@@ -1,12 +1,10 @@
 import apiClient from "./client";
-import type { Comment, CreateCommentRequest, UpdateCommentRequest } from "../types";
+import type { Comment, CreateCommentRequest, UpdateCommentRequest, DeleteCommentRequest } from "../types";
 
 interface CommentPayload {
   id: number;
   postId: number;
-  oauthId: string;
-  oauthUsername: string;
-  oauthAvatarUrl: string | null;
+  nickname: string;
   parentId: number | null;
   content: string;
   contentHtml: string;
@@ -18,9 +16,7 @@ interface CommentPayload {
 const mapComment = (comment: CommentPayload): Comment => ({
   id: comment.id,
   postId: comment.postId,
-  oauthId: comment.oauthId,
-  oauthUsername: comment.oauthUsername,
-  oauthAvatarUrl: comment.oauthAvatarUrl,
+  nickname: comment.nickname,
   parentId: comment.parentId === 0 ? null : comment.parentId,
   content: comment.content,
   contentHtml: comment.contentHtml,
@@ -38,11 +34,8 @@ export const commentApi = {
   createComment: async (
     postId: number,
     data: CreateCommentRequest,
-    oauthToken: string
   ): Promise<Comment> => {
-    const response = await apiClient.post<CommentPayload>(`/v1/posts/${postId}/comments`, data, {
-      headers: { Authorization: `Bearer ${oauthToken}` },
-    });
+    const response = await apiClient.post<CommentPayload>(`/v1/posts/${postId}/comments`, data);
     return mapComment(response.data);
   },
 
@@ -50,12 +43,10 @@ export const commentApi = {
     postId: number,
     commentId: number,
     data: UpdateCommentRequest,
-    oauthToken: string
   ): Promise<Comment> => {
     const response = await apiClient.put<CommentPayload>(
       `/v1/posts/${postId}/comments/${commentId}`,
       data,
-      { headers: { Authorization: `Bearer ${oauthToken}` } }
     );
     return mapComment(response.data);
   },
@@ -63,10 +54,15 @@ export const commentApi = {
   deleteComment: async (
     postId: number,
     commentId: number,
-    oauthToken: string
+    data: DeleteCommentRequest,
   ): Promise<void> => {
-    await apiClient.delete(`/v1/posts/${postId}/comments/${commentId}`, {
-      headers: { Authorization: `Bearer ${oauthToken}` },
-    });
+    await apiClient.delete(`/v1/posts/${postId}/comments/${commentId}`, { data });
+  },
+
+  deleteCommentByAdmin: async (
+    postId: number,
+    commentId: number,
+  ): Promise<void> => {
+    await apiClient.delete(`/v1/posts/${postId}/comments/${commentId}/admin`);
   },
 };
