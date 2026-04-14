@@ -66,13 +66,13 @@ export default function SimilarArticles({ title, content, topicHints }: Props) {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => handleClick(article, index)}
-              className="group block p-3 border border-ink-ghost rounded hover:border-term-green hover:bg-[rgba(74,222,128,0.08)] transition-all"
+              className="group block p-3 border border-ink-ghost rounded hover:border-term-green hover:bg-[var(--c-green-tint)] transition-all"
             >
               <p className="text-xs font-medium text-term-white group-hover:text-term-green leading-snug line-clamp-2 transition-colors">
                 {article.title}
               </p>
               <div className="flex items-center gap-2 mt-1.5 text-[10px] text-ink-faint">
-                <span className="text-term-amber border border-[#78350f] px-1.5 py-px rounded">
+                <span className="text-term-amber border border-[var(--c-term-amber-dim)] px-1.5 py-px rounded">
                   {article.company}
                 </span>
                 {article.publishedAt && (

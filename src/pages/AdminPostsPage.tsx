@@ -97,7 +97,7 @@ export default function AdminPostsPage() {
               </Link>
               <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded border shrink-0 ${
                 post.status === "DRAFT"
-                  ? "text-term-amber border-[#78350f]"
+                  ? "text-term-amber border-[var(--c-term-amber-dim)]"
                   : "text-term-green border-term-green-dim"
               }`}>
                 {post.status.toLowerCase()}

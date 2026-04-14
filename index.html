@@ -6,7 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>seeeeeeong.log</title>
   </head>
-  <body style="background:#0c0c0c">
+  <body>
+    <script>
+      // Apply saved theme before render to prevent flash
+      (function(){var t=localStorage.getItem('theme');if(t==='light'||(!t&&matchMedia('(prefers-color-scheme:light)').matches)){document.documentElement.classList.add('light')}})();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

@@ -109,7 +109,7 @@ export default function HomePage() {
             <Link
               key={post.id}
               to={`/posts/${post.id}`}
-              className="grid grid-cols-[1fr_auto] sm:grid-cols-[auto_1fr_auto_auto] gap-x-3 items-baseline py-2.5 px-2 border-b border-ink-ghost rounded hover:bg-[rgba(74,222,128,0.08)] transition-colors"
+              className="grid grid-cols-[1fr_auto] sm:grid-cols-[auto_1fr_auto_auto] gap-x-3 items-baseline py-2.5 px-2 border-b border-ink-ghost rounded hover:bg-[var(--c-green-tint)] transition-colors"
             >
               {/* Permissions + Category (hidden on mobile) */}
               <span className="hidden sm:flex items-center gap-2 text-[11px] text-ink-faint whitespace-nowrap">
@@ -179,8 +179,8 @@ export default function HomePage() {
 function CatTag({ name }: { name: string }) {
   const colorMap: Record<string, string> = {
     spring: "text-term-green border-term-green-dim",
-    infra: "text-term-amber border-[#78350f]",
-    cs: "text-term-blue border-[#1e40af]",
+    infra: "text-term-amber border-[var(--c-term-amber-dim)]",
+    cs: "text-term-blue border-[var(--c-term-blue-dim)]",
   };
   const color = colorMap[name] || "text-ink-faint border-ink-ghost";
   return (
