@@ -79,29 +79,24 @@ export default function PostDetailPage() {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row lg:gap-8">
-        {/* Left: Article + Comments */}
-        <div className="flex-1 min-w-0">
-          <article className="mb-8 max-w-[700px]">
-            <MarkdownViewer contentHtml={post.contentHtml} />
-          </article>
+      <article className="mb-8 max-w-[700px]">
+        <MarkdownViewer contentHtml={post.contentHtml} />
+      </article>
 
-          <hr className="border-ink-ghost border-dashed mb-6" />
+      <hr className="border-ink-ghost border-dashed mb-6" />
 
-          <CommentSection postId={Number(postId)} />
-        </div>
+      <CommentSection postId={Number(postId)} />
 
-        {/* Right: Similar Articles */}
-        {post.content && (
-          <aside className="w-full lg:w-72 xl:w-80 shrink-0 mt-8 lg:mt-0 lg:sticky lg:top-8 lg:self-start">
-            <SimilarArticles
-              title={post.title}
-              content={post.content}
-              topicHints={post.topicHints}
-            />
-          </aside>
-        )}
-      </div>
+      {/* Similar Articles — fixed to right margin on wide screens, below content otherwise */}
+      {post.content && (
+        <aside className="similar-aside mt-8">
+          <SimilarArticles
+            title={post.title}
+            content={post.content}
+            topicHints={post.topicHints}
+          />
+        </aside>
+      )}
     </div>
   );
 }

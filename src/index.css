@@ -221,3 +221,14 @@
 .tiptap-editor .editor-table { width: 100%; border-collapse: collapse; margin: 0.9rem 0; border: 1px solid #2a2a2a; }
 .tiptap-editor .editor-table th, .tiptap-editor .editor-table td { border: 1px solid #2a2a2a; padding: 0.45rem 0.65rem; vertical-align: top; }
 .tiptap-editor .editor-table th { background: #1a1a1a; font-weight: 600; color: #4ade80; }
+
+/* ─── Similar Articles Sidebar ────────────────── */
+@media (min-width: 1440px) {
+  .similar-aside {
+    position: fixed;
+    top: 5rem;
+    left: calc(50% + 480px + 2rem);
+    width: min(280px, calc((100vw - 960px) / 2 - 4rem));
+    margin-top: 0;
+  }
+}
