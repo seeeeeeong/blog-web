@@ -136,7 +136,6 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config as RetryableRequestConfig | undefined;
     const status = error.response?.status;
     const requestUrl = originalRequest?.url || "";
-    const method = String(originalRequest?.method || "get").toLowerCase();
     const currentPath = window.location.pathname;
     const apiError = extractApiError(error.response?.data);
     if (apiError?.message) {
