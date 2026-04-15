@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { commentApi } from "../../api/comment";
 import type { Comment } from "../../types";
 import { useAlert } from "../../contexts/useAlert";
@@ -17,6 +17,9 @@ export default function CommentSection({ postId }: CommentSectionProps) {
   const [loading, setLoading] = useState(true);
   const { showError } = useAlert();
 
+  const showErrorRef = useRef(showError);
+  showErrorRef.current = showError;
+
   const token = localStorage.getItem("accessToken");
   const isAdmin = token ? isAdminToken(token) : false;
 
@@ -26,13 +29,29 @@ export default function CommentSection({ postId }: CommentSectionProps) {
       const data = await commentApi.getComments(postId);
       setComments(data);
     } catch {
-      showError("Failed to load comments.");
+      showErrorRef.current("Failed to load comments.");
     } finally {
       setLoading(false);
     }
-  }, [postId, showError]);
+  }, [postId]);
 
-  useEffect(() => { void loadComments(); }, [loadComments]);
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+
+    commentApi.getComments(postId)
+      .then((data) => {
+        if (!cancelled) setComments(data);
+      })
+      .catch(() => {
+        if (!cancelled) showErrorRef.current("Failed to load comments.");
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => { cancelled = true; };
+  }, [postId]);
 
   const handleSubmitComment = async (nickname: string, password: string, content: string, parentId?: number) => {
     try {
