@@ -72,6 +72,19 @@ const extractApiError = (data: unknown): ApiErrorPayload | null => {
   return null;
 };
 
+const PUBLIC_ENDPOINT_PATTERNS: Array<{ method: string; pattern: RegExp }> = [
+  { method: "get", pattern: /^\/v1\/posts(?:\?.*)?$/ },
+  { method: "get", pattern: /^\/v1\/posts\/\d+$/ },
+  { method: "get", pattern: /^\/v1\/posts\/\d+\/comments$/ },
+];
+
+const isPublicEndpoint = (method: string, url: string): boolean => {
+  const normalizedMethod = method.toLowerCase();
+  return PUBLIC_ENDPOINT_PATTERNS.some(
+    (ep) => ep.method === normalizedMethod && ep.pattern.test(url)
+  );
+};
+
 const setAuthorizationHeader = (
   config: RetryableRequestConfig,
   token: string
@@ -84,6 +97,13 @@ const setAuthorizationHeader = (
 apiClient.interceptors.request.use(
   (config) => {
     const requestConfig = config as RetryableRequestConfig;
+    const method = String(requestConfig.method || "get");
+    const url = requestConfig.url || "";
+
+    if (isPublicEndpoint(method, url)) {
+      return requestConfig;
+    }
+
     const headers = AxiosHeaders.from(requestConfig.headers);
     const hasAuthorizationHeader = headers.has("Authorization");
 
@@ -128,15 +148,6 @@ apiClient.interceptors.response.use(
       requestUrl.includes("/v1/users/refresh");
 
     if (status === 401 && (isUserAuthEndpoint || currentPath === "/login")) {
-      return Promise.reject(error);
-    }
-
-    const isPublicPostReadEndpoint =
-      method === "get" &&
-      requestUrl.startsWith("/v1/posts") &&
-      !requestUrl.includes("/drafts");
-
-    if (status === 401 && isPublicPostReadEndpoint) {
       return Promise.reject(error);
     }
 
