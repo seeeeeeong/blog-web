@@ -22,7 +22,7 @@ const mapComment = (comment: CommentPayload): Comment => ({
   contentHtml: comment.contentHtml,
   createdAt: comment.createdAt,
   updatedAt: comment.updatedAt,
-  replies: Array.isArray(comment.replies) ? comment.replies.map(mapComment) : [],
+  replies: (comment.replies ?? []).map(mapComment),
 });
 
 export const commentApi = {
