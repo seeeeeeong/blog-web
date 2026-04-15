@@ -1,4 +1,5 @@
 import apiClient from "./client";
+import { AxiosError } from "axios";
 import type { Comment, CommentCreateRequest, CommentUpdateRequest, CommentDeleteRequest } from "../types";
 
 interface CommentPayload {
@@ -27,12 +28,19 @@ const mapComment = (comment: CommentPayload): Comment => ({
 
 export const commentApi = {
   getComments: async (postId: number): Promise<Comment[]> => {
-    const response = await apiClient.get<CommentPayload[]>(`/v1/posts/${postId}/comments`);
-    if (!Array.isArray(response.data)) {
-      console.warn("[commentApi.getComments] expected array, got:", typeof response.data, response.data);
-      return [];
+    try {
+      const response = await apiClient.get<CommentPayload[]>(`/v1/posts/${postId}/comments`);
+      if (!Array.isArray(response.data)) {
+        console.warn("[commentApi.getComments] expected array, got:", typeof response.data, response.data);
+        return [];
+      }
+      return response.data.map(mapComment);
+    } catch (error) {
+      if (error instanceof AxiosError && error.response?.status === 404) {
+        return [];
+      }
+      throw error;
     }
-    return response.data.map(mapComment);
   },
 
   createComment: async (
