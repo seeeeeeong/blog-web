@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { AlertContext } from "./alert-context";
+import { AlertContext } from "./alertContext";
 
 export function useAlert() {
   const context = useContext(AlertContext);
