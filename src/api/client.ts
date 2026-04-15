@@ -133,8 +133,7 @@ apiClient.interceptors.response.use(
 
     const isPublicPostReadEndpoint =
       method === "get" &&
-      requestUrl.startsWith("/v1/posts") &&
-      !requestUrl.includes("/drafts");
+      /^\/v1\/posts(\/\d+)?$/.test(requestUrl);
 
     if (status === 401 && isPublicPostReadEndpoint && originalRequest && !originalRequest._retry) {
       originalRequest._retry = true;
