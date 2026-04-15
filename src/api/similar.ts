@@ -1,4 +1,5 @@
 import axios from "axios";
+import type { SimilarArticle } from "../types";
 
 const DEVLOG_ARCHIVE_URL =
   import.meta.env.VITE_DEVLOG_ARCHIVE_URL ?? "http://localhost:8082";
@@ -7,16 +8,6 @@ const TOPIC_HINT_LIMIT = 8;
 const HEADING_LIMIT = 6;
 const PARAGRAPH_LIMIT = 6;
 const REQUEST_CONTENT_LIMIT = 4000;
-
-export interface SimilarArticle {
-  articleId: number;
-  title: string;
-  company: string;
-  url: string;
-  summary: string | null;
-  publishedAt: string | null;
-  similarity: number;
-}
 
 interface SimilarRequestPayload {
   title: string;

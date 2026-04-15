@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { adminApi } from "../api/admin";
 import { postApi } from "../api/post";
 import type { PostSummary } from "../types";
 import { useAlert } from "../contexts/useAlert";
@@ -28,11 +27,11 @@ export default function AdminPostsPage() {
         setPosts(data.content); setHasNext(data.hasNext || false); return;
       }
       if (filter === "published") {
-        const data = await adminApi.getAllPosts(currentPage, PAGINATION.ADMIN_POSTS_PER_PAGE);
+        const data = await postApi.getPosts(currentPage, PAGINATION.ADMIN_POSTS_PER_PAGE);
         setPosts(data.content); setHasNext(data.hasNext || false); return;
       }
       const [published, draft] = await Promise.all([
-        adminApi.getAllPosts(currentPage, PAGINATION.ADMIN_POSTS_PER_PAGE),
+        postApi.getPosts(currentPage, PAGINATION.ADMIN_POSTS_PER_PAGE),
         postApi.getDraftPosts(currentPage, PAGINATION.ADMIN_POSTS_PER_PAGE),
       ]);
       const merged = [...published.content, ...draft.content]
@@ -49,7 +48,7 @@ export default function AdminPostsPage() {
   useEffect(() => { void loadPosts(); }, [loadPosts]);
 
   const handleDelete = async (postId: number) => {
-    try { await adminApi.deletePost(postId); await loadPosts(); }
+    try { await postApi.deletePost(postId); await loadPosts(); }
     catch { showError("Failed to delete post."); }
   };
 

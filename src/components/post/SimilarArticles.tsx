@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { fetchSimilarArticles, recordSimilarClick, type SimilarArticle } from "../../api/similar";
+import { fetchSimilarArticles, recordSimilarClick } from "../../api/similar";
+import type { SimilarArticle } from "../../types";
 
 interface Props {
   title: string;

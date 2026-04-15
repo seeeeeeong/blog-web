@@ -40,7 +40,7 @@ import { useEffect, useRef, useState } from 'react';
 import TurndownService from 'turndown';
 import { gfm } from 'turndown-plugin-gfm';
 import { marked } from 'marked';
-import { uploadImageDirectly } from '../../api/image';
+import { imageApi } from '../../api/image';
 import { useAlert } from '../../contexts/useAlert';
 
 interface TipTapEditorProps {
@@ -145,7 +145,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
           if (item.type.indexOf('image') !== -1) {
             const file = item.getAsFile();
             if (file && editor) {
-              uploadImageDirectly(file)
+              imageApi.upload(file)
                 .then((imageUrl) => {
                   editor.chain().focus().setImage({ src: imageUrl }).run();
                 })
@@ -189,7 +189,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
     const file = event.target.files?.[0];
     if (file && editor) {
       try {
-        const imageUrl = await uploadImageDirectly(file);
+        const imageUrl = await imageApi.upload(file);
         editor.chain().focus().setImage({ src: imageUrl }).run();
       } catch {
         showError("Failed to upload image.");

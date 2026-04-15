@@ -21,7 +21,7 @@ export interface User {
   createdAt: string;
 }
 
-export interface LoginRequest {
+export interface UserLoginRequest {
   email: string;
   password: string;
 }
@@ -31,7 +31,7 @@ export interface TokenResponse {
   refreshToken: string;
 }
 
-export interface RefreshTokenRequest {
+export interface UserTokenRequest {
   refreshToken: string;
 }
 
@@ -60,7 +60,7 @@ export interface Post extends PostSummary {
   contentHtml: string;
 }
 
-export interface CreatePostRequest {
+export interface PostCreateRequest {
   categoryId: number;
   title: string;
   content: string;
@@ -68,7 +68,7 @@ export interface CreatePostRequest {
   isDraft?: boolean;
 }
 
-export interface UpdatePostRequest {
+export interface PostUpdateRequest {
   categoryId: number;
   title: string;
   content: string;
@@ -88,19 +88,19 @@ export interface Comment {
   replies: Comment[];
 }
 
-export interface CreateCommentRequest {
+export interface CommentCreateRequest {
   nickname: string;
   password: string;
   content: string;
   parentId?: number | null;
 }
 
-export interface UpdateCommentRequest {
+export interface CommentUpdateRequest {
   password: string;
   content: string;
 }
 
-export interface DeleteCommentRequest {
+export interface CommentDeleteRequest {
   password: string;
 }
 
@@ -109,4 +109,14 @@ export interface ImagePresignedUrlResponse {
   fileUrl: string;
   key: string;
   expiresInSeconds: number;
+}
+
+export interface SimilarArticle {
+  articleId: number;
+  title: string;
+  company: string;
+  url: string;
+  summary: string | null;
+  publishedAt: string | null;
+  similarity: number;
 }
