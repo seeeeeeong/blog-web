@@ -1,17 +1,17 @@
 import apiClient from "./client";
 import type {
-  LoginRequest,
+  UserLoginRequest,
   TokenResponse,
-  RefreshTokenRequest,
+  UserTokenRequest,
 } from "../types";
 
 export const authApi = {
-  login: async (data: LoginRequest): Promise<TokenResponse> => {
+  login: async (data: UserLoginRequest): Promise<TokenResponse> => {
     const response = await apiClient.post("/v1/users/login", data);
     return response.data;
   },
 
-  refreshToken: async (data: RefreshTokenRequest): Promise<TokenResponse> => {
+  refreshToken: async (data: UserTokenRequest): Promise<TokenResponse> => {
     const response = await apiClient.post("/v1/users/refresh", data);
     return response.data;
   },

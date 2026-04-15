@@ -5,7 +5,7 @@ import {
   type ReactNode,
 } from "react";
 import Alert from "../components/common/Alert";
-import { AlertContext } from "./alert-context";
+import { AlertContext } from "./alertContext";
 
 interface AlertConfig {
   id: number;

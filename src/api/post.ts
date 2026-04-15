@@ -1,5 +1,5 @@
 import apiClient from './client';
-import type { Post, PostSummary, PageResponse, CreatePostRequest, UpdatePostRequest } from '../types';
+import type { Post, PostSummary, PageResponse, PostCreateRequest, PostUpdateRequest } from '../types';
 
 export const postApi = {
   getPosts: async (page: number = 0, size: number = 10): Promise<PageResponse<PostSummary>> => {
@@ -17,12 +17,12 @@ export const postApi = {
     return response.data;
   },
 
-  createPost: async (data: CreatePostRequest): Promise<Post> => {
+  createPost: async (data: PostCreateRequest): Promise<Post> => {
     const response = await apiClient.post('/v1/posts', data);
     return response.data;
   },
 
-  updatePost: async (postId: number, data: UpdatePostRequest): Promise<Post> => {
+  updatePost: async (postId: number, data: PostUpdateRequest): Promise<Post> => {
     const response = await apiClient.put(`/v1/posts/${postId}`, data);
     return response.data;
   },

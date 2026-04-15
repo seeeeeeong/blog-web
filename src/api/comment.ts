@@ -1,5 +1,5 @@
 import apiClient from "./client";
-import type { Comment, CreateCommentRequest, UpdateCommentRequest, DeleteCommentRequest } from "../types";
+import type { Comment, CommentCreateRequest, CommentUpdateRequest, CommentDeleteRequest } from "../types";
 
 interface CommentPayload {
   id: number;
@@ -33,7 +33,7 @@ export const commentApi = {
 
   createComment: async (
     postId: number,
-    data: CreateCommentRequest,
+    data: CommentCreateRequest,
   ): Promise<Comment> => {
     const response = await apiClient.post<CommentPayload>(`/v1/posts/${postId}/comments`, data);
     return mapComment(response.data);
@@ -42,7 +42,7 @@ export const commentApi = {
   updateComment: async (
     postId: number,
     commentId: number,
-    data: UpdateCommentRequest,
+    data: CommentUpdateRequest,
   ): Promise<Comment> => {
     const response = await apiClient.put<CommentPayload>(
       `/v1/posts/${postId}/comments/${commentId}`,
@@ -54,7 +54,7 @@ export const commentApi = {
   deleteComment: async (
     postId: number,
     commentId: number,
-    data: DeleteCommentRequest,
+    data: CommentDeleteRequest,
   ): Promise<void> => {
     await apiClient.delete(`/v1/posts/${postId}/comments/${commentId}`, { data });
   },
