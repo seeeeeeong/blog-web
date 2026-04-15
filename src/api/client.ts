@@ -133,11 +133,14 @@ apiClient.interceptors.response.use(
 
     const isPublicPostReadEndpoint =
       method === "get" &&
-      requestUrl.startsWith("/v1/posts") &&
-      !requestUrl.includes("/drafts");
+      /^\/v1\/posts(\/\d+)?$/.test(requestUrl);
 
-    if (status === 401 && isPublicPostReadEndpoint) {
-      return Promise.reject(error);
+    if (status === 401 && isPublicPostReadEndpoint && originalRequest && !originalRequest._retry) {
+      originalRequest._retry = true;
+      const headers = AxiosHeaders.from(originalRequest.headers);
+      headers.delete("Authorization");
+      originalRequest.headers = headers;
+      return apiClient(originalRequest);
     }
 
     if (status === 401 && originalRequest && !originalRequest._retry) {
