@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { postApi } from "../api/post";
 import type { Post } from "../types";
@@ -17,21 +17,33 @@ export default function PostDetailPage() {
   const [isAuthor, setIsAuthor] = useState(false);
   const { showError } = useAlert();
 
-  const loadPost = useCallback(async () => {
-    try {
-      const data = await postApi.getPost(Number(postId));
-      setPost(data);
-      const userId = localStorage.getItem("userId");
-      setIsAuthor(userId === String(data.userId));
-    } catch {
-      showError("Post not found.");
-      navigate("/");
-    } finally {
-      setLoading(false);
-    }
-  }, [navigate, postId, showError]);
+  const showErrorRef = useRef(showError);
+  showErrorRef.current = showError;
+  const navigateRef = useRef(navigate);
+  navigateRef.current = navigate;
 
-  useEffect(() => { void loadPost(); }, [loadPost]);
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+
+    postApi.getPost(Number(postId))
+      .then((data) => {
+        if (cancelled) return;
+        setPost(data);
+        const userId = localStorage.getItem("userId");
+        setIsAuthor(userId === String(data.userId));
+      })
+      .catch(() => {
+        if (cancelled) return;
+        showErrorRef.current("Post not found.");
+        navigateRef.current("/");
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => { cancelled = true; };
+  }, [postId]);
 
   const handleDelete = async () => {
     try {
