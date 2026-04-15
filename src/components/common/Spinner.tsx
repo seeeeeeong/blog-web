@@ -1,4 +1,4 @@
-export default function Spinner() {
+export function Spinner() {
   return (
     <div className="flex items-center gap-2 text-ink-faint text-xs">
       <div className="spinner-modern" />

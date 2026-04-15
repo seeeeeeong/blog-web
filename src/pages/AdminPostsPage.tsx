@@ -5,11 +5,11 @@ import type { PostSummary } from "../types";
 import { useAlert } from "../contexts/useAlert";
 import { PAGINATION } from "../constants/pagination";
 import { formatDate } from "../utils/format";
-import Spinner from "../components/common/Spinner";
+import { Spinner } from "../components/common/Spinner";
 
 type FilterType = "all" | "published" | "draft";
 
-export default function AdminPostsPage() {
+export function AdminPostsPage() {
   const [posts, setPosts] = useState<PostSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);

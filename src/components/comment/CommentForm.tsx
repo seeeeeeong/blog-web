@@ -7,7 +7,7 @@ interface CommentFormProps {
   autoFocus?: boolean;
 }
 
-export default function CommentForm({
+export function CommentForm({
   onSubmit,
   placeholder = "Leave a comment...",
   buttonText = "send",

@@ -4,7 +4,7 @@ import {
   useRef,
   type ReactNode,
 } from "react";
-import Alert from "../components/common/Alert";
+import { Alert } from "../components/common/Alert";
 import { AlertContext } from "./alertContext";
 
 interface AlertConfig {

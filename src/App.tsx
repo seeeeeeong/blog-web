@@ -1,17 +1,31 @@
 import { lazy, Suspense, type JSX } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AlertProvider } from "./contexts/AlertContext";
-import Layout from "./components/common/Layout";
+import { Layout } from "./components/common/Layout";
 import { isAdminToken } from "./utils/authToken";
-import Spinner from "./components/common/Spinner";
+import { Spinner } from "./components/common/Spinner";
 
-const HomePage = lazy(() => import("./pages/HomePage"));
-const LoginPage = lazy(() => import("./pages/LoginPage"));
-const PostDetailPage = lazy(() => import("./pages/PostDetailPage"));
-const PostCreatePage = lazy(() => import("./pages/PostCreatePage"));
-const PostEditPage = lazy(() => import("./pages/PostEditPage"));
-const AdminPostsPage = lazy(() => import("./pages/AdminPostsPage"));
-const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
+const HomePage = lazy(() =>
+  import("./pages/HomePage").then((m) => ({ default: m.HomePage }))
+);
+const LoginPage = lazy(() =>
+  import("./pages/LoginPage").then((m) => ({ default: m.LoginPage }))
+);
+const PostDetailPage = lazy(() =>
+  import("./pages/PostDetailPage").then((m) => ({ default: m.PostDetailPage }))
+);
+const PostCreatePage = lazy(() =>
+  import("./pages/PostCreatePage").then((m) => ({ default: m.PostCreatePage }))
+);
+const PostEditPage = lazy(() =>
+  import("./pages/PostEditPage").then((m) => ({ default: m.PostEditPage }))
+);
+const AdminPostsPage = lazy(() =>
+  import("./pages/AdminPostsPage").then((m) => ({ default: m.AdminPostsPage }))
+);
+const NotFoundPage = lazy(() =>
+  import("./pages/NotFoundPage").then((m) => ({ default: m.NotFoundPage }))
+);
 
 function PrivateRoute({ children }: { children: JSX.Element }) {
   const token = localStorage.getItem("accessToken");
@@ -24,7 +38,7 @@ function PrivateRoute({ children }: { children: JSX.Element }) {
   return children;
 }
 
-function App() {
+export function App() {
   return (
     <AlertProvider>
       <BrowserRouter>
@@ -76,5 +90,3 @@ function App() {
     </AlertProvider>
   );
 }
-
-export default App;

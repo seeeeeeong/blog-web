@@ -1,11 +1,12 @@
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { isAdminToken, isExpiredToken } from "../../utils/authToken";
 import { categoryApi } from "../../api/category";
 import type { Category } from "../../types";
 import { useTheme } from "../../hooks/useTheme";
 
-export default function Layout() {
+export function Layout() {
+  // 1. Hooks
   const navigate = useNavigate();
   const location = useLocation();
   const [isAdmin, setIsAdmin] = useState(false);
@@ -13,23 +14,35 @@ export default function Layout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
 
-  const clearAuthData = useCallback(() => {
+  // 2. 파생 상태
+  const isActivePath = (path: string) => location.pathname === path;
+  const categoryParam = new URLSearchParams(location.search).get("category");
+
+  // 3. 이벤트 핸들러
+  const clearAuthData = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("userId");
     setIsAdmin(false);
-  }, []);
+  };
 
-  const checkTokenExpiration = useCallback(() => {
+  const checkTokenExpiration = () => {
     const token = localStorage.getItem("accessToken");
     if (!token) { setIsAdmin(false); return; }
     if (isExpiredToken(token)) { clearAuthData(); return; }
     setIsAdmin(isAdminToken(token));
-  }, [clearAuthData]);
+  };
 
+  const handleLogout = () => {
+    clearAuthData();
+    navigate("/");
+  };
+
+  // Side Effects
   useEffect(() => {
     checkTokenExpiration();
-  }, [checkTokenExpiration, location.pathname]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
 
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -38,14 +51,6 @@ export default function Layout() {
   useEffect(() => {
     categoryApi.getCategories().then(setCategories).catch(() => {});
   }, []);
-
-  const handleLogout = () => {
-    clearAuthData();
-    navigate("/");
-  };
-
-  const isActivePath = (path: string) => location.pathname === path;
-  const categoryParam = new URLSearchParams(location.search).get("category");
 
   return (
     <div className="min-h-screen flex flex-col">

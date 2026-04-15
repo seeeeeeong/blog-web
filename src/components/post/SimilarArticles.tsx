@@ -3,12 +3,12 @@ import axios from "axios";
 import { fetchSimilarArticles, recordSimilarClick } from "../../api/similar";
 import type { SimilarArticle } from "../../types";
 
-interface Props {
+interface SimilarArticlesProps {
   title: string;
   content: string;
 }
 
-export default function SimilarArticles({ title, content }: Props) {
+export function SimilarArticles({ title, content }: SimilarArticlesProps) {
   const [articles, setArticles] = useState<SimilarArticle[]>([]);
   const [loading, setLoading] = useState(true);
 

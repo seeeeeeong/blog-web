@@ -58,9 +58,11 @@ turndownService.use(gfm);
 turndownService.addRule('images', {
   filter: 'img',
   replacement: (_content, node) => {
-    const alt = (node as HTMLImageElement).alt || '';
-    const src = (node as HTMLImageElement).src || '';
-    const title = (node as HTMLImageElement).title || '';
+    // Turndown의 filter: 'img'가 HTMLImageElement만 전달하므로 단언 안전
+    const imgNode = node as HTMLImageElement;
+    const alt = imgNode.alt || '';
+    const src = imgNode.src || '';
+    const title = imgNode.title || '';
 
     if (!src) return '';
 
@@ -69,7 +71,37 @@ turndownService.addRule('images', {
   }
 });
 
-export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
+interface MenuButtonProps {
+  onClick: () => void;
+  isActive?: boolean;
+  children: React.ReactNode;
+  title: string;
+}
+
+function MenuButton({
+  onClick,
+  isActive = false,
+  children,
+  title,
+}: MenuButtonProps) {
+  return (
+    <button
+      onClick={onClick}
+      className={`inline-flex h-7 w-7 items-center justify-center rounded transition-all ${
+        isActive
+          ? 'bg-term-green text-panel'
+          : 'text-ink-faint hover:text-term-green hover:bg-surface-alt'
+      }`}
+      type="button"
+      title={title}
+      aria-label={title}
+    >
+      {children}
+    </button>
+  );
+}
+
+export function TipTapEditor({ value, onChange }: TipTapEditorProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { showError } = useAlert();
   const [showLinkInput, setShowLinkInput] = useState(false);
@@ -204,6 +236,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
       setLinkUrl("");
       return;
     }
+    // TipTap getAttributes('link').href는 항상 string | undefined 반환
     const previousUrl = (editor.getAttributes('link').href as string) || "";
     setLinkUrl(previousUrl);
     setShowLinkInput(true);
@@ -230,32 +263,6 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
     setShowTableInput(false);
   };
 
-  const MenuButton = ({
-    onClick,
-    isActive = false,
-    children,
-    title,
-  }: {
-    onClick: () => void;
-    isActive?: boolean;
-    children: React.ReactNode;
-    title: string;
-  }) => (
-    <button
-      onClick={onClick}
-      className={`inline-flex h-7 w-7 items-center justify-center rounded transition-all ${
-        isActive
-          ? 'bg-term-green text-panel'
-          : 'text-ink-faint hover:text-term-green hover:bg-surface-alt'
-      }`}
-      type="button"
-      title={title}
-      aria-label={title}
-    >
-      {children}
-    </button>
-  );
-
   return (
     <div className="overflow-hidden rounded-md border border-ink-ghost bg-panel">
       <input
@@ -263,7 +270,7 @@ export default function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         ref={fileInputRef}
         onChange={handleFileSelect}
         accept="image/*"
-        style={{ display: 'none' }}
+        className="hidden"
       />
       <div className="flex items-center justify-between border-b border-ink-ghost px-3 py-2">
         <span className="text-[10px] font-medium text-term-green">EDITOR</span>

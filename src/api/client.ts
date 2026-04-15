@@ -52,6 +52,7 @@ const extractApiError = (data: unknown): ApiErrorPayload | null => {
     return null;
   }
 
+  // API 응답 구조 탐색을 위한 단언 — null/typeof 체크 후 안전하게 접근
   const apiResponse = data as {
     result?: string;
     error?: { code?: string; message?: string };
@@ -96,6 +97,7 @@ const setAuthorizationHeader = (
 
 apiClient.interceptors.request.use(
   (config) => {
+    // Axios 내부 config 확장을 위한 단언 — _retry 플래그 추가용
     const requestConfig = config as RetryableRequestConfig;
     const method = String(requestConfig.method || "get");
     const url = requestConfig.url || "";
@@ -121,6 +123,7 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => {
     if (response.data && typeof response.data === "object" && "result" in response.data) {
+      // result 필드 존재 확인 후 envelope 구조로 단언
       const apiResponse = response.data as ApiEnvelope;
 
       if (apiResponse.result === "SUCCESS") {

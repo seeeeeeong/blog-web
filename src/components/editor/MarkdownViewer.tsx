@@ -2,7 +2,7 @@ interface MarkdownViewerProps {
   contentHtml: string;
 }
 
-export default function MarkdownViewer({ contentHtml }: MarkdownViewerProps) {
+export function MarkdownViewer({ contentHtml }: MarkdownViewerProps) {
   return (
     <div
       className="markdown-viewer"

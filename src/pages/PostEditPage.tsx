@@ -4,10 +4,10 @@ import { postApi } from "../api/post";
 import { categoryApi } from "../api/category";
 import type { Category } from "../types";
 import { useAlert } from "../contexts/useAlert";
-import TipTapEditor from "../components/editor/TipTapEditor";
-import Spinner from "../components/common/Spinner";
+import { TipTapEditor } from "../components/editor/TipTapEditor";
+import { Spinner } from "../components/common/Spinner";
 
-export default function PostEditPage() {
+export function PostEditPage() {
   const { postId } = useParams<{ postId: string }>();
   const navigate = useNavigate();
   const [categories, setCategories] = useState<Category[]>([]);

@@ -3,11 +3,11 @@ import { postApi } from "../api/post";
 import { categoryApi } from "../api/category";
 import type { PostSummary, Category } from "../types";
 import { Link, useSearchParams } from "react-router-dom";
-import Spinner from "../components/common/Spinner";
+import { Spinner } from "../components/common/Spinner";
 import { formatDate } from "../utils/format";
 import { PAGINATION } from "../constants/pagination";
 
-export default function HomePage() {
+export function HomePage() {
   const [searchParams] = useSearchParams();
   const categoryParam = searchParams.get("category");
   const [posts, setPosts] = useState<PostSummary[]>([]);

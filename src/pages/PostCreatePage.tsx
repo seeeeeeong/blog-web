@@ -4,9 +4,9 @@ import { postApi } from "../api/post";
 import { categoryApi } from "../api/category";
 import type { Category } from "../types";
 import { useAlert } from "../contexts/useAlert";
-import TipTapEditor from "../components/editor/TipTapEditor";
+import { TipTapEditor } from "../components/editor/TipTapEditor";
 
-export default function PostCreatePage() {
+export function PostCreatePage() {
   const navigate = useNavigate();
   const [categories, setCategories] = useState<Category[]>([]);
   const [categoryId, setCategoryId] = useState<number>(0);

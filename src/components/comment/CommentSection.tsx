@@ -4,15 +4,16 @@ import type { Comment } from "../../types";
 import { useAlert } from "../../contexts/useAlert";
 import { isAdminToken } from "../../utils/authToken";
 import { extractApiErrorMessage } from "../../utils/error";
-import CommentItem from "./CommentItem";
-import CommentForm from "./CommentForm";
-import Spinner from "../common/Spinner";
+import { CommentItem } from "./CommentItem";
+import { CommentForm } from "./CommentForm";
+import { Spinner } from "../common/Spinner";
 
 interface CommentSectionProps {
   postId: number;
 }
 
-export default function CommentSection({ postId }: CommentSectionProps) {
+export function CommentSection({ postId }: CommentSectionProps) {
+  // 1. Hooks
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const { showError } = useAlert();
@@ -20,6 +21,7 @@ export default function CommentSection({ postId }: CommentSectionProps) {
   const showErrorRef = useRef(showError);
   showErrorRef.current = showError;
 
+  // 2. 파생 상태
   const token = localStorage.getItem("accessToken");
   const isAdmin = token ? isAdminToken(token) : false;
 

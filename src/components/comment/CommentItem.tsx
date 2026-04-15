@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Comment } from "../../types";
 import { isAdminToken } from "../../utils/authToken";
-import CommentForm from "./CommentForm";
+import { CommentForm } from "./CommentForm";
 
 interface CommentItemProps {
   comment: Comment;
@@ -11,14 +11,17 @@ interface CommentItemProps {
   onReply: (nickname: string, password: string, content: string) => void;
 }
 
-export default function CommentItem({ comment, postId, onDelete, onAdminDelete, onReply }: CommentItemProps) {
+export function CommentItem({ comment, postId, onDelete, onAdminDelete, onReply }: CommentItemProps) {
+  // 1. Hooks
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [showDeleteInput, setShowDeleteInput] = useState(false);
   const [deletePassword, setDeletePassword] = useState("");
 
+  // 2. 파생 상태
   const token = localStorage.getItem("accessToken");
   const isAdmin = token ? isAdminToken(token) : false;
 
+  // 3. 이벤트 핸들러
   const handleReplySubmit = async (nickname: string, password: string, content: string) => {
     await onReply(nickname, password, content);
     setShowReplyForm(false);
@@ -31,7 +34,7 @@ export default function CommentItem({ comment, postId, onDelete, onAdminDelete, 
     setDeletePassword("");
   };
 
-  const formatDate = (dateString: string) => {
+  const formatRelativeDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
     const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
@@ -56,7 +59,7 @@ export default function CommentItem({ comment, postId, onDelete, onAdminDelete, 
             </span>
           </div>
           <span className="text-term-white font-semibold">{comment.nickname}</span>
-          <span className="text-ink-faint">{formatDate(comment.createdAt)}</span>
+          <span className="text-ink-faint">{formatRelativeDate(comment.createdAt)}</span>
         </div>
 
         {/* Content */}

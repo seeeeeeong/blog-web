@@ -6,6 +6,7 @@ export const extractApiErrorMessage = (
     return fallback;
   }
 
+  // Axios 에러 구조를 탐색하기 위한 단언 — unknown에서 안전하게 optional chaining 수행
   const parsed = error as {
     response?: { data?: { error?: { message?: string }; message?: string } };
     message?: string;

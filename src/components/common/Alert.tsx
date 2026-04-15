@@ -35,7 +35,7 @@ const LABEL_COLOR: Record<AlertType, string> = {
   confirm: "text-term-white",
 };
 
-export default function Alert({
+export function Alert({
   type,
   message,
   onClose,

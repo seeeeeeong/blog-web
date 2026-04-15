@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export default function NotFoundPage() {
+export function NotFoundPage() {
   return (
     <div className="animate-fade-in py-12">
       <div className="text-xs text-ink-faint mb-2">

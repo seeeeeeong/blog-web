@@ -11,7 +11,7 @@ interface LoginApiError {
   message?: string;
 }
 
-export default function LoginPage() {
+export function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,6 +31,7 @@ export default function LoginPage() {
       if (userId) localStorage.setItem("userId", userId);
       navigate("/");
     } catch (err) {
+      // authApi.login은 Axios 호출이므로 AxiosError로 단언 안전
       const axiosError = err as AxiosError<LoginApiError>;
       const errorCode = axiosError.response?.data?.error?.code;
       if (errorCode === "AUTH_009") {

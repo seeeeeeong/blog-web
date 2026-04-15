@@ -3,13 +3,13 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { postApi } from "../api/post";
 import type { Post } from "../types";
 import { useAlert } from "../contexts/useAlert";
-import MarkdownViewer from "../components/editor/MarkdownViewer";
-import CommentSection from "../components/comment/CommentSection";
-import SimilarArticles from "../components/post/SimilarArticles";
-import Spinner from "../components/common/Spinner";
+import { MarkdownViewer } from "../components/editor/MarkdownViewer";
+import { CommentSection } from "../components/comment/CommentSection";
+import { SimilarArticles } from "../components/post/SimilarArticles";
+import { Spinner } from "../components/common/Spinner";
 import { formatDate } from "../utils/format";
 
-export default function PostDetailPage() {
+export function PostDetailPage() {
   const { postId } = useParams<{ postId: string }>();
   const navigate = useNavigate();
   const [post, setPost] = useState<Post | null>(null);
@@ -74,7 +74,7 @@ export default function PostDetailPage() {
 
       {/* Post Header */}
       <div className="mt-4 mb-6 pb-6 border-b border-ink-ghost">
-        <h1 className="text-lg sm:text-xl font-bold text-term-white mb-3 leading-tight" style={{ fontFamily: "'IBM Plex Sans KR', sans-serif" }}>
+        <h1 className="text-lg sm:text-xl font-bold text-term-white mb-3 leading-tight font-[IBM_Plex_Sans_KR,sans-serif]">
           {post.title}
         </h1>
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-[11px] text-ink-faint">
