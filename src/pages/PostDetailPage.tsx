@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import axios from "axios";
 import { postApi } from "../api/post";
 import type { Post } from "../types";
 import { useAlert } from "../contexts/useAlert";
@@ -9,52 +10,92 @@ import { SimilarArticles } from "../components/post/SimilarArticles";
 import { Spinner } from "../components/common/Spinner";
 import { formatDate } from "../utils/format";
 
+function parsePostId(raw: string | undefined): number | null {
+  if (raw == null) return null;
+  const n = Number(raw);
+  return Number.isInteger(n) && n > 0 ? n : null;
+}
+
 export function PostDetailPage() {
-  const { postId } = useParams<{ postId: string }>();
+  const { postId: rawPostId } = useParams<{ postId: string }>();
   const navigate = useNavigate();
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAuthor, setIsAuthor] = useState(false);
+  const [error, setError] = useState<"server_error" | null>(null);
   const { showError } = useAlert();
 
-  const showErrorRef = useRef(showError);
-  showErrorRef.current = showError;
-  const navigateRef = useRef(navigate);
-  navigateRef.current = navigate;
+  const requestIdRef = useRef(0);
+  const parsedId = parsePostId(rawPostId);
 
   useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
+    if (parsedId == null) return;
+    fetchPost(parsedId);
 
-    postApi.getPost(Number(postId))
+    return () => { requestIdRef.current += 1; };
+  }, [parsedId]);
+
+  function fetchPost(id: number) {
+    const thisRequest = ++requestIdRef.current;
+    setLoading(true);
+    setError(null);
+
+    postApi.getPost(id)
       .then((data) => {
-        if (cancelled) return;
+        if (thisRequest !== requestIdRef.current) return;
         setPost(data);
         const userId = localStorage.getItem("userId");
         setIsAuthor(userId === String(data.userId));
       })
-      .catch(() => {
-        if (cancelled) return;
-        showErrorRef.current("Post not found.");
-        navigateRef.current("/");
+      .catch((err: unknown) => {
+        if (thisRequest !== requestIdRef.current) return;
+        const status = axios.isAxiosError(err) ? err.response?.status : undefined;
+        if (status === 404) {
+          navigate("/");
+        } else {
+          setError("server_error");
+        }
       })
       .finally(() => {
-        if (!cancelled) setLoading(false);
+        if (thisRequest === requestIdRef.current) setLoading(false);
       });
-
-    return () => { cancelled = true; };
-  }, [postId]);
+  }
 
   const handleDelete = async () => {
     try {
-      await postApi.deletePost(Number(postId));
+      await postApi.deletePost(Number(rawPostId));
       navigate("/");
     } catch {
       showError("Failed to delete post.");
     }
   };
 
+  if (parsedId == null) {
+    return (
+      <div className="py-12">
+        <p className="text-danger text-xs mb-4">error: post not found</p>
+        <Link to="/" className="text-xs text-ink-faint hover:text-term-green">$ cd ..</Link>
+      </div>
+    );
+  }
+
   if (loading) return <div className="flex justify-center items-center min-h-[60vh]"><Spinner /></div>;
+
+  if (error === "server_error") {
+    return (
+      <div className="py-12">
+        <p className="text-danger text-xs mb-4">error: failed to load post</p>
+        <button
+          disabled={loading}
+          onClick={() => fetchPost(parsedId)}
+          className="text-xs text-ink-faint hover:text-term-green transition-colors disabled:opacity-50"
+        >
+          $ retry
+        </button>
+        <Link to="/" className="text-xs text-ink-faint hover:text-term-green ml-4">$ cd ..</Link>
+      </div>
+    );
+  }
 
   if (!post) {
     return (
@@ -84,7 +125,7 @@ export function PostDetailPage() {
           </div>
           {isAuthor && (
             <div className="flex items-center gap-3 sm:ml-auto">
-              <Link to={`/posts/${postId}/edit`} className="text-term-blue hover:opacity-70 transition-opacity">edit</Link>
+              <Link to={`/posts/${parsedId}/edit`} className="text-term-blue hover:opacity-70 transition-opacity">edit</Link>
               <button onClick={handleDelete} className="text-danger hover:opacity-70 transition-opacity">delete</button>
             </div>
           )}
@@ -97,7 +138,7 @@ export function PostDetailPage() {
 
       <hr className="border-ink-ghost border-dashed mb-6" />
 
-      <CommentSection postId={Number(postId)} />
+      <CommentSection postId={parsedId} />
 
       {/* Similar Articles — fixed to right margin on wide screens, below content otherwise */}
       {post.content && (
