@@ -101,7 +101,6 @@ export function AdminPostsPage() {
               }`}>
                 {post.status.toLowerCase()}
               </span>
-              <span className="text-[11px] text-ink-faint shrink-0 hidden sm:block">{post.viewCount}</span>
               <span className="text-[11px] text-ink-faint shrink-0 hidden sm:block w-20 text-right">{formatDate(post.createdAt)}</span>
               <div className="flex gap-2 shrink-0 text-[11px]">
                 <Link to={`/posts/${post.id}/edit`} className="text-term-blue hover:opacity-70">edit</Link>

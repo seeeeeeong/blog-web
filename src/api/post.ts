@@ -59,8 +59,4 @@ export const postApi = {
     return response.data;
   },
 
-  getPopularPosts: async (limit: number = 5): Promise<PostSummary[]> => {
-    const response = await apiClient.get('/v1/posts/popular', { params: { limit } });
-    return response.data;
-  },
 };

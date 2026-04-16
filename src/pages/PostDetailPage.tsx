@@ -121,7 +121,6 @@ export function PostDetailPage() {
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-[11px] text-ink-faint">
           <div className="flex items-center gap-4">
             <span><span className="text-ink-lighter">date:</span> {formatDate(post.createdAt)}</span>
-            <span><span className="text-ink-lighter">views:</span> {post.viewCount}</span>
           </div>
           {isAuthor && (
             <div className="flex items-center gap-3 sm:ml-auto">

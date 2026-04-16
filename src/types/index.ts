@@ -49,7 +49,6 @@ export interface PostSummary {
   title: string;
   excerpt: string;
   thumbnailUrl: string | null;
-  viewCount: number;
   status: "DRAFT" | "PUBLISHED";
   createdAt: string;
   updatedAt: string;

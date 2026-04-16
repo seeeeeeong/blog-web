@@ -109,7 +109,7 @@ export function HomePage() {
             <Link
               key={post.id}
               to={`/posts/${post.id}`}
-              className="grid grid-cols-[1fr_auto] sm:grid-cols-[auto_1fr_auto_auto] gap-x-3 items-baseline py-2.5 px-2 border-b border-ink-ghost rounded hover:bg-[var(--c-green-tint)] transition-colors"
+              className="grid grid-cols-[1fr_auto] sm:grid-cols-[auto_1fr_auto] gap-x-3 items-baseline py-2.5 px-2 border-b border-ink-ghost rounded hover:bg-[var(--c-green-tint)] transition-colors"
             >
               {/* Permissions + Category (hidden on mobile) */}
               <span className="hidden sm:flex items-center gap-2 text-[11px] text-ink-faint whitespace-nowrap">
@@ -127,13 +127,8 @@ export function HomePage() {
                 </span>
               </span>
 
-              {/* Views */}
-              <span className="text-[11px] text-term-amber text-right whitespace-nowrap">
-                {post.viewCount} views
-              </span>
-
               {/* Date */}
-              <span className="hidden sm:block text-[11px] text-ink-faint text-right whitespace-nowrap">
+              <span className="text-[11px] text-ink-faint text-right whitespace-nowrap">
                 {formatDate(post.createdAt)}
               </span>
             </Link>
