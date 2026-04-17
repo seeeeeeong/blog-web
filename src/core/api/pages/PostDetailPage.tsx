@@ -6,7 +6,6 @@ import type { Post } from "../../domain/post";
 import { useAlert } from "../../support/contexts/useAlert";
 import { MarkdownViewer } from "../components/editor/MarkdownViewer";
 import { CommentSection } from "../components/comment/CommentSection";
-import { SimilarArticles } from "../components/post/SimilarArticles";
 import { Spinner } from "../components/common/Spinner";
 import { formatDate } from "../../support/converter/format";
 
@@ -138,16 +137,6 @@ export function PostDetailPage() {
       <hr className="border-ink-ghost border-dashed mb-6" />
 
       <CommentSection postId={parsedId} />
-
-      {/* Similar Articles — fixed to right margin on wide screens, below content otherwise */}
-      {post.content && (
-        <aside className="similar-aside mt-8">
-          <SimilarArticles
-            title={post.title}
-            content={post.content}
-          />
-        </aside>
-      )}
     </div>
   );
 }
