@@ -1,30 +1,30 @@
 import { lazy, Suspense, type JSX } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AlertProvider } from "./contexts/AlertContext";
-import { Layout } from "./components/common/Layout";
-import { isAdminToken } from "./utils/authToken";
-import { Spinner } from "./components/common/Spinner";
+import { AlertProvider } from "./core/support/contexts/AlertContext";
+import { Layout } from "./core/api/components/common/Layout";
+import { isAdminToken } from "./core/support/auth/authToken";
+import { Spinner } from "./core/api/components/common/Spinner";
 
 const HomePage = lazy(() =>
-  import("./pages/HomePage").then((m) => ({ default: m.HomePage }))
+  import("./core/api/pages/HomePage").then((m) => ({ default: m.HomePage }))
 );
 const LoginPage = lazy(() =>
-  import("./pages/LoginPage").then((m) => ({ default: m.LoginPage }))
+  import("./core/api/pages/LoginPage").then((m) => ({ default: m.LoginPage }))
 );
 const PostDetailPage = lazy(() =>
-  import("./pages/PostDetailPage").then((m) => ({ default: m.PostDetailPage }))
+  import("./core/api/pages/PostDetailPage").then((m) => ({ default: m.PostDetailPage }))
 );
 const PostCreatePage = lazy(() =>
-  import("./pages/PostCreatePage").then((m) => ({ default: m.PostCreatePage }))
+  import("./core/api/pages/PostCreatePage").then((m) => ({ default: m.PostCreatePage }))
 );
 const PostEditPage = lazy(() =>
-  import("./pages/PostEditPage").then((m) => ({ default: m.PostEditPage }))
+  import("./core/api/pages/PostEditPage").then((m) => ({ default: m.PostEditPage }))
 );
 const AdminPostsPage = lazy(() =>
-  import("./pages/AdminPostsPage").then((m) => ({ default: m.AdminPostsPage }))
+  import("./core/api/pages/AdminPostsPage").then((m) => ({ default: m.AdminPostsPage }))
 );
 const NotFoundPage = lazy(() =>
-  import("./pages/NotFoundPage").then((m) => ({ default: m.NotFoundPage }))
+  import("./core/api/pages/NotFoundPage").then((m) => ({ default: m.NotFoundPage }))
 );
 
 function PrivateRoute({ children }: { children: JSX.Element }) {
