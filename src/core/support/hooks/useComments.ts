@@ -42,21 +42,12 @@ export function useComments(postId: number) {
     return () => { cancelled = true; };
   }, [postId]);
 
-  const createComment = async (nickname: string, password: string, content: string, parentId?: number) => {
+  const createComment = async (content: string) => {
     try {
-      await commentApi.createComment(postId, { nickname, password, content, parentId: parentId ?? null });
+      await commentApi.createComment(postId, { content });
       await loadComments();
     } catch (error: unknown) {
       showError(extractApiErrorMessage(error, "Failed to add comment."));
-    }
-  };
-
-  const deleteComment = async (commentId: number, password: string) => {
-    try {
-      await commentApi.deleteComment(postId, commentId, { password });
-      await loadComments();
-    } catch (error: unknown) {
-      showError(extractApiErrorMessage(error, "Failed to delete comment."));
     }
   };
 
@@ -69,5 +60,5 @@ export function useComments(postId: number) {
     }
   };
 
-  return { comments, loading, createComment, deleteComment, adminDeleteComment };
+  return { comments, loading, createComment, adminDeleteComment };
 }

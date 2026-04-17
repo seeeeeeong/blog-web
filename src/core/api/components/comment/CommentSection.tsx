@@ -10,7 +10,7 @@ interface CommentSectionProps {
 
 export function CommentSection({ postId }: CommentSectionProps) {
   const isAdmin = useIsAdmin();
-  const { comments, loading, createComment, deleteComment, adminDeleteComment } = useComments(postId);
+  const { comments, loading, createComment, adminDeleteComment } = useComments(postId);
 
   if (loading) {
     return <div className="py-8"><Spinner /></div>;
@@ -23,7 +23,7 @@ export function CommentSection({ postId }: CommentSectionProps) {
       </h3>
 
       <div className="border border-ink-ghost rounded p-4">
-        <CommentForm onSubmit={(nickname, password, content) => createComment(nickname, password, content)} />
+        <CommentForm onSubmit={createComment} />
       </div>
 
       {comments.length === 0 ? (
@@ -36,10 +36,7 @@ export function CommentSection({ postId }: CommentSectionProps) {
             <CommentItem
               key={comment.id}
               comment={comment}
-              postId={postId}
-              onDelete={deleteComment}
               onAdminDelete={isAdmin ? adminDeleteComment : undefined}
-              onReply={(nickname, password, content) => createComment(nickname, password, content, comment.id)}
             />
           ))}
         </div>

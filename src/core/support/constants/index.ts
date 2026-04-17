@@ -9,8 +9,6 @@ export const POST_LIMITS = {
 } as const;
 
 export const COMMENT_LIMITS = {
-  NICKNAME_MAX_LENGTH: 20,
-  PASSWORD_MAX_LENGTH: 50,
   CONTENT_MAX_LENGTH: 1000,
 } as const;
 
