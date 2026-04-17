@@ -5,6 +5,7 @@ import type { AxiosError } from "axios";
 import { authApi } from "../../../storage/user/authApi";
 import { getUserIdFromToken } from "../../support/auth/authToken";
 import { extractApiErrorMessage } from "../../support/error/error";
+import { TerminalDots } from "../components/common/TerminalDots";
 
 interface LoginApiError {
   error?: { code?: string; message?: string };
@@ -51,9 +52,7 @@ export function LoginPage() {
         <div className="border border-ink-ghost rounded-lg overflow-hidden">
           {/* Title bar */}
           <div className="bg-surface flex items-center gap-1.5 px-3 py-2">
-            <div className="w-[10px] h-[10px] rounded-full bg-[#ff5f57]" />
-            <div className="w-[10px] h-[10px] rounded-full bg-[#febc2e]" />
-            <div className="w-[10px] h-[10px] rounded-full bg-[#28c840]" />
+            <TerminalDots />
             <span className="text-[10px] text-ink-faint ml-2">login — zsh</span>
           </div>
 

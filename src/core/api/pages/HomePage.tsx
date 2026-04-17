@@ -5,8 +5,10 @@ import type { PostSummary } from "../../domain/post";
 import type { Category } from "../../domain/category";
 import { Link, useSearchParams } from "react-router-dom";
 import { Spinner } from "../components/common/Spinner";
+import { CatTag } from "../components/common/CatTag";
+import { PaginationControls } from "../components/common/PaginationControls";
 import { formatDate } from "../../support/converter/format";
-import { PAGINATION } from "../../support/constants/pagination";
+import { PAGINATION } from "../../support/constants";
 
 export function HomePage() {
   const [searchParams] = useSearchParams();
@@ -112,13 +114,11 @@ export function HomePage() {
               to={`/posts/${post.id}`}
               className="grid grid-cols-[1fr_auto] sm:grid-cols-[auto_1fr_auto] gap-x-3 items-baseline py-2.5 px-2 border-b border-ink-ghost rounded hover:bg-[var(--c-green-tint)] transition-colors"
             >
-              {/* Permissions + Category (hidden on mobile) */}
               <span className="hidden sm:flex items-center gap-2 text-[11px] text-ink-faint whitespace-nowrap">
                 -rw-r--r--
                 <CatTag name={categorySlug(post.categoryId)} />
               </span>
 
-              {/* Title + excerpt */}
               <span className="min-w-0">
                 <span className="text-xs font-medium text-term-white block truncate">
                   {post.title}
@@ -128,37 +128,19 @@ export function HomePage() {
                 </span>
               </span>
 
-              {/* Date */}
               <span className="text-[11px] text-ink-faint text-right whitespace-nowrap">
                 {formatDate(post.createdAt)}
               </span>
             </Link>
           ))}
 
-          {/* Info + pagination */}
-          <div className="flex items-center gap-4 mt-4 text-[11px]">
-            <span className="text-ink-faint">
-              showing {posts.length} posts · page {currentPage + 1}
-            </span>
-            {(currentPage > 0 || hasNext) && (
-              <div className="flex gap-2 ml-auto">
-                <button
-                  onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
-                  disabled={currentPage === 0}
-                  className="bg-surface border border-ink-ghost rounded px-2.5 py-1 text-ink-faint hover:border-term-green hover:text-term-green disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                >
-                  prev
-                </button>
-                <button
-                  onClick={() => setCurrentPage((p) => p + 1)}
-                  disabled={!hasNext}
-                  className="bg-surface border border-ink-ghost rounded px-2.5 py-1 text-ink-faint hover:border-term-green hover:text-term-green disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                >
-                  next
-                </button>
-              </div>
-            )}
-          </div>
+          <PaginationControls
+            currentPage={currentPage}
+            hasNext={hasNext}
+            totalItems={posts.length}
+            onPrev={() => setCurrentPage((p) => Math.max(0, p - 1))}
+            onNext={() => setCurrentPage((p) => p + 1)}
+          />
 
           {/* Cursor */}
           <div className="flex items-baseline gap-2 text-xs mt-6 mb-4">
@@ -169,19 +151,5 @@ export function HomePage() {
         </div>
       )}
     </div>
-  );
-}
-
-function CatTag({ name }: { name: string }) {
-  const colorMap: Record<string, string> = {
-    spring: "text-term-green border-term-green-dim",
-    infra: "text-term-amber border-[var(--c-term-amber-dim)]",
-    cs: "text-term-blue border-[var(--c-term-blue-dim)]",
-  };
-  const color = colorMap[name] || "text-ink-faint border-ink-ghost";
-  return (
-    <span className={`inline-block text-[10px] px-1.5 py-px border rounded ${color}`}>
-      {name}
-    </span>
   );
 }

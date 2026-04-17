@@ -1,6 +1,7 @@
 import imageCompression from "browser-image-compression";
 import apiClient from "../common/client";
 import type { ImagePresignedUrlResponse } from "../../core/domain/image";
+import { IMAGE_UPLOAD } from "../../core/support/constants";
 
 export const imageApi = {
   getPresignedUrl: async (
@@ -15,9 +16,9 @@ export const imageApi = {
 
   upload: async (file: File): Promise<string> => {
     const options = {
-      maxSizeMB: 1,
-      maxWidthOrHeight: 1920,
-      useWebWorker: true,
+      maxSizeMB: IMAGE_UPLOAD.MAX_SIZE_MB,
+      maxWidthOrHeight: IMAGE_UPLOAD.MAX_WIDTH_OR_HEIGHT,
+      useWebWorker: IMAGE_UPLOAD.USE_WEB_WORKER,
     };
 
     let compressedFile: File;
@@ -27,7 +28,7 @@ export const imageApi = {
       compressedFile = file;
     }
 
-    const contentType = compressedFile.type || "image/png";
+    const contentType = compressedFile.type || IMAGE_UPLOAD.FALLBACK_CONTENT_TYPE;
     const presigned = await imageApi.getPresignedUrl(contentType);
 
     const response = await fetch(presigned.uploadUrl, {

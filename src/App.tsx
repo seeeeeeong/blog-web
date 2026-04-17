@@ -2,7 +2,7 @@ import { lazy, Suspense, type JSX } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AlertProvider } from "./core/support/contexts/AlertContext";
 import { Layout } from "./core/api/components/common/Layout";
-import { isAdminToken } from "./core/support/auth/authToken";
+import { checkIsAdmin } from "./core/support/auth/authToken";
 import { Spinner } from "./core/api/components/common/Spinner";
 
 const HomePage = lazy(() =>
@@ -28,13 +28,9 @@ const NotFoundPage = lazy(() =>
 );
 
 function PrivateRoute({ children }: { children: JSX.Element }) {
-  const token = localStorage.getItem("accessToken");
-  const isAdmin = token ? isAdminToken(token) : false;
-
-  if (!isAdmin) {
+  if (!checkIsAdmin()) {
     return <Navigate to="/" replace />;
   }
-
   return children;
 }
 

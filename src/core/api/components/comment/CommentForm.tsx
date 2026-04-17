@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { COMMENT_LIMITS } from "../../../support/constants";
 
 interface CommentFormProps {
   onSubmit: (nickname: string, password: string, content: string) => void;
@@ -38,7 +39,7 @@ export function CommentForm({
           value={nickname}
           onChange={(e) => setNickname(e.target.value)}
           placeholder="nickname"
-          maxLength={20}
+          maxLength={COMMENT_LIMITS.NICKNAME_MAX_LENGTH}
           className="w-1/2 rounded border border-ink-ghost bg-panel px-2.5 py-1.5 text-xs text-ink placeholder:text-ink-faint focus:border-term-green focus:outline-none transition-colors"
         />
         <input
@@ -46,7 +47,7 @@ export function CommentForm({
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="password"
-          maxLength={50}
+          maxLength={COMMENT_LIMITS.PASSWORD_MAX_LENGTH}
           className="w-1/2 rounded border border-ink-ghost bg-panel px-2.5 py-1.5 text-xs text-ink placeholder:text-ink-faint focus:border-term-green focus:outline-none transition-colors"
         />
       </div>
@@ -57,12 +58,12 @@ export function CommentForm({
         placeholder={placeholder}
         autoFocus={autoFocus}
         rows={3}
-        maxLength={1000}
+        maxLength={COMMENT_LIMITS.CONTENT_MAX_LENGTH}
         className="block w-full resize-none rounded border border-ink-ghost bg-panel p-2.5 text-xs text-ink placeholder:text-ink-faint focus:border-term-green focus:outline-none transition-colors"
       />
 
       <div className="flex justify-between items-center">
-        <span className="text-[10px] text-ink-faint">{content.length}/1000</span>
+        <span className="text-[10px] text-ink-faint">{content.length}/{COMMENT_LIMITS.CONTENT_MAX_LENGTH}</span>
         <button
           type="submit"
           disabled={!nickname.trim() || !password.trim() || !content.trim() || isSubmitting}

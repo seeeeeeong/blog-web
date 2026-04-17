@@ -1,65 +1,16 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { postApi } from "../../../storage/post/postApi";
-import { categoryApi } from "../../../storage/category/categoryApi";
-import type { Category } from "../../domain/category";
-import { useAlert } from "../../support/contexts/useAlert";
+import { usePostForm } from "../../support/hooks/usePostForm";
 import { TipTapEditor } from "../components/editor/TipTapEditor";
 
 export function PostCreatePage() {
   const navigate = useNavigate();
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [categoryId, setCategoryId] = useState<number>(0);
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [loading, setLoading] = useState(false);
-  const { showError, showWarning } = useAlert();
-  const contentCharacters = content.trim().length;
-  const wordCount = useMemo(() => {
-    const plainText = content
-      .replace(/```[\s\S]*?```/g, " ")
-      .replace(/`[^`]*`/g, " ")
-      .replace(/!\[[^\]]*]\([^)]+\)/g, " ")
-      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
-      .replace(/[#>*_~-]/g, " ")
-      .replace(/\n/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-
-    return plainText ? plainText.split(" ").length : 0;
-  }, [content]);
-
-  const loadCategories = useCallback(async () => {
-    try {
-      const data = await categoryApi.getCategories();
-      setCategories(data);
-      if (data.length > 0) {
-        setCategoryId(data[0].id);
-      }
-    } catch {
-      showError("Failed to load categories.");
-    }
-  }, [showError]);
-
-  useEffect(() => {
-    void loadCategories();
-  }, [loadCategories]);
-
-  const validateForm = (): boolean => {
-    if (!categoryId) {
-      showWarning("Please select a category.");
-      return false;
-    }
-    if (!title.trim()) {
-      showWarning("Please enter a title.");
-      return false;
-    }
-    if (!content.trim()) {
-      showWarning("Please enter the content.");
-      return false;
-    }
-    return true;
-  };
+  const {
+    categories, categoryId, setCategoryId,
+    title, setTitle, content, setContent,
+    loading, setLoading, wordCount, contentCharacters,
+    titleMaxLength, validateForm, showError,
+  } = usePostForm();
 
   const handleSubmit = async (isDraft = false) => {
     if (!validateForm()) return;
@@ -72,7 +23,6 @@ export function PostCreatePage() {
         content: content.trim(),
         isDraft,
       });
-
       navigate(isDraft ? "/admin/posts" : `/posts/${newPost.id}`);
     } catch {
       showError("Failed to create post.");
@@ -88,7 +38,7 @@ export function PostCreatePage() {
       </div>
       <h2 className="text-sm font-bold text-term-white mb-1">New Post</h2>
       <div className="flex flex-wrap items-center gap-4 text-[11px] text-ink-faint mb-6">
-        <span>title {title.length}/200</span>
+        <span>title {title.length}/{titleMaxLength}</span>
         <span>words {wordCount}</span>
         <span>chars {contentCharacters}</span>
       </div>
@@ -112,7 +62,7 @@ export function PostCreatePage() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
-              maxLength={200}
+              maxLength={titleMaxLength}
               className="h-9 w-full rounded border border-ink-ghost bg-surface px-3 text-xs text-term-white placeholder:text-ink-faint transition-colors focus:border-term-green focus:outline-none"
               placeholder="Enter title"
             />

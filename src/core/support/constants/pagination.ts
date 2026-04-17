@@ -1,5 +1,0 @@
-export const PAGINATION = {
-  POSTS_PER_PAGE: 10,
-  ADMIN_POSTS_PER_PAGE: 20,
-  POPULAR_POSTS_LIMIT: 5,
-} as const;

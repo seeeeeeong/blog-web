@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import { postApi } from "../../../storage/post/postApi";
 import type { PostSummary } from "../../domain/post";
 import { useAlert } from "../../support/contexts/useAlert";
-import { PAGINATION } from "../../support/constants/pagination";
+import { PAGINATION } from "../../support/constants";
 import { formatDate } from "../../support/converter/format";
 import { Spinner } from "../components/common/Spinner";
+import { PaginationControls } from "../components/common/PaginationControls";
 
 type FilterType = "all" | "published" | "draft";
 
@@ -109,26 +110,13 @@ export function AdminPostsPage() {
             </div>
           ))}
 
-          <div className="text-ink-faint text-[11px] mt-4">{posts.length} posts · page {currentPage + 1}</div>
-
-          {(currentPage > 0 || hasNext) && (
-            <div className="flex gap-2 mt-3">
-              <button
-                onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
-                disabled={currentPage === 0}
-                className="bg-surface border border-ink-ghost rounded px-2.5 py-1 text-[11px] text-ink-faint hover:border-term-green hover:text-term-green disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-              >
-                prev
-              </button>
-              <button
-                onClick={() => setCurrentPage(p => p + 1)}
-                disabled={!hasNext}
-                className="bg-surface border border-ink-ghost rounded px-2.5 py-1 text-[11px] text-ink-faint hover:border-term-green hover:text-term-green disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-              >
-                next
-              </button>
-            </div>
-          )}
+          <PaginationControls
+            currentPage={currentPage}
+            hasNext={hasNext}
+            totalItems={posts.length}
+            onPrev={() => setCurrentPage(p => Math.max(0, p - 1))}
+            onNext={() => setCurrentPage(p => p + 1)}
+          />
         </>
       )}
     </div>

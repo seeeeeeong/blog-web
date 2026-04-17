@@ -6,6 +6,7 @@ import {
 } from "react";
 import { Alert } from "../../api/components/common/Alert";
 import { AlertContext } from "./alertContext";
+import { ALERT_DURATION } from "../constants";
 
 interface AlertConfig {
   id: number;
@@ -38,25 +39,25 @@ export function AlertProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const showSuccess = useCallback(
-    (message: string, duration: number = 2500) =>
+    (message: string, duration: number = ALERT_DURATION.SUCCESS) =>
       showAlert({ type: "success", message, duration }),
     [showAlert]
   );
 
   const showError = useCallback(
-    (message: string, duration: number = 3000) =>
+    (message: string, duration: number = ALERT_DURATION.ERROR) =>
       showAlert({ type: "error", message, duration }),
     [showAlert]
   );
 
   const showWarning = useCallback(
-    (message: string, duration: number = 3000) =>
+    (message: string, duration: number = ALERT_DURATION.WARNING) =>
       showAlert({ type: "warning", message, duration }),
     [showAlert]
   );
 
   const showInfo = useCallback(
-    (message: string, duration: number = 2500) =>
+    (message: string, duration: number = ALERT_DURATION.INFO) =>
       showAlert({ type: "info", message, duration }),
     [showAlert]
   );

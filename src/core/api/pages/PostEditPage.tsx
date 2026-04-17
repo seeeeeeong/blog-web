@@ -1,51 +1,26 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { postApi } from "../../../storage/post/postApi";
-import { categoryApi } from "../../../storage/category/categoryApi";
-import type { Category } from "../../domain/category";
-import { useAlert } from "../../support/contexts/useAlert";
+import { usePostForm } from "../../support/hooks/usePostForm";
 import { TipTapEditor } from "../components/editor/TipTapEditor";
 import { Spinner } from "../components/common/Spinner";
 
 export function PostEditPage() {
   const { postId } = useParams<{ postId: string }>();
   const navigate = useNavigate();
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [categoryId, setCategoryId] = useState<number>(0);
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
-  const { showError, showWarning } = useAlert();
-  const contentCharacters = content.trim().length;
-  const wordCount = useMemo(() => {
-    const plainText = content
-      .replace(/```[\s\S]*?```/g, " ")
-      .replace(/`[^`]*`/g, " ")
-      .replace(/!\[[^\]]*]\([^)]+\)/g, " ")
-      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
-      .replace(/[#>*_~-]/g, " ")
-      .replace(/\n/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
 
-    return plainText ? plainText.split(" ").length : 0;
-  }, [content]);
-
-  const loadCategories = useCallback(async () => {
-    try {
-      const data = await categoryApi.getCategories();
-      setCategories(data);
-    } catch {
-      showError("Failed to load categories.");
-    }
-  }, [showError]);
+  const {
+    categories, categoryId, setCategoryId,
+    title, setTitle, content, setContent,
+    loading, setLoading, wordCount, contentCharacters,
+    titleMaxLength, validateForm, showError,
+  } = usePostForm();
 
   const loadPost = useCallback(async () => {
     try {
       const data = await postApi.getPostForAdmin(Number(postId));
-
       setCategoryId(data.categoryId);
       setTitle(data.title);
       setContent(data.content);
@@ -55,31 +30,11 @@ export function PostEditPage() {
     } finally {
       setInitialLoading(false);
     }
-  }, [postId, showError]);
+  }, [postId, showError, setCategoryId, setTitle, setContent]);
 
   useEffect(() => {
-    const loadData = async () => {
-      await loadCategories();
-      await loadPost();
-    };
-    void loadData();
-  }, [loadCategories, loadPost]);
-
-  const validateForm = (): boolean => {
-    if (!categoryId) {
-      showWarning("Please select a category.");
-      return false;
-    }
-    if (!title.trim()) {
-      showWarning("Please enter a title.");
-      return false;
-    }
-    if (!content.trim()) {
-      showWarning("Please enter the content.");
-      return false;
-    }
-    return true;
-  };
+    void loadPost();
+  }, [loadPost]);
 
   const handleSubmit = async (isDraft = false) => {
     if (!validateForm()) return;
@@ -92,7 +47,6 @@ export function PostEditPage() {
         content: content.trim(),
         isDraft,
       });
-
       navigate(isDraft ? "/admin/posts" : `/posts/${postId}`);
     } catch {
       showError("Failed to update post.");
@@ -128,7 +82,7 @@ export function PostEditPage() {
       </div>
       <h2 className="text-sm font-bold text-term-white mb-1">Edit Post</h2>
       <div className="flex flex-wrap items-center gap-4 text-[11px] text-ink-faint mb-6">
-        <span>title {title.length}/200</span>
+        <span>title {title.length}/{titleMaxLength}</span>
         <span>words {wordCount}</span>
         <span>chars {contentCharacters}</span>
       </div>
@@ -152,7 +106,7 @@ export function PostEditPage() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
-              maxLength={200}
+              maxLength={titleMaxLength}
               className="h-9 w-full rounded border border-ink-ghost bg-surface px-3 text-xs text-term-white placeholder:text-ink-faint transition-colors focus:border-term-green focus:outline-none"
               placeholder="Enter title"
             />

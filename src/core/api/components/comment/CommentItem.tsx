@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Comment } from "../../../domain/comment";
-import { isAdminToken } from "../../../support/auth/authToken";
+import { useIsAdmin } from "../../../support/hooks/useIsAdmin";
+import { formatRelativeDate } from "../../../support/converter/format";
 import { CommentForm } from "./CommentForm";
 
 interface CommentItemProps {
@@ -12,16 +13,11 @@ interface CommentItemProps {
 }
 
 export function CommentItem({ comment, postId, onDelete, onAdminDelete, onReply }: CommentItemProps) {
-  // 1. Hooks
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [showDeleteInput, setShowDeleteInput] = useState(false);
   const [deletePassword, setDeletePassword] = useState("");
+  const isAdmin = useIsAdmin();
 
-  // 2. 파생 상태
-  const token = localStorage.getItem("accessToken");
-  const isAdmin = token ? isAdminToken(token) : false;
-
-  // 3. 이벤트 핸들러
   const handleReplySubmit = async (nickname: string, password: string, content: string) => {
     await onReply(nickname, password, content);
     setShowReplyForm(false);
@@ -32,20 +28,6 @@ export function CommentItem({ comment, postId, onDelete, onAdminDelete, onReply 
     onDelete(comment.id, deletePassword.trim());
     setShowDeleteInput(false);
     setDeletePassword("");
-  };
-
-  const formatRelativeDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
-    if (diff < 60) return "just now";
-    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-    if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
-    const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2, "0");
-    const d = String(date.getDate()).padStart(2, "0");
-    return `${y}.${m}.${d}`;
   };
 
   return (

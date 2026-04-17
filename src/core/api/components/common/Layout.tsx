@@ -1,12 +1,12 @@
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { isAdminToken, isExpiredToken } from "../../../support/auth/authToken";
+import { clearAuthData, isExpiredToken, checkIsAdmin } from "../../../support/auth/authToken";
 import { categoryApi } from "../../../../storage/category/categoryApi";
 import type { Category } from "../../../domain/category";
 import { useTheme } from "../../../support/hooks/useTheme";
+import { TerminalDots } from "./TerminalDots";
 
 export function Layout() {
-  // 1. Hooks
   const navigate = useNavigate();
   const location = useLocation();
   const [isAdmin, setIsAdmin] = useState(false);
@@ -14,34 +14,26 @@ export function Layout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
 
-  // 2. 파생 상태
   const isActivePath = (path: string) => location.pathname === path;
   const categoryParam = new URLSearchParams(location.search).get("category");
 
-  // 3. 이벤트 핸들러
-  const clearAuthData = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("userId");
-    setIsAdmin(false);
-  };
-
-  const checkTokenExpiration = () => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) { setIsAdmin(false); return; }
-    if (isExpiredToken(token)) { clearAuthData(); return; }
-    setIsAdmin(isAdminToken(token));
+  const refreshAdminState = () => {
+    if (isExpiredToken(localStorage.getItem("accessToken") ?? "")) {
+      clearAuthData();
+      setIsAdmin(false);
+      return;
+    }
+    setIsAdmin(checkIsAdmin());
   };
 
   const handleLogout = () => {
     clearAuthData();
+    setIsAdmin(false);
     navigate("/");
   };
 
-  // Side Effects
   useEffect(() => {
-    checkTokenExpiration();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    refreshAdminState();
   }, [location.pathname]);
 
   useEffect(() => {
@@ -56,12 +48,7 @@ export function Layout() {
     <div className="min-h-screen flex flex-col">
       {/* Terminal Title Bar */}
       <div className="bg-surface border-b border-ink-ghost px-4 h-10 flex items-center gap-3 sticky top-0 z-50">
-        {/* macOS dots */}
-        <div className="flex gap-1.5">
-          <div className="w-[10px] h-[10px] rounded-full bg-[#ff5f57]" />
-          <div className="w-[10px] h-[10px] rounded-full bg-[#febc2e]" />
-          <div className="w-[10px] h-[10px] rounded-full bg-[#28c840]" />
-        </div>
+        <TerminalDots />
         <div className="text-[11px] text-ink-faint flex items-center gap-1.5 ml-2">
           <span className="text-term-green">~</span>/blog
           <span className="text-term-green">·</span>

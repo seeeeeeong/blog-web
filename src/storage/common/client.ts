@@ -3,7 +3,7 @@ import axios, {
   AxiosHeaders,
   type InternalAxiosRequestConfig,
 } from "axios";
-import { getUserIdFromToken } from "../../core/support/auth/authToken";
+import { getUserIdFromToken, clearAuthData } from "../../core/support/auth/authToken";
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -214,11 +214,5 @@ apiClient.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
-const clearAuthData = () => {
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("refreshToken");
-  localStorage.removeItem("userId");
-};
 
 export default apiClient;

@@ -29,3 +29,14 @@ export const isExpiredToken = (token: string): boolean => {
   if (!payload?.exp) return true;
   return payload.exp * 1000 < Date.now();
 };
+
+export const clearAuthData = (): void => {
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("userId");
+};
+
+export const checkIsAdmin = (): boolean => {
+  const token = localStorage.getItem("accessToken");
+  return token ? isAdminToken(token) : false;
+};
