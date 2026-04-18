@@ -6,6 +6,7 @@ import type { Post } from "../../domain/post";
 import { useAlert } from "../../support/contexts/useAlert";
 import { MarkdownViewer } from "../components/editor/MarkdownViewer";
 import { CommentSection } from "../components/comment/CommentSection";
+import { SimilarPosts } from "../components/post/SimilarPosts";
 import { Spinner } from "../components/common/Spinner";
 import { formatDate } from "../../support/converter/format";
 
@@ -135,6 +136,8 @@ export function PostDetailPage() {
       </article>
 
       <hr className="border-ink-ghost border-dashed mb-6" />
+
+      <SimilarPosts postId={parsedId} />
 
       <CommentSection postId={parsedId} />
     </div>
