@@ -5,7 +5,7 @@ import {
   type ReactNode,
 } from "react";
 import { Alert } from "../../api/components/common/Alert";
-import { AlertContext } from "./alertContext";
+import { AlertContext } from "./alertContextDef";
 import { ALERT_DURATION } from "../constants";
 
 interface AlertConfig {
