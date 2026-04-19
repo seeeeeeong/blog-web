@@ -162,9 +162,9 @@ export function PostDetailPage() {
         <div className="flex items-center justify-between pb-8 mb-10 border-b border-border-dim">
           <div className="flex items-center gap-3 text-[13px] text-muted">
             <div className="w-7 h-7 rounded-full bg-gradient-to-br from-cat-blue to-cat-purple flex items-center justify-center text-[11px] font-semibold text-white">
-              S
+              L
             </div>
-            <span className="text-ink">Sun Seong Lee</span>
+            <span className="text-ink">LEE SIN SEONG</span>
           </div>
           {isAuthor && (
             <div className="flex items-center gap-2">
