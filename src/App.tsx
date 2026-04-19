@@ -23,6 +23,9 @@ const PostEditPage = lazy(() =>
 const AdminPostsPage = lazy(() =>
   import("./core/api/pages/AdminPostsPage").then((m) => ({ default: m.AdminPostsPage }))
 );
+const ChatPage = lazy(() =>
+  import("./core/api/pages/ChatPage").then((m) => ({ default: m.ChatPage }))
+);
 const NotFoundPage = lazy(() =>
   import("./core/api/pages/NotFoundPage").then((m) => ({ default: m.NotFoundPage }))
 );
@@ -50,6 +53,7 @@ export function App() {
 
             <Route element={<Layout />}>
               <Route path="/" element={<HomePage />} />
+              <Route path="/chat" element={<ChatPage />} />
               <Route path="/posts/:postId" element={<PostDetailPage />} />
               <Route
                 path="/posts/create"

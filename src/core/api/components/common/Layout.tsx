@@ -15,6 +15,7 @@ function routePath(pathname: string, search: string): string {
   if (pathname.startsWith("/posts/create")) return "blog/posts/new";
   if (pathname.startsWith("/posts/") && pathname.endsWith("/edit")) return "blog/posts/edit";
   if (pathname.startsWith("/posts/")) return `blog/posts/${pathname.split("/")[2]}`;
+  if (pathname.startsWith("/chat")) return "blog/chat";
   if (pathname.startsWith("/admin")) return "blog/admin";
   if (pathname.startsWith("/login")) return "blog/login";
   return "blog" + pathname;
@@ -122,6 +123,16 @@ export function Layout() {
                   </Link>
                 );
               })}
+              <Link
+                to="/chat"
+                className={
+                  location.pathname.startsWith("/chat")
+                    ? "text-cat-green"
+                    : "text-muted hover:text-cat-green transition-colors"
+                }
+              >
+                ./chat
+              </Link>
             </nav>
 
             <div className="flex items-center gap-1.5">
@@ -226,6 +237,12 @@ export function Layout() {
                     ./{cat.name.toLowerCase()}
                   </Link>
                 ))}
+                <Link
+                  to="/chat"
+                  className={`py-2 ${location.pathname.startsWith("/chat") ? "text-cat-green" : "text-muted"}`}
+                >
+                  ./chat
+                </Link>
               </nav>
             </div>
           )}

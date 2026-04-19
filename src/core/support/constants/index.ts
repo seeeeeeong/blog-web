@@ -32,3 +32,7 @@ export const TABLE_DEFAULTS = {
   MAX: 20,
   MIN: 1,
 } as const;
+
+export const CHAT_LIMITS = {
+  QUESTION_MAX_LENGTH: 500,
+} as const;
