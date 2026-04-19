@@ -7,12 +7,6 @@ import { Link, useSearchParams } from "react-router-dom";
 import { Spinner } from "../components/common/Spinner";
 import { PAGINATION } from "../../support/constants";
 
-const ASCII_LOGO = String.raw`   __                          __
-  / /___  __  ___________  ____ _/ /
- / / __ \/ / / / ___/ __ \/ __ \`/ /
-/ / /_/ / /_/ / /  / / / / /_/ / /
-\___/\____/\__,_/_/  /_/ /_/\__,_/_/   v2.1.0`;
-
 const CAT_COLOR: Record<string, string> = {
   engineering: "text-cat-blue",
   backend: "text-cat-blue",
@@ -106,11 +100,6 @@ export function HomePage() {
     return categories.find((c) => c.id === Number(categoryParam))?.name.toLowerCase() ?? null;
   }, [categoryParam, categories]);
 
-  const today = useMemo(() => {
-    const d = new Date();
-    return `${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
-  }, []);
-
   const listTitle = isSearching
     ? `./posts --grep "${qParam}"`
     : activeCategoryName
@@ -122,17 +111,11 @@ export function HomePage() {
       {/* Hero */}
       {!isFiltered && (
         <section className="border-b border-dashed border-border-mid">
-          <div className="max-w-[1200px] mx-auto px-6 md:px-8 py-12 md:py-16">
-            <pre className="text-cat-green text-[11px] md:text-[12px] leading-[1.2] mb-7 opacity-90 whitespace-pre overflow-x-auto">
-{ASCII_LOGO}
-            </pre>
-            <h1 className="text-[26px] md:text-[32px] font-semibold tracking-tight text-ink-bright mb-4">
-              <span className="prompt-green">#</span> Lee Sin Seong — Engineering Notes
+          <div className="max-w-[1200px] mx-auto px-6 md:px-8 py-10 md:py-14">
+            <h1 className="text-[26px] md:text-[34px] font-semibold tracking-[-0.01em] text-ink-bright">
+              <span className="prompt-green">#</span> SEEEEEEONG.LOG
               <span className="term-cursor" />
             </h1>
-            <p className="text-muted text-[14px] max-w-[640px]">
-              백엔드 엔지니어가 남기는 기술 로그. 실무에서 깨진 것들, 고친 과정, 그리고 남은 질문들의 기록.
-            </p>
           </div>
         </section>
       )}
@@ -140,11 +123,9 @@ export function HomePage() {
       {/* Status grid */}
       {!isFiltered && (
         <section className="border-b border-dashed border-border-mid">
-          <div className="max-w-[1200px] mx-auto grid grid-cols-2 md:grid-cols-4">
-            <StatusCell label="posts" value={`${posts.length}${hasNext ? "+" : ""}`} />
+          <div className="max-w-[1200px] mx-auto grid grid-cols-2">
+            <StatusCell label="posts" value={`${posts.length}${hasNext ? "+" : ""}`} accent />
             <StatusCell label="categories" value={String(categories.length || "—")} />
-            <StatusCell label="uptime" value="584d" accent />
-            <StatusCell label="last_build" value={today} />
           </div>
         </section>
       )}
@@ -271,7 +252,7 @@ export function HomePage() {
 
 function StatusCell({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
-    <div className="px-6 md:px-8 py-5 border-r border-dashed border-border-mid last:border-r-0 md:[&:nth-child(2)]:border-r md:[&:nth-child(4)]:border-r-0 max-md:[&:nth-child(2n)]:border-r-0">
+    <div className="px-6 md:px-8 py-5 border-r border-dashed border-border-mid last:border-r-0">
       <div className="text-[11px] text-muted mb-1.5">
         <span className="prompt-green">▸ </span>
         {label}

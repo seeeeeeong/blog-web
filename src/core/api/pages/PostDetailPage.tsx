@@ -170,72 +170,82 @@ export function PostDetailPage() {
 
   return (
     <div className="animate-fade-in">
-      <article className="max-w-[760px] mx-auto px-6 md:px-8 pt-12 md:pt-16 pb-12">
-        {/* Breadcrumb path */}
-        <div className="text-[12px] text-muted mb-6 font-mono">
-          <Link to="/" className="text-cat-green hover:underline">
-            ~
-          </Link>
-          <span className="text-faint mx-1.5">/</span>
-          <span className="text-muted">posts</span>
-          <span className="text-faint mx-1.5">/</span>
-          <Link to={`/?category=${post.categoryId}`} className="text-cat-green hover:underline">
-            {categoryName}
-          </Link>
-          <span className="text-faint mx-1.5">/</span>
-          <span className="text-ink-bright">{slug}.md</span>
-        </div>
-
-        {/* Tag + date row */}
-        <div className="flex items-center gap-3 mb-3.5">
-          <Link
-            to={`/?category=${post.categoryId}`}
-            className="inline-block px-2 py-[3px] border border-border-mid text-cat-amber text-[11px] font-mono uppercase tracking-[0.08em] hover:border-cat-amber transition-colors"
-          >
-            {categoryName}
-          </Link>
-          <span className="text-muted text-[12px] font-mono">
-            {formatIsoDate(post.createdAt)} · {readTime} min
-          </span>
-        </div>
-
-        {/* Title */}
-        <h1 className="font-prose font-bold text-[26px] md:text-[34px] leading-[1.2] tracking-[-0.02em] text-ink-bright mb-[18px]">
-          {post.title}
-        </h1>
-
-        {/* Meta row: author + stats + actions */}
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[12px] text-muted font-mono py-4 border-t border-b border-border-dim mb-10">
-          <span className="flex items-center gap-2 text-ink">
-            <span className="w-[22px] h-[22px] bg-cat-green text-bg font-bold text-[11px] inline-flex items-center justify-center">
-              L
-            </span>
-            LEE SIN SEONG
-          </span>
-          <span>· {wordCount.toLocaleString()} words</span>
-          {isAuthor && (
-            <div className="ml-auto flex items-center gap-4">
-              <Link to={`/posts/${parsedId}/edit`} className="text-cat-green hover:underline">
-                :edit
+      <div className="max-w-[1160px] mx-auto px-6 md:px-8 pt-12 md:pt-16 pb-12">
+        <div className="lg:flex lg:gap-10">
+          <article className="flex-1 min-w-0 max-w-[760px] mx-auto lg:mx-0">
+            {/* Breadcrumb path */}
+            <div className="text-[12px] text-muted mb-6 font-mono">
+              <Link to="/" className="text-cat-green hover:underline">
+                ~
               </Link>
-              <button onClick={handleDelete} className="text-cat-pink hover:underline">
-                :rm
-              </button>
+              <span className="text-faint mx-1.5">/</span>
+              <span className="text-muted">posts</span>
+              <span className="text-faint mx-1.5">/</span>
+              <Link to={`/?category=${post.categoryId}`} className="text-cat-green hover:underline">
+                {categoryName}
+              </Link>
+              <span className="text-faint mx-1.5">/</span>
+              <span className="text-ink-bright">{slug}.md</span>
             </div>
-          )}
-        </div>
 
-        {/* Body */}
-        <div className="mb-14">
-          <MarkdownViewer contentHtml={post.contentHtml} />
-        </div>
+            {/* Tag + date row */}
+            <div className="flex items-center gap-3 mb-3.5">
+              <Link
+                to={`/?category=${post.categoryId}`}
+                className="inline-block px-2 py-[3px] border border-border-mid text-cat-amber text-[11px] font-mono uppercase tracking-[0.08em] hover:border-cat-amber transition-colors"
+              >
+                {categoryName}
+              </Link>
+              <span className="text-muted text-[12px] font-mono">
+                {formatIsoDate(post.createdAt)} · {readTime} min
+              </span>
+            </div>
 
-        <SimilarPosts postId={parsedId} />
+            {/* Title */}
+            <h1 className="font-prose font-bold text-[26px] md:text-[34px] leading-[1.2] tracking-[-0.02em] text-ink-bright mb-[18px]">
+              {post.title}
+            </h1>
 
-        <div className="mt-14">
-          <CommentSection postId={parsedId} />
+            {/* Meta row: author + stats + actions */}
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[12px] text-muted font-mono py-4 border-t border-b border-border-dim mb-10">
+              <span className="flex items-center gap-2 text-ink">
+                <span className="w-[22px] h-[22px] bg-cat-green text-bg font-bold text-[11px] inline-flex items-center justify-center">
+                  L
+                </span>
+                LEE SIN SEONG
+              </span>
+              <span>· {wordCount.toLocaleString()} words</span>
+              {isAuthor && (
+                <div className="ml-auto flex items-center gap-4">
+                  <Link to={`/posts/${parsedId}/edit`} className="text-cat-green hover:underline">
+                    :edit
+                  </Link>
+                  <button onClick={handleDelete} className="text-cat-pink hover:underline">
+                    :rm
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Body */}
+            <div className="mb-14">
+              <MarkdownViewer contentHtml={post.contentHtml} />
+            </div>
+
+            <div className="lg:hidden mb-14">
+              <SimilarPosts postId={parsedId} />
+            </div>
+
+            <div>
+              <CommentSection postId={parsedId} />
+            </div>
+          </article>
+
+          <aside className="hidden lg:block lg:w-[280px] lg:shrink-0 lg:sticky lg:top-24 lg:self-start">
+            <SimilarPosts postId={parsedId} />
+          </aside>
         </div>
-      </article>
+      </div>
     </div>
   );
 }

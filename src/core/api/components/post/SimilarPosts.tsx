@@ -48,37 +48,36 @@ export function SimilarPosts({ postId }: SimilarPostsProps) {
   }
 
   return (
-    <section className="pt-8 border-t border-dashed border-border-mid">
-      <div className="flex items-baseline gap-2 mb-5 text-[13px]">
+    <section className="lg:pt-0 pt-8 lg:border-t-0 border-t border-dashed border-border-mid">
+      <div className="flex items-baseline gap-2 mb-4 text-[13px]">
         <h2 className="text-cat-amber">
           <span className="text-muted">$ grep </span>--related
         </h2>
-        <span className="text-faint">// similar reads</span>
       </div>
 
       {status === "LOADING" || status === "PENDING" ? (
         <p className="text-[12px] text-faint">
           <span className="prompt-green">▸</span>{" "}
-          {status === "PENDING" ? "indexing this post…" : "loading…"}
+          {status === "PENDING" ? "indexing…" : "loading…"}
         </p>
       ) : items.length === 0 ? (
         <p className="text-[12px] text-faint">
           <span className="prompt-muted">—</span> no related entries
         </p>
       ) : (
-        <ul className="grid md:grid-cols-2 gap-2">
+        <ul className="grid grid-cols-1 gap-2 auto-rows-fr">
           {items.map((item) => (
-            <li key={item.id}>
+            <li key={item.id} className="flex">
               <a
                 href={item.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block border border-border-dim hover:border-cat-green p-3 transition-colors group"
+                className="flex-1 flex flex-col border border-border-dim hover:border-cat-green p-3 min-h-[78px] transition-colors group"
               >
-                <p className="text-[13px] text-ink-bright leading-snug mb-1.5 line-clamp-2 group-hover:text-cat-green transition-colors">
+                <p className="text-[12.5px] text-ink-bright leading-snug mb-auto line-clamp-2 group-hover:text-cat-green transition-colors">
                   <span className="prompt-green">▸</span> {item.title}
                 </p>
-                <p className="text-[11px] text-muted pl-4">@ {item.company}</p>
+                <p className="text-[11px] text-muted pl-4 mt-1.5 truncate">@ {item.company}</p>
               </a>
             </li>
           ))}

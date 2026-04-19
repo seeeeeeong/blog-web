@@ -180,18 +180,18 @@ export function ChatPage() {
         </div>
       ) : (
         <>
-          <section className="space-y-5 mb-6 min-h-[40vh]">
+          <section className="space-y-8 mb-6 min-h-[40vh]">
             {isEmpty ? (
               <div className="py-10">
                 <p className="text-[12px] text-faint mb-4">
                   <span className="prompt-green">▸</span> try asking…
                 </p>
-                <ul className="space-y-1.5">
+                <ul className="space-y-2">
                   {SAMPLE_PROMPTS.map((p) => (
                     <li key={p}>
                       <button
                         onClick={() => send(p)}
-                        className="text-left text-[13px] text-muted hover:text-cat-green transition-colors"
+                        className="text-left text-[14px] text-muted hover:text-cat-green transition-colors"
                       >
                         <span className="prompt-amber mr-1.5">❯</span>
                         {p}
@@ -258,11 +258,11 @@ function MessageBlock({ message }: { message: ChatMessage }) {
   if (message.role === "user") {
     return (
       <div className="pl-1">
-        <p className="text-[11px] text-muted mb-1">
+        <p className="text-[11px] text-muted mb-1.5">
           <span className="prompt-blue">user</span>
           <span className="prompt-muted">@journal</span>
         </p>
-        <div className="text-[13px] text-ink whitespace-pre-wrap break-words">
+        <div className="text-[15px] leading-[1.7] text-ink-bright whitespace-pre-wrap break-words">
           <span className="prompt-green mr-2">❯</span>
           {message.content}
         </div>
@@ -272,20 +272,20 @@ function MessageBlock({ message }: { message: ChatMessage }) {
 
   return (
     <div className="pl-1">
-      <p className="text-[11px] text-muted mb-1">
+      <p className="text-[11px] text-muted mb-2">
         <span className="prompt-amber">assistant</span>
         <span className="prompt-muted">@rag</span>
         {message.streaming && <span className="ml-2 text-faint">streaming…</span>}
         {message.error && <span className="ml-2 text-danger">error</span>}
       </p>
-      <div className="border-l-2 border-border-dim pl-4">
+      <div className="border-l-2 border-cat-green/40 pl-5">
         {message.content ? (
           <div
-            className="markdown-viewer text-[13px]"
+            className="markdown-viewer chat-markdown text-[15px] leading-[1.75] text-ink-bright"
             dangerouslySetInnerHTML={{ __html: renderMarkdown(message.content) }}
           />
         ) : (
-          <p className="text-[12px] text-faint">
+          <p className="text-[13px] text-faint">
             <span className="prompt-green">▸</span> thinking…
           </p>
         )}
