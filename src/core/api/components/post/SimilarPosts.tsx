@@ -8,6 +8,12 @@ interface SimilarPostsProps {
 
 const PENDING_RETRY_MS = 15_000;
 
+function handleShine(e: React.MouseEvent<HTMLElement>) {
+  const rect = e.currentTarget.getBoundingClientRect();
+  e.currentTarget.style.setProperty("--x", `${e.clientX - rect.left}px`);
+  e.currentTarget.style.setProperty("--y", `${e.clientY - rect.top}px`);
+}
+
 export function SimilarPosts({ postId }: SimilarPostsProps) {
   const [status, setStatus] = useState<SimilarStatus | "LOADING" | "ERROR">("LOADING");
   const [items, setItems] = useState<SimilarResponse["items"]>([]);
@@ -48,32 +54,33 @@ export function SimilarPosts({ postId }: SimilarPostsProps) {
   }
 
   return (
-    <section className="mt-8 pt-6 border-t border-ink-ghost">
-      <h2 className="text-xs text-ink-faint mb-3">
-        <span className="text-ink-faint">$ </span>related # similar tech blog posts
-      </h2>
+    <section className="pt-8 border-t border-border-dim">
+      <div className="flex items-baseline gap-2 mb-5">
+        <h2 className="text-[15px] font-medium text-ink">Related</h2>
+        <span className="text-[13px] text-faint font-mono">— similar reads</span>
+      </div>
+
       {status === "LOADING" || status === "PENDING" ? (
-        <p className="text-[11px] text-ink-faint">
-          {status === "PENDING" ? "indexing this post…" : "loading…"}
+        <p className="text-[13px] text-faint">
+          {status === "PENDING" ? "Indexing this post…" : "Loading…"}
         </p>
       ) : items.length === 0 ? (
-        <p className="text-[11px] text-ink-faint">no related posts yet.</p>
+        <p className="text-[13px] text-faint">No related posts yet.</p>
       ) : (
-        <ul className="space-y-2">
+        <ul className="grid md:grid-cols-2 gap-3">
           {items.map((item) => (
             <li key={item.id}>
               <a
                 href={item.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group block"
+                onMouseMove={handleShine}
+                className="shine block border border-border-dim rounded-lg p-4 hover:border-border-mid transition-colors"
               >
-                <span className="text-[11px] text-term-blue group-hover:opacity-70 transition-opacity">
+                <p className="text-[14px] font-medium text-ink leading-snug mb-1.5 line-clamp-2">
                   {item.title}
-                </span>
-                <span className="ml-2 text-[11px] text-ink-faint">
-                  — {item.company}
-                </span>
+                </p>
+                <p className="text-[12px] text-faint font-mono">{item.company}</p>
               </a>
             </li>
           ))}

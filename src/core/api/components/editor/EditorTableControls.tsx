@@ -13,7 +13,7 @@ interface EditorTableControlsProps {
 }
 
 const tableButtonClass =
-  "inline-flex h-7 items-center justify-center rounded border-[1.5px] border-ink-ghost px-2 text-[10px] text-ink-light transition-colors hover:text-ink hover:bg-surface-alt";
+  "h-7 px-2.5 rounded-md border border-border-dim hover:border-border-mid text-[11px] text-muted hover:text-ink transition-colors";
 
 export function EditorTableControls({
   editor,
@@ -29,11 +29,11 @@ export function EditorTableControls({
   if (!showInsertForm && !isInTable) return null;
 
   return (
-    <div className="flex flex-wrap items-center gap-2 border-b border-ink-ghost px-3 py-2">
+    <div className="flex flex-wrap items-center gap-2 border-b border-border-dim bg-raised px-3 py-2">
       {showInsertForm && (
         <>
-          <span className="text-xs font-medium text-ink">Table</span>
-          <label className="flex items-center gap-1 text-[10px] text-ink-light">
+          <span className="text-[12px] font-medium text-ink">Table</span>
+          <label className="flex items-center gap-1.5 text-[11px] text-muted">
             rows
             <input
               type="number"
@@ -41,10 +41,10 @@ export function EditorTableControls({
               max={TABLE_DEFAULTS.MAX}
               value={tableRows}
               onChange={(e) => onRowsChange(e.target.value)}
-              className="h-7 w-14 rounded border border-ink-ghost bg-surface px-2 text-xs text-term-white focus:border-term-green focus:outline-none"
+              className="h-7 w-14 rounded-md border border-border-dim bg-bg px-2 text-[12px] text-ink focus:border-border-mid focus:outline-none"
             />
           </label>
-          <label className="flex items-center gap-1 text-[10px] text-ink-light">
+          <label className="flex items-center gap-1.5 text-[11px] text-muted">
             cols
             <input
               type="number"
@@ -52,13 +52,21 @@ export function EditorTableControls({
               max={TABLE_DEFAULTS.MAX}
               value={tableCols}
               onChange={(e) => onColsChange(e.target.value)}
-              className="h-7 w-14 rounded border border-ink-ghost bg-surface px-2 text-xs text-term-white focus:border-term-green focus:outline-none"
+              className="h-7 w-14 rounded-md border border-border-dim bg-bg px-2 text-[12px] text-ink focus:border-border-mid focus:outline-none"
             />
           </label>
-          <button type="button" onClick={onInsert} className="inline-flex h-7 items-center justify-center rounded bg-accent px-2 text-[10px] font-medium text-accent-text transition-opacity hover:opacity-80">
+          <button
+            type="button"
+            onClick={onInsert}
+            className="h-7 px-3 rounded-md bg-white text-black text-[11px] font-medium hover:bg-gray-100 transition-colors"
+          >
             Insert
           </button>
-          <button type="button" onClick={onCancel} className="inline-flex h-7 items-center justify-center rounded border-[1.5px] border-ink-ghost px-2 text-[10px] text-ink-light transition-colors hover:text-ink">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="h-7 px-3 rounded-md border border-border-dim hover:border-border-mid text-[11px] text-muted hover:text-ink transition-colors"
+          >
             Cancel
           </button>
         </>
@@ -66,7 +74,7 @@ export function EditorTableControls({
 
       {isInTable && (
         <>
-          <div className="h-4 w-px bg-ink-ghost" />
+          <div className="h-4 w-px bg-border-dim" />
           <button type="button" onClick={() => editor.chain().focus().addRowBefore().run()} className={tableButtonClass}>row+</button>
           <button type="button" onClick={() => editor.chain().focus().deleteRow().run()} className={tableButtonClass}>row-</button>
           <button type="button" onClick={() => editor.chain().focus().addColumnBefore().run()} className={tableButtonClass}>col+</button>
@@ -74,7 +82,7 @@ export function EditorTableControls({
           <button
             type="button"
             onClick={() => editor.chain().focus().deleteTable().run()}
-            className="inline-flex h-7 items-center justify-center rounded border-[1.5px] border-danger/30 px-2 text-[10px] text-danger transition-colors hover:bg-red-50"
+            className="h-7 px-2.5 rounded-md border border-border-dim hover:border-danger text-[11px] text-muted hover:text-danger transition-colors"
           >
             rm table
           </button>

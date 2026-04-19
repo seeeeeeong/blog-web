@@ -9,37 +9,35 @@ interface CommentItemProps {
 
 export function CommentItem({ comment, onAdminDelete }: CommentItemProps) {
   const isAdmin = useIsAdmin();
+  const initial = comment.nickname.charAt(0).toUpperCase();
 
   return (
-    <div className="border border-ink-ghost rounded p-3 hover:border-ink-faint transition-colors">
-      {/* Author line */}
-      <div className="flex items-center gap-2 mb-2 text-xs">
-        <div className="w-5 h-5 rounded-full bg-surface-alt flex items-center justify-center">
-          <span className="text-ink-faint text-[10px] font-bold">
-            {comment.nickname[0]}
-          </span>
+    <article className="border border-border-dim rounded-lg p-4 hover:border-border-mid transition-colors">
+      <header className="flex items-center gap-2.5 mb-3">
+        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-cat-blue to-cat-purple flex items-center justify-center text-[10px] font-semibold text-white">
+          {initial}
         </div>
-        <span className="text-term-white font-semibold">{comment.nickname}</span>
-        <span className="text-ink-faint">{formatRelativeDate(comment.createdAt)}</span>
-      </div>
+        <span className="text-[13px] text-ink font-medium">{comment.nickname}</span>
+        <span className="text-[12px] text-faint font-mono">
+          {formatRelativeDate(comment.createdAt)}
+        </span>
+      </header>
 
-      {/* Content */}
       <div
-        className="comment-content text-xs text-ink-light whitespace-pre-wrap break-words mb-2 leading-relaxed"
+        className="comment-content text-[14px] text-ink whitespace-pre-wrap break-words leading-relaxed"
         dangerouslySetInnerHTML={{ __html: comment.contentHtml }}
       />
 
-      {/* Admin actions */}
       {isAdmin && onAdminDelete && (
-        <div className="flex items-center gap-3 text-[11px]">
+        <div className="mt-3 flex items-center gap-3">
           <button
             onClick={() => onAdminDelete(comment.id)}
-            className="text-danger hover:opacity-70 transition-opacity"
+            className="text-[12px] text-muted hover:text-danger transition-colors"
           >
-            delete
+            Delete
           </button>
         </div>
       )}
-    </div>
+    </article>
   );
 }

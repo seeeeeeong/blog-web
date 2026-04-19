@@ -188,13 +188,8 @@ export function TipTapEditor({ value, onChange }: TipTapEditorProps) {
   };
 
   return (
-    <div className="overflow-hidden rounded-md border border-ink-ghost bg-panel">
+    <div className="overflow-hidden rounded-lg border border-border-dim bg-bg">
       <input type="file" ref={fileInputRef} onChange={handleFileSelect} accept="image/*" className="hidden" />
-
-      <div className="flex items-center justify-between border-b border-ink-ghost px-3 py-2">
-        <span className="text-[10px] font-medium text-term-green">EDITOR</span>
-        <span className="hidden text-[10px] text-ink-faint sm:block">Ctrl+B, Ctrl+I</span>
-      </div>
 
       <EditorToolbar
         editor={editor}
@@ -223,7 +218,7 @@ export function TipTapEditor({ value, onChange }: TipTapEditorProps) {
         onCancel={() => setShowTableInput(false)}
       />
 
-      <div className="bg-panel">
+      <div className="bg-bg">
         <EditorContent editor={editor} />
       </div>
     </div>

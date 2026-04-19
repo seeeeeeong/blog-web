@@ -1,16 +1,22 @@
-const COLOR_MAP: Record<string, string> = {
-  spring: "text-term-green border-term-green-dim",
-  infra: "text-term-amber border-[var(--c-term-amber-dim)]",
-  cs: "text-term-blue border-[var(--c-term-blue-dim)]",
+const DOT_COLOR: Record<string, string> = {
+  engineering: "bg-cat-blue",
+  backend: "bg-cat-blue",
+  cs: "bg-cat-blue",
+  frontend: "bg-cat-purple",
+  infra: "bg-cat-amber",
+  notes: "bg-cat-pink",
+  spring: "bg-cat-green",
 };
 
-const DEFAULT_COLOR = "text-ink-faint border-ink-ghost";
+const DEFAULT_DOT = "bg-ghost";
 
 export function CatTag({ name }: { name: string }) {
-  const color = COLOR_MAP[name] || DEFAULT_COLOR;
+  const dot = DOT_COLOR[name] ?? DEFAULT_DOT;
+  const label = name.charAt(0).toUpperCase() + name.slice(1);
   return (
-    <span className={`inline-block text-[10px] px-1.5 py-px border rounded ${color}`}>
-      {name}
+    <span className="pill">
+      <span className={`pill-dot ${dot}`} />
+      {label}
     </span>
   );
 }

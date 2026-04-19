@@ -32,15 +32,16 @@ export function PostCreatePage() {
   };
 
   return (
-    <div className="animate-fade-in">
-      <div className="text-xs text-ink-faint mb-1">
-        <span className="text-term-blue">~/blog</span> <span className="text-term-green">$</span> <span className="text-term-white">new post</span>
-      </div>
-      <h2 className="text-sm font-bold text-term-white mb-1">New Post</h2>
-      <div className="flex flex-wrap items-center gap-4 text-[11px] text-ink-faint mb-6">
-        <span>title {title.length}/{titleMaxLength}</span>
-        <span>words {wordCount}</span>
-        <span>chars {contentCharacters}</span>
+    <div className="max-w-[900px] mx-auto px-6 py-10 animate-fade-in">
+      <div className="mb-8">
+        <h1 className="text-[22px] font-semibold tracking-tighter-plus text-ink mb-2">
+          New post
+        </h1>
+        <div className="flex flex-wrap items-center gap-4 text-[12px] text-faint font-mono">
+          <span>title {title.length}/{titleMaxLength}</span>
+          <span>words {wordCount}</span>
+          <span>chars {contentCharacters}</span>
+        </div>
       </div>
 
       <form
@@ -48,12 +49,11 @@ export function PostCreatePage() {
           e.preventDefault();
           handleSubmit(false);
         }}
-        className="space-y-5 pb-20"
+        className="space-y-5 pb-24"
       >
-        {/* Title & Category */}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div className="md:col-span-2">
-            <label htmlFor="title" className="mb-1.5 block text-xs font-medium text-ink-light">
+            <label htmlFor="title" className="mb-1.5 block text-[12px] font-medium text-muted">
               Title
             </label>
             <input
@@ -63,20 +63,20 @@ export function PostCreatePage() {
               onChange={(e) => setTitle(e.target.value)}
               required
               maxLength={titleMaxLength}
-              className="h-9 w-full rounded border border-ink-ghost bg-surface px-3 text-xs text-term-white placeholder:text-ink-faint transition-colors focus:border-term-green focus:outline-none"
+              className="h-9 w-full rounded-md border border-border-dim bg-raised px-3 text-[14px] text-ink placeholder:text-faint transition-colors focus:border-border-mid focus:outline-none"
               placeholder="Enter title"
             />
           </div>
 
           <div className="md:col-span-1">
-            <label htmlFor="category" className="mb-1.5 block text-xs font-medium text-ink-light">
+            <label htmlFor="category" className="mb-1.5 block text-[12px] font-medium text-muted">
               Category
             </label>
             <select
               id="category"
               value={categoryId}
               onChange={(e) => setCategoryId(Number(e.target.value))}
-              className="h-9 w-full rounded border border-ink-ghost bg-surface px-3 text-xs text-term-white transition-colors focus:border-term-green focus:outline-none"
+              className="h-9 w-full rounded-md border border-border-dim bg-raised px-3 text-[14px] text-ink transition-colors focus:border-border-mid focus:outline-none"
             >
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
@@ -87,42 +87,40 @@ export function PostCreatePage() {
           </div>
         </div>
 
-        {/* Editor */}
         <div className="space-y-1.5">
           <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-            <label className="text-xs font-medium text-ink-light">Content</label>
-            <span className="text-[10px] text-ink-faint">
-              Add images by pasting or using the upload button
+            <label className="text-[12px] font-medium text-muted">Content</label>
+            <span className="text-[11px] text-faint">
+              Paste or upload images directly
             </span>
           </div>
           <TipTapEditor value={content} onChange={setContent} />
         </div>
 
-        {/* Action Bar */}
-        <div className="sticky bottom-3 z-20 rounded border border-ink-ghost bg-surface p-3">
+        <div className="sticky bottom-3 z-20 rounded-lg border border-border-dim bg-raised/95 backdrop-blur p-3">
           <div className="flex flex-col-reverse items-stretch justify-between gap-3 sm:flex-row sm:items-center">
             <button
               type="button"
               onClick={() => navigate("/")}
-              className="inline-flex h-8 items-center justify-center rounded border border-ink-ghost px-4 text-[11px] text-ink-faint transition-colors hover:text-term-white hover:border-ink-faint"
+              className="h-8 px-4 rounded-md border border-border-dim hover:border-border-mid text-[13px] text-muted hover:text-ink transition-colors"
             >
-              cancel
+              Cancel
             </button>
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => handleSubmit(true)}
                 disabled={loading}
-                className="inline-flex h-8 items-center justify-center rounded border border-ink-ghost px-4 text-[11px] font-medium text-term-amber transition-colors hover:border-term-amber disabled:cursor-not-allowed disabled:opacity-30"
+                className="h-8 px-4 rounded-md border border-border-dim hover:border-border-mid text-[13px] font-medium text-muted hover:text-ink transition-colors disabled:opacity-30"
               >
-                {loading ? "..." : "save draft"}
+                {loading ? "…" : "Save draft"}
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="inline-flex h-8 items-center justify-center rounded bg-term-green px-4 text-[11px] font-medium text-panel transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-30"
+                className="h-8 px-4 rounded-md bg-white text-black text-[13px] font-medium hover:bg-gray-100 transition-colors disabled:opacity-30"
               >
-                {loading ? "..." : "publish"}
+                {loading ? "…" : "Publish"}
               </button>
             </div>
           </div>

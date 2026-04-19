@@ -12,26 +12,25 @@ export function CommentSection({ postId }: CommentSectionProps) {
   const isAdmin = useIsAdmin();
   const { comments, loading, createComment, adminDeleteComment } = useComments(postId);
 
-  if (loading) {
-    return <div className="py-8"><Spinner /></div>;
-  }
-
   return (
-    <div className="space-y-4 text-sm">
-      <h3 className="text-xs font-semibold text-term-green">
-        $ cat comments <span className="text-ink-faint font-normal">({comments.length})</span>
-      </h3>
+    <section className="pt-8 border-t border-border-dim">
+      <div className="flex items-baseline gap-2 mb-6">
+        <h2 className="text-[15px] font-medium text-ink">Comments</h2>
+        <span className="text-[13px] text-faint font-mono">— {comments.length}</span>
+      </div>
 
-      <div className="border border-ink-ghost rounded p-4">
+      <div className="mb-8">
         <CommentForm onSubmit={createComment} />
       </div>
 
-      {comments.length === 0 ? (
-        <div className="text-ink-faint text-xs py-4">
-          No comments yet.
+      {loading ? (
+        <div className="py-6">
+          <Spinner />
         </div>
+      ) : comments.length === 0 ? (
+        <p className="text-[13px] text-faint py-4">No comments yet.</p>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-4">
           {comments.map((comment) => (
             <CommentItem
               key={comment.id}
@@ -41,6 +40,6 @@ export function CommentSection({ postId }: CommentSectionProps) {
           ))}
         </div>
       )}
-    </div>
+    </section>
   );
 }

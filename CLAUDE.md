@@ -20,10 +20,10 @@ src/
 ├── core/
 │   ├── api/
 │   │   ├── components/       # UI components
-│   │   │   ├── common/       # Layout, Spinner, Alert, TerminalDots, PaginationControls, CatTag
+│   │   │   ├── common/       # Layout, Spinner, Alert, PaginationControls, CatTag
 │   │   │   ├── comment/      # CommentForm, CommentItem, CommentSection
 │   │   │   ├── editor/       # TipTapEditor, EditorToolbar, EditorLinkInput, EditorTableControls, MenuButton, MarkdownViewer
-│   │   │   └── post/         # SimilarArticles
+│   │   │   └── post/         # SimilarPosts
 │   │   └── pages/            # Page-level components (equivalent to controllers)
 │   ├── domain/
 │   │   └── {context}/        # Type definitions per domain (post, comment, user, category, image, similar)

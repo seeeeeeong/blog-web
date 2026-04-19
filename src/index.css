@@ -1,88 +1,188 @@
-@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Pretendard:wght@400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ─── Theme Variables ─────────────────────────── */
+/* ─── Theme Variables (Vercel Dark) ───────────── */
 :root {
-  --c-panel: #0c0c0c;
-  --c-panel-hover: #1a1a1a;
-  --c-surface: #141414;
-  --c-surface-alt: #1a1a1a;
-  --c-ink: #d4d4d4;
-  --c-ink-light: #999;
-  --c-ink-lighter: #737373;
-  --c-ink-faint: #525252;
-  --c-ink-ghost: #2a2a2a;
-  --c-term-green: #4ade80;
-  --c-term-green-dim: #166534;
-  --c-term-amber: #fbbf24;
+  --c-bg: #000000;
+  --c-raised: #0f0f0f;
+  --c-raised-hover: #151515;
+  --c-border-dim: #1a1a1a;
+  --c-border-mid: #2a2a2a;
+  --c-ink: #ededed;
+  --c-muted: #a0a0a0;
+  --c-faint: #787878;
+  --c-ghost: #4f4f4f;
+
+  --c-cat-blue: #60a5fa;
+  --c-cat-purple: #c084fc;
+  --c-cat-amber: #fbbf24;
+  --c-cat-pink: #f472b6;
+  --c-cat-green: #22c55e;
+  --c-danger: #f87171;
+
+  --c-code-bg: #0f0f0f;
+  --c-pre-bg: #0a0a0a;
+  /* legacy */
+  --c-panel: var(--c-bg);
+  --c-panel-hover: var(--c-raised);
+  --c-surface: var(--c-raised);
+  --c-surface-alt: var(--c-raised);
+  --c-ink-light: var(--c-ink);
+  --c-ink-lighter: var(--c-muted);
+  --c-ink-faint: var(--c-faint);
+  --c-ink-ghost: var(--c-border-dim);
+  --c-term-green: var(--c-cat-green);
+  --c-term-green-dim: #14532d;
+  --c-term-amber: var(--c-cat-amber);
   --c-term-amber-dim: #78350f;
-  --c-term-blue: #60a5fa;
-  --c-term-blue-dim: #1e40af;
-  --c-term-pink: #f472b6;
-  --c-term-white: #fafafa;
-  --c-accent-text: #0c0c0c;
-  --c-danger: #ef4444;
-  --c-green-tint: rgba(74, 222, 128, 0.08);
-  --c-code-bg: #1a1a1a;
-  --c-pre-bg: #141414;
+  --c-term-blue: var(--c-cat-blue);
+  --c-term-blue-dim: #1e3a8a;
+  --c-term-pink: var(--c-cat-pink);
+  --c-term-white: var(--c-ink);
+  --c-accent-text: var(--c-bg);
+  --c-green-tint: rgba(34, 197, 94, 0.06);
 }
 
 .light {
-  --c-panel: #ffffff;
-  --c-panel-hover: #f5f5f5;
-  --c-surface: #f9fafb;
-  --c-surface-alt: #f0f0f0;
-  --c-ink: #1f2937;
-  --c-ink-light: #4b5563;
-  --c-ink-lighter: #6b7280;
-  --c-ink-faint: #9ca3af;
-  --c-ink-ghost: #e5e7eb;
-  --c-term-green: #16a34a;
-  --c-term-green-dim: #bbf7d0;
-  --c-term-amber: #d97706;
-  --c-term-amber-dim: #fde68a;
-  --c-term-blue: #2563eb;
-  --c-term-blue-dim: #bfdbfe;
-  --c-term-pink: #db2777;
-  --c-term-white: #111827;
-  --c-accent-text: #ffffff;
+  --c-bg: #ffffff;
+  --c-raised: #fafafa;
+  --c-raised-hover: #f5f5f5;
+  --c-border-dim: #e5e5e5;
+  --c-border-mid: #d4d4d4;
+  --c-ink: #0a0a0a;
+  --c-muted: #525252;
+  --c-faint: #737373;
+  --c-ghost: #a3a3a3;
+
+  --c-cat-blue: #2563eb;
+  --c-cat-purple: #9333ea;
+  --c-cat-amber: #d97706;
+  --c-cat-pink: #db2777;
+  --c-cat-green: #16a34a;
   --c-danger: #dc2626;
-  --c-green-tint: rgba(22, 163, 74, 0.08);
-  --c-code-bg: #f3f4f6;
-  --c-pre-bg: #f9fafb;
+
+  --c-code-bg: #f5f5f5;
+  --c-pre-bg: #fafafa;
+  --c-term-green-dim: #bbf7d0;
+  --c-term-amber-dim: #fde68a;
+  --c-term-blue-dim: #bfdbfe;
+  --c-green-tint: rgba(22, 163, 74, 0.06);
 }
 
 @layer base {
-  html { @apply scroll-smooth; }
+  html {
+    @apply scroll-smooth;
+  }
   body {
-    background: var(--c-panel);
+    background: var(--c-bg);
     color: var(--c-ink);
-    font-family: "JetBrains Mono", monospace;
-    font-size: 13px;
-    line-height: 1.7;
+    font-family: "Geist", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    font-feature-settings: "ss01" on;
     -webkit-font-smoothing: antialiased;
     transition: background-color 0.2s, color 0.2s;
   }
-  ::selection { background: var(--c-term-green); color: var(--c-accent-text); }
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: var(--c-panel); }
-  ::-webkit-scrollbar-thumb { background: var(--c-ink-ghost); border-radius: 3px; }
+  ::selection {
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+  }
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--c-bg);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--c-border-dim);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--c-border-mid);
+  }
 }
 
 :focus-visible {
   outline: none;
-  box-shadow: 0 0 0 1px var(--c-term-green);
+  box-shadow: 0 0 0 2px var(--c-bg), 0 0 0 4px var(--c-ink);
+}
+
+/* ─── Vercel Utilities ─────────────────────────── */
+@layer components {
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 500;
+    background: var(--c-raised);
+    border: 1px solid var(--c-border-dim);
+    color: var(--c-muted);
+    white-space: nowrap;
+  }
+  .pill-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .shine {
+    position: relative;
+    overflow: hidden;
+  }
+  .shine::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      600px circle at var(--x, 50%) var(--y, 50%),
+      rgba(255, 255, 255, 0.04),
+      transparent 40%
+    );
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+  .shine:hover::before {
+    opacity: 1;
+  }
+  .grad-text {
+    background: linear-gradient(90deg, var(--c-ink) 0%, var(--c-muted) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hero-noise {
+    position: relative;
+  }
+  .hero-noise::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: radial-gradient(circle at 20% 10%, rgba(255, 80, 180, 0.06), transparent 40%),
+      radial-gradient(circle at 80% 60%, rgba(80, 180, 255, 0.07), transparent 40%);
+  }
 }
 
 /* ─── Animations ───────────────────────────────── */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-.animate-fade-in { animation: fadeIn 0.25s ease forwards; }
+.animate-fade-in { animation: fadeIn 0.3s ease forwards; }
 
 @keyframes blink {
   0%, 100% { opacity: 1; }
@@ -93,136 +193,181 @@
 /* ─── Spinner ──────────────────────────────────── */
 @keyframes spin { to { transform: rotate(360deg); } }
 .spinner-modern {
-  width: 16px; height: 16px;
-  border: 2px solid var(--c-ink-ghost);
-  border-top-color: var(--c-term-green);
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--c-border-dim);
+  border-top-color: var(--c-ink);
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
 }
 
-/* ─── Cursor ──────────────────────────────────── */
+/* ─── Legacy cursor (still used in some places) ─ */
 .term-cursor {
   display: inline-block;
-  width: 8px; height: 15px;
-  background: var(--c-term-green);
+  width: 8px;
+  height: 15px;
+  background: var(--c-ink);
   animation: blink 1s step-end infinite;
   vertical-align: middle;
   margin-left: 2px;
 }
 
-/* ─── Markdown Viewer (Terminal) ──────────────── */
+/* ─── Markdown Viewer (Clean editorial) ────────── */
 .markdown-viewer {
-  font-family: "IBM Plex Sans KR", sans-serif;
-  font-size: 15.5px;
+  font-family: "Geist", "Pretendard", -apple-system, sans-serif;
+  font-size: 16px;
   color: var(--c-ink);
-  line-height: 1.95;
+  line-height: 1.75;
   word-break: break-word;
 }
 
-.markdown-viewer h1, .markdown-viewer h2, .markdown-viewer h3,
-.markdown-viewer h4, .markdown-viewer h5, .markdown-viewer h6 {
-  font-family: "JetBrains Mono", monospace;
+.markdown-viewer h1,
+.markdown-viewer h2,
+.markdown-viewer h3,
+.markdown-viewer h4,
+.markdown-viewer h5,
+.markdown-viewer h6 {
+  font-family: "Geist", "Pretendard", -apple-system, sans-serif;
   font-weight: 600;
-  line-height: 1.4;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  color: var(--c-ink);
 }
 
 .markdown-viewer h1 {
-  font-size: 1.3rem;
-  color: var(--c-term-green);
-  margin: 2.5rem 0 0.8rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--c-ink-ghost);
+  font-size: 1.75rem;
+  margin: 2.5rem 0 1rem;
 }
-.markdown-viewer h1::before { content: "# "; color: var(--c-term-green-dim); }
 .markdown-viewer h1:first-child { margin-top: 0; }
 
 .markdown-viewer h2 {
-  font-size: 1.15rem;
-  color: var(--c-term-green);
-  margin: 2.5rem 0 0.8rem;
+  font-size: 1.4rem;
+  margin: 2.25rem 0 0.8rem;
 }
-.markdown-viewer h2::before { content: "## "; color: var(--c-term-green-dim); }
 
 .markdown-viewer h3 {
-  font-size: 1rem;
-  color: var(--c-term-amber);
+  font-size: 1.15rem;
   margin: 2rem 0 0.6rem;
 }
-.markdown-viewer h3::before { content: "### "; color: var(--c-term-amber-dim); }
 
-.markdown-viewer p { margin-bottom: 1.3rem; }
+.markdown-viewer p { margin-bottom: 1.2rem; color: var(--c-ink); }
 
-.markdown-viewer ul, .markdown-viewer ol { margin-bottom: 1.3rem; padding-left: 1.5rem; }
+.markdown-viewer ul,
+.markdown-viewer ol {
+  margin-bottom: 1.2rem;
+  padding-left: 1.5rem;
+}
 .markdown-viewer ul { list-style-type: disc; }
 .markdown-viewer ol { list-style-type: decimal; }
 .markdown-viewer li { margin-bottom: 0.35rem; }
-.markdown-viewer li::marker { color: var(--c-term-green); }
+.markdown-viewer li::marker { color: var(--c-faint); }
 
 .markdown-viewer code {
-  background: var(--c-code-bg);
-  color: var(--c-term-pink);
-  padding: 0.15rem 0.5rem;
-  border-radius: 3px;
-  font-family: "JetBrains Mono", monospace;
-  font-size: 0.85em;
+  background: var(--c-raised);
+  color: var(--c-cat-pink);
+  padding: 0.12rem 0.4rem;
+  border-radius: 4px;
+  border: 1px solid var(--c-border-dim);
+  font-family: "Geist Mono", ui-monospace, monospace;
+  font-size: 0.86em;
 }
 
 .markdown-viewer pre {
   background: var(--c-pre-bg) !important;
-  border: 1px solid var(--c-ink-ghost);
-  border-radius: 6px;
-  padding: 1.2rem 1.5rem;
+  border: 1px solid var(--c-border-dim);
+  border-radius: 8px;
+  padding: 1.1rem 1.4rem;
   overflow-x: auto;
-  margin-bottom: 1.5rem;
+  margin: 1.5rem 0 1.8rem;
 }
 
 .markdown-viewer pre code {
   background: transparent !important;
   color: var(--c-ink) !important;
+  border: none;
   padding: 0;
-  font-size: 0.85em;
-  line-height: 1.8;
+  font-size: 0.88em;
+  line-height: 1.75;
 }
 
 .markdown-viewer a {
-  color: var(--c-term-blue);
-  border-bottom: 1px dashed var(--c-term-blue-dim);
-  text-decoration: none;
+  color: var(--c-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--c-border-mid);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.15s;
 }
-.markdown-viewer a:hover { color: var(--c-term-white); border-bottom-color: var(--c-term-white); }
+.markdown-viewer a:hover { text-decoration-color: var(--c-ink); }
 
 .markdown-viewer blockquote {
-  border-left: 2px solid var(--c-term-green);
-  background: var(--c-green-tint);
-  padding: 1rem 1.2rem;
-  border-radius: 0 6px 6px 0;
-  color: var(--c-ink-light);
+  border-left: 2px solid var(--c-border-mid);
+  padding: 0.4rem 0 0.4rem 1.2rem;
+  color: var(--c-muted);
   margin: 1.5rem 0;
+  font-style: normal;
 }
 .markdown-viewer blockquote p:last-child { margin-bottom: 0; }
 
-.markdown-viewer hr { border: none; border-top: 1px dashed var(--c-ink-ghost); margin: 2.5rem 0; }
+.markdown-viewer hr {
+  border: none;
+  border-top: 1px solid var(--c-border-dim);
+  margin: 2.5rem 0;
+}
 
-.markdown-viewer img { max-width: 100%; border-radius: 6px; margin: 0.5rem 0; border: 1px solid var(--c-ink-ghost); }
+.markdown-viewer img {
+  max-width: 100%;
+  border: 1px solid var(--c-border-dim);
+  border-radius: 8px;
+  margin: 1rem 0 1.5rem;
+}
 
-.markdown-viewer table { width: fit-content; max-width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: 13px; font-family: "JetBrains Mono", monospace; }
-.markdown-viewer thead { border-bottom: 2px solid var(--c-ink-ghost); }
-.markdown-viewer th { padding: 0.5rem 0.8rem; text-align: left; font-weight: 600; color: var(--c-term-green); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
-.markdown-viewer td { padding: 0.5rem 0.8rem; color: var(--c-ink); border-bottom: 1px solid var(--c-ink-ghost); font-size: 12px; }
-.markdown-viewer tbody tr:hover { background: var(--c-green-tint); }
+.markdown-viewer table {
+  width: fit-content;
+  max-width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--c-border-dim);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  font-size: 14px;
+}
+.markdown-viewer thead { background: var(--c-raised); }
+.markdown-viewer th {
+  padding: 0.6rem 0.9rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--c-ink);
+  font-size: 12px;
+  border-bottom: 1px solid var(--c-border-dim);
+}
+.markdown-viewer td {
+  padding: 0.55rem 0.9rem;
+  border-top: 1px solid var(--c-border-dim);
+  color: var(--c-ink);
+}
+.markdown-viewer tbody tr:hover { background: var(--c-raised); }
 
-.markdown-viewer strong { font-weight: 600; color: var(--c-term-white); }
-.markdown-viewer em { font-style: italic; color: var(--c-ink-light); }
+.markdown-viewer strong { font-weight: 600; color: var(--c-ink); }
+.markdown-viewer em { font-style: italic; }
 
 /* ─── Comment Content ──────────────────────────── */
-.comment-content { color: var(--c-ink-light); line-height: 1.7; }
-.comment-content a { color: var(--c-term-blue); text-decoration: underline; }
+.comment-content {
+  color: var(--c-ink);
+  line-height: 1.7;
+  font-family: "Geist", "Pretendard", -apple-system, sans-serif;
+}
+.comment-content a {
+  color: var(--c-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--c-border-mid);
+  text-underline-offset: 3px;
+}
 
-/* ─── TipTap Editor (Terminal) ────────────────── */
+/* ─── TipTap Editor ────────────────────────────── */
 .tiptap-editor {
-  font-family: "IBM Plex Sans KR", sans-serif;
-  font-size: 15px;
-  line-height: 1.85;
+  font-family: "Geist", "Pretendard", -apple-system, sans-serif;
+  font-size: 15.5px;
+  line-height: 1.7;
   color: var(--c-ink);
 }
 
@@ -230,51 +375,92 @@
 
 .tiptap-editor p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
-  color: var(--c-ink-faint);
-  float: left; height: 0;
+  color: var(--c-faint);
+  float: left;
+  height: 0;
   pointer-events: none;
 }
 
-.tiptap-editor h1, .tiptap-editor h2, .tiptap-editor h3 {
+.tiptap-editor h1,
+.tiptap-editor h2,
+.tiptap-editor h3 {
   margin: 1.5rem 0 0.75rem;
-  font-weight: 600; line-height: 1.3;
-  font-family: "JetBrains Mono", monospace;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  color: var(--c-ink);
+  font-family: "Geist", "Pretendard", sans-serif;
 }
-.tiptap-editor h1 { font-size: 1.4rem; color: var(--c-term-green); }
-.tiptap-editor h2 { font-size: 1.2rem; color: var(--c-term-green); }
-.tiptap-editor h3 { font-size: 1.05rem; color: var(--c-term-amber); }
-.tiptap-editor p { margin: 0.8rem 0; }
+.tiptap-editor h1 { font-size: 1.5rem; }
+.tiptap-editor h2 { font-size: 1.25rem; }
+.tiptap-editor h3 { font-size: 1.08rem; }
+.tiptap-editor p { margin: 0.75rem 0; }
 
-.tiptap-editor ul, .tiptap-editor ol { margin: 0.7rem 0; padding-left: 1.5rem; }
+.tiptap-editor ul,
+.tiptap-editor ol {
+  margin: 0.7rem 0;
+  padding-left: 1.5rem;
+}
 .tiptap-editor ul { list-style: disc; }
 .tiptap-editor ol { list-style: decimal; }
+.tiptap-editor li::marker { color: var(--c-faint); }
 
 .tiptap-editor blockquote {
   margin: 1rem 0;
-  border-left: 2px solid var(--c-term-green);
-  padding: 0.3rem 0 0.3rem 0.8rem;
-  color: var(--c-ink-light);
-  background: var(--c-green-tint);
+  border-left: 2px solid var(--c-border-mid);
+  padding: 0.3rem 0 0.3rem 1rem;
+  color: var(--c-muted);
 }
 
 .tiptap-editor pre {
-  margin: 1rem 0; border-radius: 6px;
-  background: var(--c-pre-bg); color: var(--c-ink);
+  margin: 1rem 0;
+  background: var(--c-pre-bg);
+  color: var(--c-ink);
   padding: 0.9rem 1rem;
-  border: 1px solid var(--c-ink-ghost);
+  border-radius: 8px;
+  border: 1px solid var(--c-border-dim);
 }
-.tiptap-editor pre code { background: transparent; border: none; color: inherit; padding: 0; font-family: "JetBrains Mono", monospace; font-size: 0.9em; }
+.tiptap-editor pre code {
+  background: transparent;
+  border: none;
+  color: inherit;
+  padding: 0;
+  font-family: "Geist Mono", ui-monospace, monospace;
+  font-size: 0.9em;
+}
 
 .tiptap-editor code {
-  border-radius: 3px; background: var(--c-code-bg); color: var(--c-term-pink);
-  padding: 0.12rem 0.38rem; font-family: "JetBrains Mono", monospace; font-size: 0.88em;
+  background: var(--c-raised);
+  color: var(--c-cat-pink);
+  border: 1px solid var(--c-border-dim);
+  border-radius: 4px;
+  padding: 0.1rem 0.35rem;
+  font-family: "Geist Mono", ui-monospace, monospace;
+  font-size: 0.88em;
 }
 
-.tiptap-editor .editor-table { width: 100%; border-collapse: collapse; margin: 0.9rem 0; border: 1px solid var(--c-ink-ghost); }
-.tiptap-editor .editor-table th, .tiptap-editor .editor-table td { border: 1px solid var(--c-ink-ghost); padding: 0.45rem 0.65rem; vertical-align: top; }
-.tiptap-editor .editor-table th { background: var(--c-code-bg); font-weight: 600; color: var(--c-term-green); }
+.tiptap-editor .editor-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.9rem 0;
+  border: 1px solid var(--c-border-dim);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.tiptap-editor .editor-table th,
+.tiptap-editor .editor-table td {
+  border: 1px solid var(--c-border-dim);
+  padding: 0.5rem 0.7rem;
+  vertical-align: top;
+}
+.tiptap-editor .editor-table th {
+  background: var(--c-raised);
+  color: var(--c-ink);
+  font-weight: 600;
+  font-size: 13px;
+}
 
-/* ─── Similar Articles Sidebar ────────────────── */
+/* ─── Similar Articles Sidebar ─────────────────── */
 @media (min-width: 1440px) {
   .similar-aside {
     position: fixed;

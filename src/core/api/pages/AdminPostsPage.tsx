@@ -54,68 +54,93 @@ export function AdminPostsPage() {
   };
 
   return (
-    <div className="animate-fade-in">
-      <div className="flex items-center justify-between mb-5">
+    <div className="max-w-[1100px] mx-auto px-6 py-10 animate-fade-in">
+      <div className="flex items-center justify-between mb-8">
         <div>
-          <div className="text-xs text-ink-faint mb-1">
-            <span className="text-term-blue">~/blog</span> <span className="text-term-green">$</span> <span className="text-term-amber">admin</span> --posts
-          </div>
-          <h2 className="text-sm font-bold text-term-white">Admin Posts</h2>
+          <h1 className="text-[22px] font-semibold tracking-tighter-plus text-ink mb-1">
+            Admin · Posts
+          </h1>
+          <p className="text-[13px] text-faint font-mono">{posts.length} in view</p>
         </div>
-        <Link to="/posts/create" className="text-[11px] font-medium text-panel bg-term-green px-2.5 py-1 rounded hover:opacity-80 transition-opacity">
-          + new
+        <Link
+          to="/posts/create"
+          className="h-9 px-4 rounded-md bg-white text-black text-[13px] font-medium hover:bg-gray-100 inline-flex items-center transition-colors"
+        >
+          New post
         </Link>
       </div>
 
-      {/* Filters */}
-      <div className="flex gap-1 mb-5">
-        {(["all", "published", "draft"] as FilterType[]).map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`px-2.5 py-1 rounded text-[11px] font-medium transition-colors ${
-              filter === f
-                ? "bg-term-green text-panel"
-                : "bg-surface text-ink-faint hover:text-term-green hover:border-term-green border border-ink-ghost"
-            }`}
-          >
-            {f}
-          </button>
-        ))}
+      <div className="flex gap-1 mb-6">
+        {(["all", "published", "draft"] as FilterType[]).map((f) => {
+          const active = filter === f;
+          return (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`h-7 px-3 rounded-md text-[12px] font-mono transition-colors ${
+                active
+                  ? "bg-raised border border-border-dim text-ink"
+                  : "text-muted hover:text-ink"
+              }`}
+            >
+              {f}
+            </button>
+          );
+        })}
       </div>
 
       {loading ? (
-        <div className="py-8"><Spinner /></div>
+        <div className="py-16 flex justify-center">
+          <Spinner />
+        </div>
       ) : posts.length === 0 ? (
-        <div className="py-8 text-ink-faint text-xs">No posts found.</div>
+        <p className="py-16 text-center text-[13px] text-faint">No posts found.</p>
       ) : (
         <>
-          {posts.map((post) => (
-            <div key={post.id} className="flex items-center gap-3 py-2.5 border-b border-ink-ghost text-xs group">
-              <Link to={`/posts/${post.id}`} className="flex-1 min-w-0 font-medium text-term-white truncate group-hover:text-term-green transition-colors">
-                {post.title}
-              </Link>
-              <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded border shrink-0 ${
-                post.status === "DRAFT"
-                  ? "text-term-amber border-[var(--c-term-amber-dim)]"
-                  : "text-term-green border-term-green-dim"
-              }`}>
-                {post.status.toLowerCase()}
-              </span>
-              <span className="text-[11px] text-ink-faint shrink-0 hidden sm:block w-20 text-right">{formatDate(post.createdAt)}</span>
-              <div className="flex gap-2 shrink-0 text-[11px]">
-                <Link to={`/posts/${post.id}/edit`} className="text-term-blue hover:opacity-70">edit</Link>
-                <button onClick={() => handleDelete(post.id)} className="text-danger hover:opacity-70">del</button>
+          <div className="border border-border-dim rounded-lg overflow-hidden">
+            {posts.map((post, idx) => (
+              <div
+                key={post.id}
+                className={`flex items-center gap-4 px-4 py-3 text-[13px] group ${
+                  idx < posts.length - 1 ? "border-b border-border-dim" : ""
+                }`}
+              >
+                <Link
+                  to={`/posts/${post.id}`}
+                  className="flex-1 min-w-0 font-medium text-ink truncate group-hover:text-muted transition-colors"
+                >
+                  {post.title}
+                </Link>
+                <span className="pill shrink-0">
+                  <span
+                    className={`pill-dot ${post.status === "DRAFT" ? "bg-cat-amber" : "bg-cat-green"}`}
+                  />
+                  {post.status === "DRAFT" ? "Draft" : "Published"}
+                </span>
+                <span className="text-[12px] text-faint font-mono hidden sm:block w-24 text-right shrink-0">
+                  {formatDate(post.createdAt)}
+                </span>
+                <div className="flex gap-2 shrink-0 text-[12px]">
+                  <Link to={`/posts/${post.id}/edit`} className="text-muted hover:text-ink transition-colors">
+                    Edit
+                  </Link>
+                  <button
+                    onClick={() => handleDelete(post.id)}
+                    className="text-muted hover:text-danger transition-colors"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
 
           <PaginationControls
             currentPage={currentPage}
             hasNext={hasNext}
             totalItems={posts.length}
-            onPrev={() => setCurrentPage(p => Math.max(0, p - 1))}
-            onNext={() => setCurrentPage(p => p + 1)}
+            onPrev={() => setCurrentPage((p) => Math.max(0, p - 1))}
+            onNext={() => setCurrentPage((p) => p + 1)}
           />
         </>
       )}

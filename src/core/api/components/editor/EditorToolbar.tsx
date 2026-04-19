@@ -17,12 +17,12 @@ interface EditorToolbarProps {
 }
 
 function Divider() {
-  return <div className="mx-1 h-5 w-px bg-ink-ghost" />;
+  return <div className="mx-1 h-5 w-px bg-border-dim" />;
 }
 
 export function EditorToolbar({ editor, onAddImage, onToggleLink, onToggleTable }: EditorToolbarProps) {
   return (
-    <div className="overflow-x-auto border-b border-ink-ghost">
+    <div className="overflow-x-auto border-b border-border-dim bg-raised">
       <div className="flex min-w-max items-center gap-0.5 px-2 py-1.5 sm:px-3">
         <MenuButton onClick={() => editor.chain().focus().toggleBold().run()} isActive={editor.isActive('bold')} title="Bold (Ctrl+B)">
           <Bold size={14} />

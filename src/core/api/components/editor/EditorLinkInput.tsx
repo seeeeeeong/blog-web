@@ -7,7 +7,7 @@ interface EditorLinkInputProps {
 
 export function EditorLinkInput({ linkUrl, onUrlChange, onApply, onCancel }: EditorLinkInputProps) {
   return (
-    <div className="flex flex-wrap items-center gap-2 border-b border-ink-ghost px-3 py-2">
+    <div className="flex flex-wrap items-center gap-2 border-b border-border-dim bg-raised px-3 py-2">
       <input
         type="url"
         value={linkUrl}
@@ -17,20 +17,20 @@ export function EditorLinkInput({ linkUrl, onUrlChange, onApply, onCancel }: Edi
           if (e.key === "Escape") onCancel();
         }}
         placeholder="https://..."
-        className="h-8 min-w-[14rem] flex-1 rounded border border-ink-ghost bg-surface px-2 text-xs text-term-white placeholder:text-ink-faint focus:border-term-green focus:outline-none"
+        className="h-8 min-w-[14rem] flex-1 rounded-md border border-border-dim bg-bg px-2.5 text-[13px] text-ink placeholder:text-faint focus:border-border-mid focus:outline-none transition-colors"
         autoFocus
       />
       <button
         type="button"
         onClick={onApply}
-        className="inline-flex h-8 items-center justify-center rounded-md bg-accent px-3 text-xs font-medium text-accent-text transition-opacity hover:opacity-80"
+        className="h-8 px-3 rounded-md bg-white text-black text-[12px] font-medium hover:bg-gray-100 transition-colors"
       >
         Apply
       </button>
       <button
         type="button"
         onClick={onCancel}
-        className="inline-flex h-8 items-center justify-center rounded-md border-[1.5px] border-ink-ghost px-3 text-xs text-ink-light transition-colors hover:text-ink"
+        className="h-8 px-3 rounded-md border border-border-dim hover:border-border-mid text-[12px] text-muted hover:text-ink transition-colors"
       >
         Cancel
       </button>

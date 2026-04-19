@@ -1,8 +1,8 @@
 export function Spinner() {
   return (
-    <div className="flex items-center gap-2 text-ink-faint text-xs">
+    <div className="flex items-center gap-2 text-muted text-[13px]">
       <div className="spinner-modern" />
-      <span className="animate-blink">loading...</span>
+      <span>Loading…</span>
     </div>
   );
 }

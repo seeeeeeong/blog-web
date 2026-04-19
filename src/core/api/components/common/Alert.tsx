@@ -11,28 +11,12 @@ interface AlertProps {
   showCloseButton?: boolean;
 }
 
-const ACCENT: Record<AlertType, string> = {
-  success: "border-l-term-green",
-  error:   "border-l-danger",
-  warning: "border-l-term-amber",
-  info:    "border-l-term-blue",
-  confirm: "border-l-term-white",
-};
-
-const LABEL: Record<AlertType, string> = {
-  success: "OK",
-  error:   "ERR",
-  warning: "WARN",
-  info:    "INFO",
-  confirm: "CONFIRM",
-};
-
-const LABEL_COLOR: Record<AlertType, string> = {
-  success: "text-term-green",
-  error:   "text-danger",
-  warning: "text-term-amber",
-  info:    "text-term-blue",
-  confirm: "text-term-white",
+const DOT_COLOR: Record<AlertType, string> = {
+  success: "bg-cat-green",
+  error: "bg-danger",
+  warning: "bg-cat-amber",
+  info: "bg-cat-blue",
+  confirm: "bg-ink",
 };
 
 export function Alert({
@@ -50,24 +34,31 @@ export function Alert({
     }
   }, [duration, onClose, type]);
 
-  const base = `w-72 border border-ink-ghost border-l-2 ${ACCENT[type]} bg-surface shadow-sm animate-fade-in rounded`;
+  const base =
+    "w-80 rounded-lg border border-border-dim bg-raised shadow-[0_8px_24px_rgba(0,0,0,0.35)] animate-fade-in";
 
   if (type === "confirm") {
     return (
       <div className={base} role="alertdialog">
-        <div className="px-3 py-2.5">
-          <span className={`text-[10px] font-bold ${LABEL_COLOR[type]}`}>[{LABEL[type]}]</span>
-          <p className="mt-1 text-xs text-ink leading-relaxed">{message}</p>
+        <div className="flex items-start gap-3 px-4 py-3">
+          <span className={`mt-1.5 h-1.5 w-1.5 rounded-full ${DOT_COLOR[type]} shrink-0`} />
+          <p className="text-[13px] text-ink leading-relaxed">{message}</p>
         </div>
-        <div className="flex justify-end gap-3 border-t border-ink-ghost px-3 py-2">
-          <button onClick={onClose} className="text-[11px] text-ink-faint hover:text-ink transition-colors">
-            cancel
+        <div className="flex justify-end gap-2 border-t border-border-dim px-3 py-2">
+          <button
+            onClick={onClose}
+            className="h-7 px-3 rounded-md text-[12px] text-muted hover:text-ink transition-colors"
+          >
+            Cancel
           </button>
           <button
-            onClick={() => { onConfirm?.(); onClose(); }}
-            className="text-[11px] font-medium text-term-green hover:opacity-70 transition-opacity"
+            onClick={() => {
+              onConfirm?.();
+              onClose();
+            }}
+            className="h-7 px-3 rounded-md bg-white text-black text-[12px] font-medium hover:bg-gray-100 transition-colors"
           >
-            confirm
+            Confirm
           </button>
         </div>
       </div>
@@ -76,18 +67,16 @@ export function Alert({
 
   return (
     <div className={base} role="alert">
-      <div className="flex items-start justify-between gap-2 px-3 py-2.5">
-        <div className="flex items-baseline gap-2">
-          <span className={`text-[10px] font-bold shrink-0 ${LABEL_COLOR[type]}`}>[{LABEL[type]}]</span>
-          <p className="text-xs text-ink leading-relaxed">{message}</p>
-        </div>
+      <div className="flex items-start gap-3 px-4 py-3">
+        <span className={`mt-1.5 h-1.5 w-1.5 rounded-full ${DOT_COLOR[type]} shrink-0`} />
+        <p className="flex-1 text-[13px] text-ink leading-relaxed">{message}</p>
         {showCloseButton && (
           <button
             onClick={onClose}
-            className="shrink-0 text-sm text-ink-faint hover:text-ink transition-colors"
+            className="shrink-0 text-muted hover:text-ink transition-colors text-sm leading-none"
             aria-label="close"
           >
-            &times;
+            ×
           </button>
         )}
       </div>

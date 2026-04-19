@@ -7,7 +7,7 @@ interface PaginationControlsProps {
 }
 
 const buttonClass =
-  "bg-surface border border-ink-ghost rounded px-2.5 py-1 text-[11px] text-ink-faint hover:border-term-green hover:text-term-green disabled:opacity-30 disabled:cursor-not-allowed transition-colors";
+  "h-8 px-3 rounded-md border border-border-dim hover:border-border-mid text-[12px] text-muted hover:text-ink disabled:opacity-30 disabled:cursor-not-allowed transition-colors";
 
 export function PaginationControls({
   currentPage,
@@ -19,24 +19,16 @@ export function PaginationControls({
   if (currentPage === 0 && !hasNext) return null;
 
   return (
-    <div className="flex items-center gap-4 mt-4 text-[11px]">
-      <span className="text-ink-faint">
-        showing {totalItems} posts · page {currentPage + 1}
+    <div className="flex items-center gap-4 mt-6 text-[12px]">
+      <span className="text-faint font-mono">
+        {totalItems} posts · page {currentPage + 1}
       </span>
       <div className="flex gap-2 ml-auto">
-        <button
-          onClick={onPrev}
-          disabled={currentPage === 0}
-          className={buttonClass}
-        >
-          prev
+        <button onClick={onPrev} disabled={currentPage === 0} className={buttonClass}>
+          Prev
         </button>
-        <button
-          onClick={onNext}
-          disabled={!hasNext}
-          className={buttonClass}
-        >
-          next
+        <button onClick={onNext} disabled={!hasNext} className={buttonClass}>
+          Next
         </button>
       </div>
     </div>

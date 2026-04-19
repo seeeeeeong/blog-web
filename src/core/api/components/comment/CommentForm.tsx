@@ -10,8 +10,8 @@ interface CommentFormProps {
 
 export function CommentForm({
   onSubmit,
-  placeholder = "Leave a comment...",
-  buttonText = "send",
+  placeholder = "Leave a comment…",
+  buttonText = "Post",
   autoFocus = false,
 }: CommentFormProps) {
   const [content, setContent] = useState("");
@@ -30,25 +30,26 @@ export function CommentForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-2">
+    <form onSubmit={handleSubmit} className="space-y-3">
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder={placeholder}
         autoFocus={autoFocus}
-        rows={3}
+        rows={4}
         maxLength={COMMENT_LIMITS.CONTENT_MAX_LENGTH}
-        className="block w-full resize-none rounded border border-ink-ghost bg-panel p-2.5 text-xs text-ink placeholder:text-ink-faint focus:border-term-green focus:outline-none transition-colors"
+        className="block w-full resize-none rounded-lg border border-border-dim bg-raised p-3 text-[14px] text-ink placeholder:text-faint focus:border-border-mid focus:outline-none transition-colors"
       />
-
       <div className="flex justify-between items-center">
-        <span className="text-[10px] text-ink-faint">{content.length}/{COMMENT_LIMITS.CONTENT_MAX_LENGTH}</span>
+        <span className="text-[11px] text-faint font-mono">
+          {content.length}/{COMMENT_LIMITS.CONTENT_MAX_LENGTH}
+        </span>
         <button
           type="submit"
           disabled={!content.trim() || isSubmitting}
-          className="bg-term-green text-panel rounded px-3 py-1 text-xs font-medium hover:opacity-80 disabled:opacity-30 disabled:cursor-not-allowed transition-opacity"
+          className="h-8 px-4 rounded-md bg-white text-black text-[13px] font-medium hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
-          {isSubmitting ? "..." : buttonText}
+          {isSubmitting ? "Posting…" : buttonText}
         </button>
       </div>
     </form>

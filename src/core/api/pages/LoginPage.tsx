@@ -5,7 +5,6 @@ import type { AxiosError } from "axios";
 import { authApi } from "../../../storage/user/authApi";
 import { getUserIdFromToken } from "../../support/auth/authToken";
 import { extractApiErrorMessage } from "../../support/error/error";
-import { TerminalDots } from "../components/common/TerminalDots";
 
 interface LoginApiError {
   error?: { code?: string; message?: string };
@@ -32,7 +31,6 @@ export function LoginPage() {
       if (userId) localStorage.setItem("userId", userId);
       navigate("/");
     } catch (err) {
-      // authApi.login은 Axios 호출이므로 AxiosError로 단언 안전
       const axiosError = err as AxiosError<LoginApiError>;
       const errorCode = axiosError.response?.data?.error?.code;
       if (errorCode === "AUTH_009") {
@@ -46,57 +44,69 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-panel flex items-center justify-center px-4">
+    <div className="flex items-center justify-center px-6 py-16 md:py-24 min-h-[70vh]">
       <div className="w-full max-w-sm">
-        {/* Terminal window */}
-        <div className="border border-ink-ghost rounded-lg overflow-hidden">
-          {/* Title bar */}
-          <div className="bg-surface flex items-center gap-1.5 px-3 py-2">
-            <TerminalDots />
-            <span className="text-[10px] text-ink-faint ml-2">login — zsh</span>
+        <div className="mb-8 text-center">
+          <h1 className="text-[22px] font-semibold tracking-tighter-plus text-ink mb-1.5">
+            Sign in
+          </h1>
+          <p className="text-[13px] text-muted">Admin authentication required.</p>
+        </div>
+
+        <form
+          onSubmit={handleSubmit}
+          className="rounded-xl border border-border-dim bg-raised p-6 space-y-4"
+        >
+          <div>
+            <label htmlFor="email" className="block text-[12px] font-medium text-muted mb-1.5">
+              Email
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full h-9 px-3 bg-bg border border-border-dim rounded-md text-[13px] text-ink placeholder:text-faint outline-none focus:border-border-mid transition-colors"
+              placeholder="admin@example.com"
+            />
+          </div>
+          <div>
+            <label htmlFor="password" className="block text-[12px] font-medium text-muted mb-1.5">
+              Password
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full h-9 px-3 bg-bg border border-border-dim rounded-md text-[13px] text-ink placeholder:text-faint outline-none focus:border-border-mid transition-colors"
+              placeholder="••••••••"
+            />
           </div>
 
-          {/* Body */}
-          <div className="bg-panel p-5">
-            <div className="text-xs text-term-green mb-1">$ sudo authenticate</div>
-            <p className="text-[11px] text-ink-faint mb-5">Admin authentication required</p>
+          {errorMessage && (
+            <p className="text-[12px] text-danger">{errorMessage}</p>
+          )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label htmlFor="email" className="block text-[11px] text-ink-faint mb-1">email:</label>
-                <input
-                  id="email" name="email" type="email" autoComplete="email" required
-                  value={email} onChange={(e) => setEmail(e.target.value)}
-                  className="w-full h-9 px-3 bg-surface border border-ink-ghost rounded text-xs text-term-white outline-none focus:border-term-green transition-colors"
-                  placeholder="admin@example.com"
-                />
-              </div>
-              <div>
-                <label htmlFor="password" className="block text-[11px] text-ink-faint mb-1">password:</label>
-                <input
-                  id="password" name="password" type="password" autoComplete="current-password" required
-                  value={password} onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-9 px-3 bg-surface border border-ink-ghost rounded text-xs text-term-white outline-none focus:border-term-green transition-colors"
-                  placeholder="••••••••"
-                />
-              </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full h-9 rounded-md bg-white text-black text-[13px] font-medium hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          >
+            {loading ? "Signing in…" : "Sign in"}
+          </button>
+        </form>
 
-              {errorMessage && (
-                <div className="text-danger text-xs">[ERR] {errorMessage}</div>
-              )}
-
-              <button
-                type="submit" disabled={loading}
-                className="w-full h-9 text-xs font-semibold bg-term-green text-panel rounded hover:opacity-80 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
-              >
-                {loading ? "authenticating..." : "login"}
-              </button>
-            </form>
-
-            <div className="mt-4 text-center">
-              <Link to="/" className="text-[11px] text-ink-faint hover:text-term-green transition-colors">$ cd ~/blog</Link>
-            </div>
-          </div>
+        <div className="mt-6 text-center">
+          <Link to="/" className="text-[12px] text-muted hover:text-ink transition-colors">
+            ← Back to home
+          </Link>
         </div>
       </div>
     </div>

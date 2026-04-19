@@ -14,10 +14,10 @@ export function MenuButton({
   return (
     <button
       onClick={onClick}
-      className={`inline-flex h-7 w-7 items-center justify-center rounded transition-all ${
+      className={`inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors ${
         isActive
-          ? 'bg-term-green text-panel'
-          : 'text-ink-faint hover:text-term-green hover:bg-surface-alt'
+          ? "bg-raised-hover text-ink"
+          : "text-muted hover:text-ink hover:bg-raised"
       }`}
       type="button"
       title={title}
