@@ -9,9 +9,31 @@ import { useAlert } from "../../support/contexts/useAlert";
 import { MarkdownViewer } from "../components/editor/MarkdownViewer";
 import { CommentSection } from "../components/comment/CommentSection";
 import { SimilarPosts } from "../components/post/SimilarPosts";
-import { CatTag } from "../components/common/CatTag";
 import { Spinner } from "../components/common/Spinner";
-import { formatDateLong } from "../../support/converter/format";
+import { calculateWordCount } from "../../support/converter/format";
+
+function formatIsoDate(iso: string): string {
+  const d = new Date(iso);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${dd}`;
+}
+
+function readMinutes(content: string | undefined): number {
+  if (!content) return 1;
+  const words = calculateWordCount(content);
+  return Math.max(1, Math.round(words / 200));
+}
+
+function slugify(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9가-힣\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .slice(0, 40) || "post";
+}
 
 function parsePostId(raw: string | undefined): number | null {
   if (raw == null) return null;
@@ -86,10 +108,12 @@ export function PostDetailPage() {
 
   if (parsedId == null) {
     return (
-      <div className="max-w-[760px] mx-auto px-6 py-24 text-center">
-        <p className="text-danger text-sm mb-4">Post not found.</p>
-        <Link to="/" className="text-sm text-muted hover:text-ink">
-          ← Back to home
+      <div className="max-w-[760px] mx-auto px-8 py-24 text-center">
+        <p className="text-danger text-[13px] mb-4">
+          <span className="prompt-pink">!</span> cat: post not found
+        </p>
+        <Link to="/" className="text-[12px] text-muted hover:text-cat-green transition-colors">
+          <span className="prompt-green">$</span> cd ~/blog
         </Link>
       </div>
     );
@@ -105,20 +129,22 @@ export function PostDetailPage() {
 
   if (error === "server_error") {
     return (
-      <div className="max-w-[760px] mx-auto px-6 py-24 text-center">
-        <p className="text-danger text-sm mb-4">Failed to load post.</p>
+      <div className="max-w-[760px] mx-auto px-8 py-24 text-center">
+        <p className="text-danger text-[13px] mb-4">
+          <span className="prompt-pink">!</span> cat: failed to load post
+        </p>
         <div className="flex items-center justify-center gap-3">
           <button
             onClick={() => fetchPost(parsedId)}
-            className="h-9 px-4 rounded-md border border-border-dim hover:border-border-mid text-sm text-muted hover:text-ink transition-colors"
+            className="h-8 px-3 border border-border-mid text-[12px] text-muted hover:text-cat-green hover:border-cat-green transition-colors"
           >
-            Retry
+            :retry
           </button>
           <Link
             to="/"
-            className="h-9 px-4 rounded-md text-sm text-muted hover:text-ink inline-flex items-center transition-colors"
+            className="h-8 px-3 text-[12px] text-muted hover:text-cat-green inline-flex items-center transition-colors"
           >
-            ← Back
+            <span className="prompt-green mr-1.5">$</span> cd ~
           </Link>
         </div>
       </div>
@@ -127,71 +153,86 @@ export function PostDetailPage() {
 
   if (!post) {
     return (
-      <div className="max-w-[760px] mx-auto px-6 py-24 text-center">
-        <p className="text-danger text-sm mb-4">Post not found.</p>
-        <Link to="/" className="text-sm text-muted hover:text-ink">
-          ← Back to home
+      <div className="max-w-[760px] mx-auto px-8 py-24 text-center">
+        <p className="text-danger text-[13px] mb-4">
+          <span className="prompt-pink">!</span> cat: post not found
+        </p>
+        <Link to="/" className="text-[12px] text-muted hover:text-cat-green transition-colors">
+          <span className="prompt-green">$</span> cd ~/blog
         </Link>
       </div>
     );
   }
 
+  const slug = slugify(post.title);
+  const readTime = readMinutes(post.content);
+  const wordCount = calculateWordCount(post.content ?? "");
+
   return (
     <div className="animate-fade-in">
-      <article className="max-w-[760px] mx-auto px-6 pt-10 pb-16">
-        {/* Back */}
-        <Link
-          to="/"
-          className="inline-flex items-center gap-1.5 text-[13px] text-muted hover:text-ink transition-colors mb-10"
-        >
-          <span>←</span> All posts
-        </Link>
+      <article className="max-w-[760px] mx-auto px-6 md:px-8 pt-12 md:pt-16 pb-12">
+        {/* Breadcrumb path */}
+        <div className="text-[12px] text-muted mb-6 font-mono">
+          <Link to="/" className="text-cat-green hover:underline">
+            ~
+          </Link>
+          <span className="text-faint mx-1.5">/</span>
+          <span className="text-muted">posts</span>
+          <span className="text-faint mx-1.5">/</span>
+          <Link to={`/?category=${post.categoryId}`} className="text-cat-green hover:underline">
+            {categoryName}
+          </Link>
+          <span className="text-faint mx-1.5">/</span>
+          <span className="text-ink-bright">{slug}.md</span>
+        </div>
 
-        {/* Meta */}
-        <div className="flex items-center gap-3 mb-6">
-          <CatTag name={categoryName} />
-          <span className="font-mono text-[12px] text-faint">{formatDateLong(post.createdAt)}</span>
+        {/* Tag + date row */}
+        <div className="flex items-center gap-3 mb-3.5">
+          <Link
+            to={`/?category=${post.categoryId}`}
+            className="inline-block px-2 py-[3px] border border-border-mid text-cat-amber text-[11px] font-mono uppercase tracking-[0.08em] hover:border-cat-amber transition-colors"
+          >
+            {categoryName}
+          </Link>
+          <span className="text-muted text-[12px] font-mono">
+            {formatIsoDate(post.createdAt)} · {readTime} min
+          </span>
         </div>
 
         {/* Title */}
-        <h1 className="text-[32px] md:text-[44px] font-semibold leading-[1.05] tracking-tighter-plus mb-6 grad-text">
+        <h1 className="font-prose font-bold text-[26px] md:text-[34px] leading-[1.2] tracking-[-0.02em] text-ink-bright mb-[18px]">
           {post.title}
         </h1>
 
-        {/* Author */}
-        <div className="flex items-center justify-between pb-8 mb-10 border-b border-border-dim">
-          <div className="flex items-center gap-3 text-[13px] text-muted">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-cat-blue to-cat-purple flex items-center justify-center text-[11px] font-semibold text-white">
+        {/* Meta row: author + stats + actions */}
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[12px] text-muted font-mono py-4 border-t border-b border-border-dim mb-10">
+          <span className="flex items-center gap-2 text-ink">
+            <span className="w-[22px] h-[22px] bg-cat-green text-bg font-bold text-[11px] inline-flex items-center justify-center">
               L
-            </div>
-            <span className="text-ink">LEE SIN SEONG</span>
-          </div>
+            </span>
+            LEE SIN SEONG
+          </span>
+          <span>· {wordCount.toLocaleString()} words</span>
           {isAuthor && (
-            <div className="flex items-center gap-2">
-              <Link
-                to={`/posts/${parsedId}/edit`}
-                className="h-8 px-3 rounded-md border border-border-dim hover:border-border-mid text-[12px] text-muted hover:text-ink flex items-center transition-colors"
-              >
-                Edit
+            <div className="ml-auto flex items-center gap-4">
+              <Link to={`/posts/${parsedId}/edit`} className="text-cat-green hover:underline">
+                :edit
               </Link>
-              <button
-                onClick={handleDelete}
-                className="h-8 px-3 rounded-md border border-border-dim hover:border-danger text-[12px] text-muted hover:text-danger transition-colors"
-              >
-                Delete
+              <button onClick={handleDelete} className="text-cat-pink hover:underline">
+                :rm
               </button>
             </div>
           )}
         </div>
 
         {/* Body */}
-        <div className="mb-16">
+        <div className="mb-14">
           <MarkdownViewer contentHtml={post.contentHtml} />
         </div>
 
         <SimilarPosts postId={parsedId} />
 
-        <div className="mt-16">
+        <div className="mt-14">
           <CommentSection postId={parsedId} />
         </div>
       </article>

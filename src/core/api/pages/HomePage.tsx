@@ -1,20 +1,46 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { postApi } from "../../../storage/post/postApi";
 import { categoryApi } from "../../../storage/category/categoryApi";
 import type { PostSummary } from "../../domain/post";
 import type { Category } from "../../domain/category";
 import { Link, useSearchParams } from "react-router-dom";
 import { Spinner } from "../components/common/Spinner";
-import { CatTag } from "../components/common/CatTag";
-import { formatDateShort, formatDateLong } from "../../support/converter/format";
 import { PAGINATION } from "../../support/constants";
 
-const LATEST_COUNT = 3;
+const ASCII_LOGO = String.raw`   __                          __
+  / /___  __  ___________  ____ _/ /
+ / / __ \/ / / / ___/ __ \/ __ \`/ /
+/ / /_/ / /_/ / /  / / / / /_/ / /
+\___/\____/\__,_/_/  /_/ /_/\__,_/_/   v2.1.0`;
 
-function handleShine(e: React.MouseEvent<HTMLElement>) {
-  const rect = e.currentTarget.getBoundingClientRect();
-  e.currentTarget.style.setProperty("--x", `${e.clientX - rect.left}px`);
-  e.currentTarget.style.setProperty("--y", `${e.clientY - rect.top}px`);
+const CAT_COLOR: Record<string, string> = {
+  engineering: "text-cat-blue",
+  backend: "text-cat-blue",
+  cs: "text-cat-blue",
+  frontend: "text-cat-purple",
+  infra: "text-cat-amber",
+  notes: "text-cat-pink",
+  spring: "text-cat-green",
+  performance: "text-cat-green",
+  database: "text-cat-amber",
+};
+
+function catClass(name: string): string {
+  return CAT_COLOR[name.toLowerCase()] ?? "text-cat-amber";
+}
+
+function formatSize(excerpt: string | null | undefined, title: string): string {
+  const base = (excerpt ?? "").length + title.length;
+  const kb = Math.max(0.5, base / 100);
+  return `${kb.toFixed(1)}k`;
+}
+
+function formatIsoDate(iso: string): string {
+  const d = new Date(iso);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${dd}`;
 }
 
 export function HomePage() {
@@ -74,223 +100,186 @@ export function HomePage() {
 
   const isSearching = Boolean(qParam);
   const isFiltered = Boolean(categoryParam) || isSearching;
-  const latest = !isFiltered ? posts.slice(0, LATEST_COUNT) : [];
-  const rest = isFiltered ? posts : posts.slice(LATEST_COUNT);
+
+  const activeCategoryName = useMemo(() => {
+    if (!categoryParam) return null;
+    return categories.find((c) => c.id === Number(categoryParam))?.name.toLowerCase() ?? null;
+  }, [categoryParam, categories]);
+
+  const today = useMemo(() => {
+    const d = new Date();
+    return `${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
+  }, []);
+
+  const listTitle = isSearching
+    ? `./posts --grep "${qParam}"`
+    : activeCategoryName
+      ? `./posts --cat ${activeCategoryName}`
+      : "./posts --recent";
 
   return (
     <div className="animate-fade-in">
       {/* Hero */}
       {!isFiltered && (
-        <section className="hero-noise border-b border-border-dim">
-          <div className="max-w-[1100px] mx-auto px-6 py-20 md:py-24 relative">
-            <h1 className="text-[52px] md:text-[84px] font-semibold leading-[0.95] tracking-tightest-plus mb-8 grad-text">
-              Build. Break.
-              <br />
-              Write it down.
+        <section className="border-b border-dashed border-border-mid">
+          <div className="max-w-[1200px] mx-auto px-6 md:px-8 py-12 md:py-16">
+            <pre className="text-cat-green text-[11px] md:text-[12px] leading-[1.2] mb-7 opacity-90 whitespace-pre overflow-x-auto">
+{ASCII_LOGO}
+            </pre>
+            <h1 className="text-[26px] md:text-[32px] font-semibold tracking-tight text-ink-bright mb-4">
+              <span className="prompt-green">#</span> Lee Sin Seong — Engineering Notes
+              <span className="term-cursor" />
             </h1>
-            <div className="flex items-center gap-3">
-              {latest[0] && (
-                <Link
-                  to={`/posts/${latest[0].id}`}
-                  className="h-10 px-5 rounded-md bg-white text-black text-[14px] font-medium flex items-center gap-2 hover:bg-gray-100 transition-colors"
-                >
-                  Read latest <span>→</span>
-                </Link>
-              )}
-              <a
-                href="#all"
-                className="h-10 px-5 rounded-md border border-border-dim hover:border-border-mid text-[14px] text-ink flex items-center gap-2 font-mono transition-colors"
-              >
-                <span className="text-faint">$</span> browse
-              </a>
-            </div>
+            <p className="text-muted text-[14px] max-w-[640px]">
+              백엔드 엔지니어가 남기는 기술 로그. 실무에서 깨진 것들, 고친 과정, 그리고 남은 질문들의 기록.
+            </p>
           </div>
         </section>
       )}
 
-      <div className="max-w-[1100px] mx-auto px-6">
-        {/* Search banner */}
-        {isSearching && (
-          <div className="pt-10 pb-2 flex items-baseline gap-3">
-            <h2 className="text-[15px] font-medium text-ink">
-              Results for <span className="font-mono text-muted">"{qParam}"</span>
-            </h2>
-            <Link
-              to="/"
-              className="text-[13px] text-muted hover:text-ink transition-colors"
-            >
-              Clear
-            </Link>
+      {/* Status grid */}
+      {!isFiltered && (
+        <section className="border-b border-dashed border-border-mid">
+          <div className="max-w-[1200px] mx-auto grid grid-cols-2 md:grid-cols-4">
+            <StatusCell label="posts" value={`${posts.length}${hasNext ? "+" : ""}`} />
+            <StatusCell label="categories" value={String(categories.length || "—")} />
+            <StatusCell label="uptime" value="584d" accent />
+            <StatusCell label="last_build" value={today} />
           </div>
-        )}
+        </section>
+      )}
 
+      {/* Section head */}
+      <div className="max-w-[1200px] mx-auto px-6 md:px-8 pt-10 pb-5 border-b border-dashed border-border-mid flex items-baseline justify-between gap-4">
+        <h2 className="text-[13px] text-cat-amber">
+          <span className="text-muted">$ ls </span>
+          {listTitle}
+        </h2>
+        <div className="flex items-center gap-3 text-[12px] text-faint">
+          {isFiltered && (
+            <Link to="/" className="text-muted hover:text-cat-green transition-colors">
+              :q
+            </Link>
+          )}
+          <span>
+            {posts.length} entr{posts.length === 1 ? "y" : "ies"}
+            {hasNext ? " (more)" : ""}
+          </span>
+        </div>
+      </div>
+
+      {/* Category filter strip */}
+      {!isSearching && categories.length > 0 && (
+        <div className="max-w-[1200px] mx-auto px-6 md:px-8 py-3 border-b border-border-dim flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px]">
+          <span className="text-faint">filter:</span>
+          <Link
+            to="/"
+            className={!categoryParam ? "text-cat-amber" : "text-muted hover:text-cat-amber transition-colors"}
+          >
+            all
+          </Link>
+          {categories.map((cat) => {
+            const active = categoryParam === String(cat.id);
+            return (
+              <Link
+                key={cat.id}
+                to={`/?category=${cat.id}`}
+                className={active ? "text-cat-amber" : "text-muted hover:text-cat-amber transition-colors"}
+              >
+                {cat.name.toLowerCase()}
+              </Link>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Body */}
+      <div className="max-w-[1200px] mx-auto">
         {loading && posts.length === 0 ? (
           <div className="py-24 flex justify-center">
             <Spinner />
           </div>
         ) : error ? (
           <div className="py-24 text-center">
-            <p className="text-danger text-sm mb-4">{error}</p>
+            <p className="text-danger text-[13px] mb-4">
+              <span className="prompt-pink">!</span> {error}
+            </p>
             <button
               onClick={() => loadPage(0, false)}
-              className="h-9 px-4 rounded-md border border-border-dim text-sm text-muted hover:text-ink"
+              className="h-8 px-3 border border-border-mid text-[12px] text-muted hover:text-cat-green hover:border-cat-green transition-colors"
             >
-              Retry
+              :retry
             </button>
           </div>
         ) : posts.length === 0 ? (
-          <div className="py-24 text-center text-sm text-faint">
-            {isSearching ? `No posts match "${qParam}".` : "No posts yet."}
+          <div className="py-24 text-center text-[13px] text-faint">
+            <span className="prompt-muted">$</span> ls: no matching entries
+            {isSearching && <span> for "{qParam}"</span>}
           </div>
         ) : (
-          <>
-            {/* Latest */}
-            {latest.length > 0 && (
-              <section className="py-16 border-b border-border-dim">
-                <div className="flex items-baseline justify-between mb-8">
-                  <h2 className="text-[15px] font-medium text-ink">Latest</h2>
-                  <a href="#all" className="text-[13px] text-muted hover:text-ink transition-colors">
-                    View all →
-                  </a>
-                </div>
-
+          <div>
+            {posts.map((post, idx) => {
+              const cat = categorySlug(post.categoryId);
+              return (
                 <Link
-                  to={`/posts/${latest[0].id}`}
-                  onMouseMove={handleShine}
-                  className="shine block border border-border-dim rounded-xl p-6 md:p-8 mb-4 hover:border-border-mid transition-colors"
+                  key={post.id}
+                  to={`/posts/${post.id}`}
+                  className="grid grid-cols-[28px_1fr_90px_28px] md:grid-cols-[28px_120px_110px_1fr_70px_110px_28px] gap-x-3 md:gap-x-4 items-center px-6 md:px-8 py-3 border-b border-border-dim hover:bg-raised group transition-colors"
                 >
-                  <div className="flex items-center gap-3 mb-5">
-                    <CatTag name={categorySlug(latest[0].categoryId)} />
-                    <span className="font-mono text-[11px] text-faint">
-                      {formatDateLong(latest[0].createdAt)}
-                    </span>
-                  </div>
-                  <h3 className="text-[24px] md:text-[32px] font-semibold tracking-tighter-plus leading-tight mb-3 text-ink">
-                    {latest[0].title}
-                  </h3>
-                  {latest[0].excerpt && (
-                    <p className="text-[15px] text-muted leading-relaxed max-w-2xl">
-                      {latest[0].excerpt}
-                    </p>
-                  )}
+                  <span className="text-faint text-[12px]">{String(idx + 1).padStart(2, "0")}</span>
+                  <span className="hidden md:inline text-muted text-[11px]">-rw-r--r--</span>
+                  <span className={`hidden md:inline text-[12px] ${catClass(cat)} truncate`}>{cat}</span>
+                  <span className="text-ink-bright text-[13px] group-hover:text-cat-green truncate">
+                    {post.title}
+                  </span>
+                  <span className="hidden md:inline text-muted text-[11px] text-right">
+                    {formatSize(post.excerpt, post.title)}
+                  </span>
+                  <span className="text-muted text-[11px] text-right md:text-left truncate">
+                    {formatIsoDate(post.createdAt)}
+                  </span>
+                  <span className="text-faint text-right">❯</span>
                 </Link>
+              );
+            })}
 
-                {latest.length > 1 && (
-                  <div className="grid md:grid-cols-2 gap-4">
-                    {latest.slice(1).map((post) => (
-                      <Link
-                        key={post.id}
-                        to={`/posts/${post.id}`}
-                        onMouseMove={handleShine}
-                        className="shine block border border-border-dim rounded-xl p-6 hover:border-border-mid transition-colors"
-                      >
-                        <div className="flex items-center gap-3 mb-4">
-                          <CatTag name={categorySlug(post.categoryId)} />
-                          <span className="font-mono text-[11px] text-faint">
-                            {formatDateShort(post.createdAt)}
-                          </span>
-                        </div>
-                        <h3 className="text-[20px] font-semibold tracking-tight leading-snug mb-2 text-ink">
-                          {post.title}
-                        </h3>
-                        {post.excerpt && (
-                          <p className="text-[13px] text-muted leading-relaxed line-clamp-2">
-                            {post.excerpt}
-                          </p>
-                        )}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </section>
+            {hasNext && (
+              <div className="flex justify-center py-10">
+                <button
+                  onClick={() => loadPage(page + 1, true)}
+                  disabled={loadingMore}
+                  className="h-9 px-4 border border-border-mid text-[12px] text-muted hover:text-cat-green hover:border-cat-green transition-colors disabled:opacity-50"
+                >
+                  {loadingMore ? (
+                    <>
+                      <span className="prompt-green">$</span> loading…
+                    </>
+                  ) : (
+                    <>
+                      <span className="prompt-green">$</span> ls --more
+                    </>
+                  )}
+                </button>
+              </div>
             )}
-
-            {/* All posts changelog */}
-            {rest.length > 0 && (
-              <section id="all" className={isSearching ? "pb-16 pt-4" : "py-16"}>
-                {!isSearching && (
-                  <div className="flex flex-wrap items-baseline justify-between gap-4 mb-8">
-                    <h2 className="text-[15px] font-medium text-ink">
-                      {categoryParam ? "Posts" : "All posts"}
-                    </h2>
-                    <div className="flex items-center gap-1 flex-wrap">
-                      <Link
-                        to="/"
-                        className={`h-7 px-3 rounded-md text-[12px] font-mono transition-colors ${
-                          !categoryParam
-                            ? "bg-raised border border-border-dim text-ink"
-                            : "text-muted hover:text-ink"
-                        }`}
-                      >
-                        all
-                      </Link>
-                      {categories.map((cat) => {
-                        const active = categoryParam === String(cat.id);
-                        return (
-                          <Link
-                            key={cat.id}
-                            to={`/?category=${cat.id}`}
-                            className={`h-7 px-3 rounded-md text-[12px] font-mono transition-colors ${
-                              active
-                                ? "bg-raised border border-border-dim text-ink"
-                                : "text-muted hover:text-ink"
-                            }`}
-                          >
-                            {cat.name.toLowerCase()}
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                <div className="relative">
-                  <div className="absolute left-[80px] md:left-[110px] top-0 bottom-0 w-px bg-border-dim" />
-                  {rest.map((post, idx) => (
-                    <article
-                      key={post.id}
-                      className={`grid grid-cols-[80px_1fr] md:grid-cols-[110px_1fr] gap-6 md:gap-8 py-6 relative ${
-                        idx < rest.length - 1 ? "border-b border-border-dim" : ""
-                      }`}
-                    >
-                      <div className="font-mono text-[12px] text-faint pt-1">
-                        {formatDateShort(post.createdAt)}
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2 mb-2">
-                          <CatTag name={categorySlug(post.categoryId)} />
-                        </div>
-                        <Link to={`/posts/${post.id}`} className="group block">
-                          <h3 className="text-[18px] md:text-[20px] font-semibold tracking-tight mb-1.5 text-ink group-hover:text-muted transition-colors">
-                            {post.title}
-                          </h3>
-                          {post.excerpt && (
-                            <p className="text-[13px] text-muted leading-relaxed line-clamp-2">
-                              {post.excerpt}
-                            </p>
-                          )}
-                        </Link>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-
-                {hasNext && (
-                  <div className="flex justify-center mt-12">
-                    <button
-                      onClick={() => loadPage(page + 1, true)}
-                      disabled={loadingMore}
-                      className="h-10 px-5 rounded-md border border-border-dim hover:border-border-mid text-[13px] text-muted hover:text-ink font-mono transition-colors disabled:opacity-50"
-                    >
-                      {loadingMore ? "Loading…" : "Load more"}
-                    </button>
-                  </div>
-                )}
-              </section>
-            )}
-          </>
+          </div>
         )}
       </div>
     </div>
   );
 }
+
+function StatusCell({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
+  return (
+    <div className="px-6 md:px-8 py-5 border-r border-dashed border-border-mid last:border-r-0 md:[&:nth-child(2)]:border-r md:[&:nth-child(4)]:border-r-0 max-md:[&:nth-child(2n)]:border-r-0">
+      <div className="text-[11px] text-muted mb-1.5">
+        <span className="prompt-green">▸ </span>
+        {label}
+      </div>
+      <div className="text-[22px] text-ink-bright font-medium">
+        {accent ? <span className="text-cat-green">{value}</span> : value}
+      </div>
+    </div>
+  );
+}
+

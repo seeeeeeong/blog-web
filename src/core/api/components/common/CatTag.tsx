@@ -1,22 +1,17 @@
-const DOT_COLOR: Record<string, string> = {
-  engineering: "bg-cat-blue",
-  backend: "bg-cat-blue",
-  cs: "bg-cat-blue",
-  frontend: "bg-cat-purple",
-  infra: "bg-cat-amber",
-  notes: "bg-cat-pink",
-  spring: "bg-cat-green",
+const CAT_COLOR: Record<string, string> = {
+  engineering: "text-cat-blue",
+  backend: "text-cat-blue",
+  cs: "text-cat-blue",
+  frontend: "text-cat-purple",
+  infra: "text-cat-amber",
+  notes: "text-cat-pink",
+  spring: "text-cat-green",
+  performance: "text-cat-green",
+  database: "text-cat-amber",
 };
 
-const DEFAULT_DOT = "bg-ghost";
-
 export function CatTag({ name }: { name: string }) {
-  const dot = DOT_COLOR[name] ?? DEFAULT_DOT;
-  const label = name.charAt(0).toUpperCase() + name.slice(1);
-  return (
-    <span className="pill">
-      <span className={`pill-dot ${dot}`} />
-      {label}
-    </span>
-  );
+  const key = name.toLowerCase();
+  const color = CAT_COLOR[key] ?? "text-cat-amber";
+  return <span className={`text-[12px] ${color}`}>{key}</span>;
 }

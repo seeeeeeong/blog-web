@@ -3,13 +3,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Vercel Dark palette
+        // Neo-Terminal palette
         bg: "var(--c-bg)",
+        "bg-2": "var(--c-bg-2)",
         raised: "var(--c-raised)",
         "raised-hover": "var(--c-raised-hover)",
         "border-dim": "var(--c-border-dim)",
         "border-mid": "var(--c-border-mid)",
         ink: "var(--c-ink)",
+        "ink-bright": "var(--c-ink-bright)",
         muted: "var(--c-muted)",
         faint: "var(--c-faint)",
         ghost: "var(--c-ghost)",
@@ -49,15 +51,15 @@ export default {
         draft: "var(--c-cat-amber)",
       },
       fontFamily: {
-        sans: ["Geist", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "system-ui", "sans-serif"],
-        mono: ['"Geist Mono"', "ui-monospace", '"SF Mono"', "Menlo", "monospace"],
+        sans: ['"JetBrains Mono"', '"IBM Plex Mono"', "Pretendard", "ui-monospace", '"SF Mono"', "Menlo", "monospace"],
+        mono: ['"JetBrains Mono"', '"IBM Plex Mono"', "ui-monospace", '"SF Mono"', "Menlo", "monospace"],
       },
       borderRadius: {
-        DEFAULT: "6px",
-        md: "6px",
-        lg: "8px",
-        xl: "12px",
-        "2xl": "16px",
+        DEFAULT: "3px",
+        md: "4px",
+        lg: "4px",
+        xl: "4px",
+        "2xl": "4px",
         full: "9999px",
       },
       letterSpacing: {
