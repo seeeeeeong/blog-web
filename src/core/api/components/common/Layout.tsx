@@ -1,6 +1,7 @@
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { clearAuthData, isExpiredToken, checkIsAdmin } from "../../../support/auth/authToken";
+import { adminAiApi } from "../../../../storage/admin/adminAiApi";
 import { categoryApi } from "../../../../storage/category/categoryApi";
 import type { Category } from "../../../domain/category";
 import { useTheme } from "../../../support/hooks/useTheme";
@@ -193,12 +194,7 @@ export function Layout() {
                   >
                     :admin
                   </Link>
-                  <Link
-                    to="/admin/rag"
-                    className="hidden sm:inline-flex h-7 px-2.5 border border-border-dim hover:border-cat-blue text-[11px] text-muted hover:text-cat-blue items-center transition-colors"
-                  >
-                    :rag
-                  </Link>
+                  <BackfillButton />
                   <button
                     onClick={handleLogout}
                     className="h-7 px-2.5 border border-cat-pink text-cat-pink hover:bg-cat-pink hover:text-bg text-[11px] transition-colors"
@@ -283,5 +279,49 @@ export function Layout() {
         </div>
       </footer>
     </div>
+  );
+}
+
+const AI_ADMIN_KEY = import.meta.env.VITE_AI_ADMIN_KEY ?? "";
+
+function BackfillButton() {
+  const [status, setStatus] = useState<"idle" | "running" | "done" | "error">("idle");
+
+  const run = async () => {
+    if (!AI_ADMIN_KEY) {
+      alert("VITE_AI_ADMIN_KEY 환경변수가 설정되지 않았습니다.");
+      return;
+    }
+    setStatus("running");
+    try {
+      const contentCount = await adminAiApi.backfillContent(AI_ADMIN_KEY);
+      const embedCount = await adminAiApi.backfillEmbedding(AI_ADMIN_KEY);
+      alert(`Backfill 완료\n- Content: ${contentCount}개\n- Embedding: ${embedCount}개`);
+      setStatus("done");
+    } catch {
+      alert("Backfill 실패");
+      setStatus("error");
+    } finally {
+      setTimeout(() => setStatus("idle"), 3000);
+    }
+  };
+
+  const label =
+    status === "running" ? "running…" : status === "done" ? "done" : ":backfill";
+
+  return (
+    <button
+      onClick={run}
+      disabled={status === "running"}
+      className={`hidden sm:inline-flex h-7 px-2.5 border text-[11px] items-center transition-colors ${
+        status === "done"
+          ? "border-cat-green text-cat-green"
+          : status === "error"
+            ? "border-danger text-danger"
+            : "border-border-dim hover:border-cat-blue text-muted hover:text-cat-blue"
+      } disabled:opacity-40`}
+    >
+      {label}
+    </button>
   );
 }
