@@ -12,19 +12,19 @@ export function CommentItem({ comment, onAdminDelete }: CommentItemProps) {
   const initial = comment.nickname.charAt(0).toUpperCase();
 
   return (
-    <article className="border border-border-dim rounded-lg p-4 hover:border-border-mid transition-colors">
-      <header className="flex items-center gap-2.5 mb-3">
-        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-cat-blue to-cat-purple flex items-center justify-center text-[10px] font-semibold text-white">
+    <article className="border-l-2 border-rule pl-4 hover:border-accent transition-colors">
+      <header className="flex items-center gap-2.5 mb-2.5">
+        <div className="w-6 h-6 rounded-full bg-paper-2 border border-rule flex items-center justify-center font-meta text-[10px] font-semibold text-ink-soft">
           {initial}
         </div>
-        <span className="text-[13px] text-ink font-medium">{comment.nickname}</span>
-        <span className="text-[12px] text-faint font-mono">
+        <span className="font-display text-[14px] text-ink font-medium">{comment.nickname}</span>
+        <span className="font-meta text-[10px] text-muted tracking-[0.08em] uppercase">
           {formatRelativeDate(comment.createdAt)}
         </span>
       </header>
 
       <div
-        className="comment-content text-[14px] text-ink whitespace-pre-wrap break-words leading-relaxed"
+        className="comment-content font-body text-[15px] text-ink whitespace-pre-wrap break-words leading-[1.7]"
         dangerouslySetInnerHTML={{ __html: comment.contentHtml }}
       />
 
@@ -32,7 +32,7 @@ export function CommentItem({ comment, onAdminDelete }: CommentItemProps) {
         <div className="mt-3 flex items-center gap-3">
           <button
             onClick={() => onAdminDelete(comment.id)}
-            className="text-[12px] text-muted hover:text-danger transition-colors"
+            className="font-meta text-[10px] text-muted hover:text-danger transition-colors uppercase tracking-[0.08em]"
           >
             Delete
           </button>

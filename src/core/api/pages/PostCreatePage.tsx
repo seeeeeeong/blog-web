@@ -32,15 +32,16 @@ export function PostCreatePage() {
   };
 
   return (
-    <div className="max-w-[900px] mx-auto px-6 py-10 animate-fade-in">
-      <div className="mb-8">
-        <h1 className="text-[22px] font-semibold tracking-tighter-plus text-ink mb-2">
-          New post
+    <div className="max-w-[920px] mx-auto px-6 md:px-10 py-10 animate-fade-in">
+      <div className="mb-8 pb-6 border-b border-rule">
+        <p className="eyebrow mb-2">Editorial</p>
+        <h1 className="font-display text-[36px] font-medium tracking-[-0.02em] text-ink leading-none mb-3">
+          New entry
         </h1>
-        <div className="flex flex-wrap items-center gap-4 text-[12px] text-faint font-mono">
-          <span>title {title.length}/{titleMaxLength}</span>
-          <span>words {wordCount}</span>
-          <span>chars {contentCharacters}</span>
+        <div className="flex flex-wrap items-center gap-5 font-meta text-[11px] text-muted tracking-[0.08em] uppercase">
+          <span>title · {title.length}/{titleMaxLength}</span>
+          <span>words · {wordCount}</span>
+          <span>chars · {contentCharacters}</span>
         </div>
       </div>
 
@@ -49,11 +50,11 @@ export function PostCreatePage() {
           e.preventDefault();
           handleSubmit(false);
         }}
-        className="space-y-5 pb-24"
+        className="space-y-6 pb-24"
       >
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div className="md:col-span-2">
-            <label htmlFor="title" className="mb-1.5 block text-[12px] font-medium text-muted">
+            <label htmlFor="title" className="mb-1.5 block eyebrow">
               Title
             </label>
             <input
@@ -63,20 +64,20 @@ export function PostCreatePage() {
               onChange={(e) => setTitle(e.target.value)}
               required
               maxLength={titleMaxLength}
-              className="h-9 w-full rounded-md border border-border-dim bg-raised px-3 text-[14px] text-ink placeholder:text-faint transition-colors focus:border-border-mid focus:outline-none"
-              placeholder="Enter title"
+              className="h-10 w-full border border-rule bg-paper px-3 font-display text-[18px] text-ink placeholder:text-faint placeholder:font-body placeholder:italic focus:border-ink focus:outline-none transition-colors"
+              placeholder="An entry needs a title."
             />
           </div>
 
-          <div className="md:col-span-1">
-            <label htmlFor="category" className="mb-1.5 block text-[12px] font-medium text-muted">
+          <div>
+            <label htmlFor="category" className="mb-1.5 block eyebrow">
               Category
             </label>
             <select
               id="category"
               value={categoryId}
               onChange={(e) => setCategoryId(Number(e.target.value))}
-              className="h-9 w-full rounded-md border border-border-dim bg-raised px-3 text-[14px] text-ink transition-colors focus:border-border-mid focus:outline-none"
+              className="h-10 w-full border border-rule bg-paper px-3 font-body text-[14px] text-ink focus:border-ink focus:outline-none transition-colors"
             >
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
@@ -87,22 +88,22 @@ export function PostCreatePage() {
           </div>
         </div>
 
-        <div className="space-y-1.5">
-          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-            <label className="text-[12px] font-medium text-muted">Content</label>
-            <span className="text-[11px] text-faint">
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <label className="eyebrow">Body</label>
+            <span className="font-meta text-[10px] text-faint">
               Paste or upload images directly
             </span>
           </div>
           <TipTapEditor value={content} onChange={setContent} />
         </div>
 
-        <div className="sticky bottom-3 z-20 rounded-lg border border-border-dim bg-raised/95 backdrop-blur p-3">
+        <div className="sticky bottom-3 z-20 border border-rule bg-paper/95 backdrop-blur p-3">
           <div className="flex flex-col-reverse items-stretch justify-between gap-3 sm:flex-row sm:items-center">
             <button
               type="button"
               onClick={() => navigate("/")}
-              className="h-8 px-4 rounded-md border border-border-dim hover:border-border-mid text-[13px] text-muted hover:text-ink transition-colors"
+              className="h-9 px-4 border border-rule font-meta text-[11px] uppercase tracking-[0.1em] text-muted hover:border-ink hover:text-ink transition-colors"
             >
               Cancel
             </button>
@@ -111,14 +112,14 @@ export function PostCreatePage() {
                 type="button"
                 onClick={() => handleSubmit(true)}
                 disabled={loading}
-                className="h-8 px-4 rounded-md border border-border-dim hover:border-border-mid text-[13px] font-medium text-muted hover:text-ink transition-colors disabled:opacity-30"
+                className="h-9 px-4 border border-rule font-meta text-[11px] uppercase tracking-[0.1em] text-muted hover:border-ink hover:text-ink transition-colors disabled:opacity-30"
               >
                 {loading ? "…" : "Save draft"}
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="h-8 px-4 rounded-md bg-white text-black text-[13px] font-medium hover:bg-gray-100 transition-colors disabled:opacity-30"
+                className="h-9 px-5 bg-ink text-paper font-meta text-[11px] uppercase tracking-[0.12em] hover:bg-accent transition-colors disabled:opacity-30"
               >
                 {loading ? "…" : "Publish"}
               </button>

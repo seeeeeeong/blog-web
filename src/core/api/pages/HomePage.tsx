@@ -6,35 +6,23 @@ import type { Category } from "../../domain/category";
 import { Link, useSearchParams } from "react-router-dom";
 import { Spinner } from "../components/common/Spinner";
 import { PAGINATION } from "../../support/constants";
+import { calculateWordCount } from "../../support/converter/format";
 
-const CAT_COLOR: Record<string, string> = {
-  engineering: "text-cat-blue",
-  backend: "text-cat-blue",
-  cs: "text-cat-blue",
-  frontend: "text-cat-purple",
-  infra: "text-cat-amber",
-  notes: "text-cat-pink",
-  spring: "text-cat-green",
-  performance: "text-cat-green",
-  database: "text-cat-amber",
-};
+const MONTHS_EN = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 
-function catClass(name: string): string {
-  return CAT_COLOR[name.toLowerCase()] ?? "text-cat-amber";
-}
-
-function formatSize(excerpt: string | null | undefined, title: string): string {
-  const base = (excerpt ?? "").length + title.length;
-  const kb = Math.max(0.5, base / 100);
-  return `${kb.toFixed(1)}k`;
-}
-
-function formatIsoDate(iso: string): string {
+function parseIsoDate(iso: string) {
   const d = new Date(iso);
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${dd}`;
+  return {
+    day: String(d.getDate()).padStart(2, "0"),
+    month: MONTHS_EN[d.getMonth()],
+    year: d.getFullYear(),
+  };
+}
+
+function readMinutes(excerpt: string | null | undefined, title: string): number {
+  const base = (excerpt ?? "").length + title.length;
+  const words = Math.max(300, calculateWordCount(excerpt ?? "") * 4 + base);
+  return Math.max(3, Math.round(words / 220));
 }
 
 export function HomePage() {
@@ -53,10 +41,9 @@ export function HomePage() {
     categoryApi.getCategories().then(setCategories).catch(() => {});
   }, []);
 
-  const categorySlug = useCallback(
+  const categoryName = useCallback(
     (categoryId: number) => {
-      const name = categories.find((c) => c.id === categoryId)?.name ?? "etc";
-      return name.toLowerCase();
+      return categories.find((c) => c.id === categoryId)?.name ?? "etc";
     },
     [categories],
   );
@@ -95,172 +82,239 @@ export function HomePage() {
   const isSearching = Boolean(qParam);
   const isFiltered = Boolean(categoryParam) || isSearching;
 
-  const activeCategoryName = useMemo(() => {
+  const activeCategory = useMemo(() => {
     if (!categoryParam) return null;
-    return categories.find((c) => c.id === Number(categoryParam))?.name.toLowerCase() ?? null;
+    return categories.find((c) => c.id === Number(categoryParam)) ?? null;
   }, [categoryParam, categories]);
 
-  const listTitle = isSearching
-    ? `./posts --grep "${qParam}"`
-    : activeCategoryName
-      ? `./posts --cat ${activeCategoryName}`
-      : "./posts --recent";
+  const [featured, ...rest] = posts;
 
   return (
-    <div className="animate-fade-in">
-      {/* Hero */}
-      {!isFiltered && (
-        <section className="border-b border-dashed border-border-mid">
-          <div className="max-w-[1200px] mx-auto px-6 md:px-8 py-10 md:py-14">
-            <h1 className="text-[26px] md:text-[34px] font-semibold tracking-[-0.01em] text-ink-bright">
-              <span className="prompt-green">#</span> SEEEEEEONG.LOG
-              <span className="term-cursor" />
-            </h1>
+    <div className="px-6 md:px-10 pt-10 pb-20 animate-fade-in">
+      <div className="grid md:grid-cols-[200px_1fr] gap-10 md:gap-14">
+        <aside className="hidden md:block">
+          <div className="eyebrow mb-4 pb-2.5 border-b border-rule">
+            {isSearching ? "Search" : "Categories"}
           </div>
-        </section>
-      )}
-
-      {/* Status grid */}
-      {!isFiltered && (
-        <section className="border-b border-dashed border-border-mid">
-          <div className="max-w-[1200px] mx-auto grid grid-cols-2">
-            <StatusCell label="posts" value={`${posts.length}${hasNext ? "+" : ""}`} accent />
-            <StatusCell label="categories" value={String(categories.length || "—")} />
-          </div>
-        </section>
-      )}
-
-      {/* Section head */}
-      <div className="max-w-[1200px] mx-auto px-6 md:px-8 pt-10 pb-5 border-b border-dashed border-border-mid flex items-baseline justify-between gap-4">
-        <h2 className="text-[13px] text-cat-amber">
-          <span className="text-muted">$ ls </span>
-          {listTitle}
-        </h2>
-        <div className="flex items-center gap-3 text-[12px] text-faint">
-          {isFiltered && (
-            <Link to="/" className="text-muted hover:text-cat-green transition-colors">
-              :q
-            </Link>
-          )}
-          <span>
-            {posts.length} entr{posts.length === 1 ? "y" : "ies"}
-            {hasNext ? " (more)" : ""}
-          </span>
-        </div>
-      </div>
-
-      {/* Category filter strip */}
-      {!isSearching && categories.length > 0 && (
-        <div className="max-w-[1200px] mx-auto px-6 md:px-8 py-3 border-b border-border-dim flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px]">
-          <span className="text-faint">filter:</span>
-          <Link
-            to="/"
-            className={!categoryParam ? "text-cat-amber" : "text-muted hover:text-cat-amber transition-colors"}
-          >
-            all
-          </Link>
-          {categories.map((cat) => {
-            const active = categoryParam === String(cat.id);
-            return (
-              <Link
+          <div className="flex flex-col gap-0.5 mb-10">
+            <CategoryLink
+              to="/"
+              active={!categoryParam && !isSearching}
+              label="All posts"
+              count={posts.length}
+            />
+            {categories.map((cat) => (
+              <CategoryLink
                 key={cat.id}
                 to={`/?category=${cat.id}`}
-                className={active ? "text-cat-amber" : "text-muted hover:text-cat-amber transition-colors"}
+                active={categoryParam === String(cat.id)}
+                label={cat.name}
+              />
+            ))}
+          </div>
+
+          <div className="eyebrow mb-3 pb-2 border-b border-rule-soft">About</div>
+          <p className="text-[14px] text-muted leading-[1.6] font-body">
+            A slow blog on software, books, and the long interval between them.
+            Updated when there's something worth saying.{" "}
+            <em className="text-ink-soft not-italic font-body italic">— seeeeeeong</em>
+          </p>
+        </aside>
+
+        <section className="min-w-0">
+          {isSearching && (
+            <div className="mb-10 pb-6 border-b border-rule">
+              <p className="eyebrow mb-2">Search results</p>
+              <h1 className="font-display text-[32px] md:text-[40px] font-medium tracking-[-0.025em] leading-[1.05] text-ink">
+                “{qParam}”
+              </h1>
+              <p className="font-meta text-[11px] text-muted mt-3 tracking-[0.08em] uppercase">
+                {posts.length} {posts.length === 1 ? "result" : "results"}
+              </p>
+            </div>
+          )}
+
+          {activeCategory && !isSearching && (
+            <div className="mb-10 pb-6 border-b border-rule">
+              <p className="eyebrow mb-2">Category</p>
+              <h1 className="font-display text-[32px] md:text-[40px] font-medium tracking-[-0.025em] leading-[1.05] text-ink">
+                {activeCategory.name}
+              </h1>
+            </div>
+          )}
+
+          {loading && posts.length === 0 ? (
+            <div className="py-24 flex justify-center">
+              <Spinner />
+            </div>
+          ) : error ? (
+            <div className="py-24 text-center">
+              <p className="text-danger text-[14px] mb-4">{error}</p>
+              <button
+                onClick={() => loadPage(0, false)}
+                className="h-8 px-3 border border-rule rounded-sm font-meta text-[11px] text-muted hover:border-ink hover:text-ink transition-colors"
               >
-                {cat.name.toLowerCase()}
-              </Link>
-            );
-          })}
-        </div>
-      )}
+                :retry
+              </button>
+            </div>
+          ) : posts.length === 0 ? (
+            <div className="py-24 text-center font-body text-[15px] text-muted italic">
+              No matching entries{isSearching && ` for "${qParam}"`}.
+            </div>
+          ) : (
+            <>
+              {!isFiltered && featured && (
+                <FeaturedArticle
+                  post={featured}
+                  categoryName={categoryName(featured.categoryId)}
+                />
+              )}
 
-      {/* Body */}
-      <div className="max-w-[1200px] mx-auto">
-        {loading && posts.length === 0 ? (
-          <div className="py-24 flex justify-center">
-            <Spinner />
-          </div>
-        ) : error ? (
-          <div className="py-24 text-center">
-            <p className="text-danger text-[13px] mb-4">
-              <span className="prompt-pink">!</span> {error}
-            </p>
-            <button
-              onClick={() => loadPage(0, false)}
-              className="h-8 px-3 border border-border-mid text-[12px] text-muted hover:text-cat-green hover:border-cat-green transition-colors"
-            >
-              :retry
-            </button>
-          </div>
-        ) : posts.length === 0 ? (
-          <div className="py-24 text-center text-[13px] text-faint">
-            <span className="prompt-muted">$</span> ls: no matching entries
-            {isSearching && <span> for "{qParam}"</span>}
-          </div>
-        ) : (
-          <div>
-            {posts.map((post, idx) => {
-              const cat = categorySlug(post.categoryId);
-              return (
-                <Link
-                  key={post.id}
-                  to={`/posts/${post.id}`}
-                  className="grid grid-cols-[28px_1fr_90px_28px] md:grid-cols-[28px_120px_110px_1fr_70px_110px_28px] gap-x-3 md:gap-x-4 items-center px-6 md:px-8 py-3 border-b border-border-dim hover:bg-raised group transition-colors"
-                >
-                  <span className="text-faint text-[12px]">{String(idx + 1).padStart(2, "0")}</span>
-                  <span className="hidden md:inline text-muted text-[11px]">-rw-r--r--</span>
-                  <span className={`hidden md:inline text-[12px] ${catClass(cat)} truncate`}>{cat}</span>
-                  <span className="text-ink-bright text-[13px] group-hover:text-cat-green truncate">
-                    {post.title}
-                  </span>
-                  <span className="hidden md:inline text-muted text-[11px] text-right">
-                    {formatSize(post.excerpt, post.title)}
-                  </span>
-                  <span className="text-muted text-[11px] text-right md:text-left truncate">
-                    {formatIsoDate(post.createdAt)}
-                  </span>
-                  <span className="text-faint text-right">❯</span>
-                </Link>
-              );
-            })}
-
-            {hasNext && (
-              <div className="flex justify-center py-10">
-                <button
-                  onClick={() => loadPage(page + 1, true)}
-                  disabled={loadingMore}
-                  className="h-9 px-4 border border-border-mid text-[12px] text-muted hover:text-cat-green hover:border-cat-green transition-colors disabled:opacity-50"
-                >
-                  {loadingMore ? (
-                    <>
-                      <span className="prompt-green">$</span> loading…
-                    </>
-                  ) : (
-                    <>
-                      <span className="prompt-green">$</span> ls --more
-                    </>
-                  )}
-                </button>
+              <div>
+                {(isFiltered ? posts : rest).map((post) => (
+                  <PostRow
+                    key={post.id}
+                    post={post}
+                    categoryName={categoryName(post.categoryId)}
+                  />
+                ))}
               </div>
-            )}
-          </div>
-        )}
+
+              {hasNext && (
+                <div className="mt-14 pt-7 border-t-2 border-ink flex items-center justify-between font-meta text-[11px] uppercase tracking-[0.1em]">
+                  <span className="text-muted">
+                    Page {page + 1}
+                  </span>
+                  <button
+                    onClick={() => loadPage(page + 1, true)}
+                    disabled={loadingMore}
+                    className="text-muted hover:text-ink transition-colors disabled:opacity-50"
+                  >
+                    {loadingMore ? "loading…" : "Older →"}
+                  </button>
+                </div>
+              )}
+
+              {!hasNext && posts.length > 3 && (
+                <div className="mt-16 text-center font-display text-rule text-[22px] tracking-[1em] pl-[1em]">
+                  ❦❦❦
+                </div>
+              )}
+            </>
+          )}
+        </section>
       </div>
     </div>
   );
 }
 
-function StatusCell({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
+function CategoryLink({
+  to,
+  active,
+  label,
+  count,
+}: {
+  to: string;
+  active: boolean;
+  label: string;
+  count?: number;
+}) {
   return (
-    <div className="px-6 md:px-8 py-5 border-r border-dashed border-border-mid last:border-r-0">
-      <div className="text-[11px] text-muted mb-1.5">
-        <span className="prompt-green">▸ </span>
-        {label}
-      </div>
-      <div className="text-[22px] text-ink-bright font-medium">
-        {accent ? <span className="text-cat-green">{value}</span> : value}
-      </div>
-    </div>
+    <Link
+      to={to}
+      className={`flex justify-between items-center py-[7px] pl-2.5 pr-2 text-[15px] transition-colors border-l-2 font-body ${
+        active
+          ? "text-ink border-accent font-medium"
+          : "text-ink-soft border-transparent hover:text-ink hover:bg-paper-2"
+      }`}
+    >
+      <span>{label}</span>
+      {count !== undefined && (
+        <span className="font-meta text-[11px] text-faint">
+          {String(count).padStart(2, "0")}
+        </span>
+      )}
+    </Link>
   );
 }
 
+function FeaturedArticle({
+  post,
+  categoryName,
+}: {
+  post: PostSummary;
+  categoryName: string;
+}) {
+  const { day, month } = parseIsoDate(post.createdAt);
+  const readTime = readMinutes(post.excerpt, post.title);
+  return (
+    <article className="grid md:grid-cols-[1.1fr_1fr] gap-8 md:gap-10 items-start pb-11 mb-11 border-b border-rule">
+      <div>
+        <div className="font-meta text-[10px] tracking-[0.3em] uppercase text-accent mb-3.5">
+          Featured · {categoryName}
+        </div>
+        <h1 className="font-display text-[40px] md:text-[48px] font-normal leading-[1.05] tracking-[-0.025em] mb-4 text-balance">
+          <Link to={`/posts/${post.id}`} className="text-ink hover:text-accent transition-colors">
+            {post.title}
+          </Link>
+        </h1>
+        {post.excerpt && (
+          <p className="font-body italic text-[17px] text-ink-soft leading-[1.6] mb-5">
+            {post.excerpt}
+          </p>
+        )}
+        <div className="flex flex-wrap items-center gap-5 font-meta text-[11px] tracking-[0.08em] uppercase text-muted">
+          <span className="text-accent">{categoryName}</span>
+          <span>{month} {day}</span>
+          <span>{readTime} min read</span>
+        </div>
+      </div>
+      <Link to={`/posts/${post.id}`} className="block">
+        <div className="aspect-[4/3] thumb-hatch flex items-end p-4">
+          <span className="font-meta text-[10px] tracking-[0.15em] uppercase text-muted bg-paper px-2 py-[3px] border border-rule">
+            cover · 4:3
+          </span>
+        </div>
+      </Link>
+    </article>
+  );
+}
+
+function PostRow({
+  post,
+  categoryName,
+}: {
+  post: PostSummary;
+  categoryName: string;
+}) {
+  const { day, month, year } = parseIsoDate(post.createdAt);
+  const readTime = readMinutes(post.excerpt, post.title);
+  return (
+    <Link
+      to={`/posts/${post.id}`}
+      className="grid grid-cols-[64px_1fr] md:grid-cols-[80px_1fr_110px] gap-6 md:gap-[30px] py-6 rule-dotted-bottom items-start transition-[padding] duration-200 hover:pl-2"
+    >
+      <div className="font-meta text-[11px] text-muted tracking-[0.05em] leading-[1.5] pt-1">
+        <span className="block font-display text-[26px] text-ink font-medium leading-none tracking-[-0.02em] mb-1">
+          {day}
+        </span>
+        {month} {year}
+      </div>
+      <div className="min-w-0">
+        <h2 className="font-display text-[22px] md:text-[24px] font-medium leading-[1.2] tracking-[-0.015em] mb-2 text-balance text-ink">
+          {post.title}
+        </h2>
+        {post.excerpt && (
+          <p className="font-body text-[15.5px] text-ink-soft leading-[1.6] mb-3 line-clamp-2">
+            {post.excerpt}
+          </p>
+        )}
+        <div className="flex gap-4 font-meta text-[11px] tracking-[0.08em] uppercase text-muted">
+          <span className="text-accent">{categoryName}</span>
+          <span>{readTime} min</span>
+        </div>
+      </div>
+      <div className="hidden md:block aspect-square thumb-hatch" />
+    </Link>
+  );
+}

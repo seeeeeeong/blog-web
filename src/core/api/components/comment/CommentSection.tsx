@@ -13,15 +13,17 @@ export function CommentSection({ postId }: CommentSectionProps) {
   const { comments, loading, createComment, adminDeleteComment } = useComments(postId);
 
   return (
-    <section className="pt-8 border-t border-dashed border-border-mid">
-      <div className="flex items-baseline gap-2 mb-6 text-[13px]">
-        <h2 className="text-cat-amber">
-          <span className="text-muted">$ cat </span>comments.log
+    <section className="pt-10 border-t border-rule">
+      <div className="flex items-baseline justify-between gap-3 mb-6">
+        <h2 className="font-display text-[22px] font-medium tracking-[-0.015em] text-ink">
+          Correspondence
         </h2>
-        <span className="text-faint">// {comments.length} {comments.length === 1 ? "entry" : "entries"}</span>
+        <span className="font-meta text-[11px] text-muted tracking-[0.08em] uppercase">
+          {comments.length} {comments.length === 1 ? "note" : "notes"}
+        </span>
       </div>
 
-      <div className="mb-8">
+      <div className="mb-10">
         <CommentForm onSubmit={createComment} />
       </div>
 
@@ -30,11 +32,11 @@ export function CommentSection({ postId }: CommentSectionProps) {
           <Spinner />
         </div>
       ) : comments.length === 0 ? (
-        <p className="text-[12px] text-faint py-4">
-          <span className="prompt-muted">—</span> no comments yet
+        <p className="font-body italic text-[14px] text-muted py-4">
+          Be the first to leave a note.
         </p>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-5">
           {comments.map((comment) => (
             <CommentItem
               key={comment.id}

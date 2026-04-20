@@ -2,41 +2,35 @@ import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { clearAuthData, isExpiredToken, checkIsAdmin } from "../../../support/auth/authToken";
 import { adminAiApi } from "../../../../storage/admin/adminAiApi";
-import { categoryApi } from "../../../../storage/category/categoryApi";
-import type { Category } from "../../../domain/category";
 import { useTheme } from "../../../support/hooks/useTheme";
+import { ChatDrawer } from "./ChatDrawer";
 
-function routePath(pathname: string, search: string): string {
-  if (pathname === "/") {
-    const params = new URLSearchParams(search);
-    if (params.get("q")) return "blog/search";
-    if (params.get("category")) return "blog/posts";
-    return "blog";
-  }
-  if (pathname.startsWith("/posts/create")) return "blog/posts/new";
-  if (pathname.startsWith("/posts/") && pathname.endsWith("/edit")) return "blog/posts/edit";
-  if (pathname.startsWith("/posts/")) return `blog/posts/${pathname.split("/")[2]}`;
-  if (pathname.startsWith("/chat")) return "blog/chat";
-  if (pathname.startsWith("/admin")) return "blog/admin";
-  if (pathname.startsWith("/login")) return "blog/login";
-  return "blog" + pathname;
+function formatToday(): string {
+  const d = new Date();
+  return d.toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 }
 
 export function Layout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isAdmin, setIsAdmin] = useState(false);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const [chatOpen, setChatOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const { theme, toggleTheme } = useTheme();
 
   const urlParams = new URLSearchParams(location.search);
-  const categoryParam = urlParams.get("category");
   const qParam = urlParams.get("q");
-  const isHomeAll = location.pathname === "/" && !categoryParam && !qParam;
+  const categoryParam = urlParams.get("category");
+  const isHome = location.pathname === "/";
+  const isArchive = isHome && Boolean(categoryParam || qParam);
 
   const refreshAdminState = () => {
     if (isExpiredToken(localStorage.getItem("accessToken") ?? "")) {
@@ -60,10 +54,6 @@ export function Layout() {
   }, [location.pathname, location.search]);
 
   useEffect(() => {
-    categoryApi.getCategories().then(setCategories).catch(() => {});
-  }, []);
-
-  useEffect(() => {
     if (searchOpen) {
       setSearchValue(qParam ?? "");
       requestAnimationFrame(() => searchInputRef.current?.focus());
@@ -77,236 +67,216 @@ export function Layout() {
     navigate(`/?q=${encodeURIComponent(q)}`);
   };
 
-  const currentPath = routePath(location.pathname, location.search);
-
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Terminal chrome bar */}
-      <div className="sticky top-0 z-40 bg-bg-2 border-b border-border-dim">
-        <div className="h-8 flex items-center px-4 gap-3 text-[11px] text-muted">
-          <div className="flex gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-cat-pink" />
-            <div className="w-3 h-3 rounded-full bg-cat-amber" />
-            <div className="w-3 h-3 rounded-full bg-cat-green" />
+    <div className="min-h-screen flex flex-col bg-paper text-ink">
+      <nav className="sticky top-0 z-30 border-b border-rule bg-paper/95 backdrop-blur">
+        <div className="max-w-[1180px] mx-auto px-6 md:px-10 py-5 md:py-6 grid grid-cols-[1fr_auto_1fr] items-center gap-6">
+          <div className="hidden md:flex gap-6 text-[13px] text-muted">
+            <Link
+              to="/"
+              className={`relative py-1 hover:text-ink transition-colors ${
+                isHome && !isArchive
+                  ? "text-ink after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:bg-ink"
+                  : ""
+              }`}
+            >
+              Home
+            </Link>
+            <Link
+              to="/?category=1"
+              className="hover:text-ink transition-colors"
+            >
+              Categories
+            </Link>
+            {searchOpen ? (
+              <form onSubmit={submitSearch} className="flex items-center gap-1">
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Escape") setSearchOpen(false);
+                  }}
+                  onBlur={() => setSearchOpen(false)}
+                  placeholder="search…"
+                  className="w-40 bg-transparent border-b border-rule focus:border-ink outline-none text-[13px] text-ink placeholder:text-faint pb-0.5"
+                />
+              </form>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setSearchOpen(true)}
+                className="hover:text-ink transition-colors"
+              >
+                Search
+              </button>
+            )}
           </div>
-          <div className="flex-1 text-center truncate">— zsh — ~/{currentPath} — 120×36</div>
-          <div className="hidden sm:block text-faint">100% ▲</div>
+
+          <Link to="/" className="text-center leading-none select-none">
+            <span className="block font-meta text-[10px] tracking-[0.25em] text-muted uppercase mb-1.5">
+              Est. MMXXV — seeeeeeong.log
+            </span>
+            <span className="font-display text-[24px] md:text-[28px] font-medium tracking-[-0.02em] text-ink">
+              The Reading Room
+            </span>
+          </Link>
+
+          <div className="flex items-center justify-end gap-2 md:gap-3 font-meta text-[11px] text-muted">
+            <button
+              type="button"
+              onClick={() => setChatOpen((v) => !v)}
+              className={`hidden md:inline-flex h-[30px] items-center px-3 rounded-sm border transition-colors lowercase tracking-[0.06em] ${
+                chatOpen
+                  ? "border-accent text-accent bg-accent-soft"
+                  : "border-rule text-muted hover:border-ink hover:text-ink"
+              }`}
+              aria-label="Toggle chat"
+            >
+              :ask
+            </button>
+            {isAdmin && (
+              <div className="hidden md:flex gap-2">
+                <Link
+                  to="/posts/create"
+                  className="h-[30px] inline-flex items-center px-2.5 border border-rule rounded-sm text-muted hover:border-ink hover:text-ink transition-colors lowercase tracking-[0.06em]"
+                >
+                  :new
+                </Link>
+                <Link
+                  to="/admin/posts"
+                  className="h-[30px] inline-flex items-center px-2.5 border border-rule rounded-sm text-muted hover:border-ink hover:text-ink transition-colors lowercase tracking-[0.06em]"
+                >
+                  :admin
+                </Link>
+                <Link
+                  to="/admin/rag"
+                  className="h-[30px] inline-flex items-center px-2.5 border border-rule rounded-sm text-muted hover:border-ink hover:text-ink transition-colors lowercase tracking-[0.06em]"
+                >
+                  :rag
+                </Link>
+                <BackfillButton />
+                <button
+                  onClick={handleLogout}
+                  className="h-[30px] inline-flex items-center px-2.5 border border-rule rounded-sm text-danger hover:border-danger transition-colors lowercase tracking-[0.06em]"
+                >
+                  :logout
+                </button>
+              </div>
+            )}
+            {!isAdmin && (
+              <Link
+                to="/login"
+                className="hidden md:inline-flex h-[30px] items-center px-2.5 border border-rule rounded-sm text-muted hover:border-ink hover:text-ink transition-colors lowercase tracking-[0.06em]"
+              >
+                :login
+              </Link>
+            )}
+            <button
+              onClick={toggleTheme}
+              className="w-[30px] h-[30px] rounded-full border border-rule hover:border-ink flex items-center justify-center transition-colors"
+              title={theme === "dark" ? "Light" : "Dark"}
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? (
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="4" />
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+                </svg>
+              ) : (
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+              )}
+            </button>
+
+            <button
+              onClick={() => setMobileOpen((v) => !v)}
+              className="md:hidden w-[30px] h-[30px] rounded-sm border border-rule text-muted text-[14px] flex items-center justify-center"
+              aria-label="Menu"
+            >
+              {mobileOpen ? "×" : "≡"}
+            </button>
+          </div>
         </div>
 
-        {/* Prompt-style nav */}
-        <header className="border-t border-border-dim">
-          <div className="max-w-[1200px] mx-auto px-6 h-12 flex items-center justify-between gap-4">
-            <Link to="/" className="flex items-center gap-0 text-[13px] min-w-0 shrink-0">
-              <span className="prompt-green">sinseong</span>
-              <span className="prompt-muted">@</span>
-              <span className="prompt-blue">journal</span>
-              <span className="prompt-muted mx-1">:</span>
-              <span className="prompt-amber truncate">~/{currentPath}</span>
-              <span className="prompt-pink mx-2">❯</span>
-            </Link>
-
-            <nav className="hidden md:flex items-center gap-5 text-[12px]">
-              <Link
-                to="/"
-                className={isHomeAll ? "text-ink-bright" : "text-muted hover:text-ink-bright transition-colors"}
-              >
-                ./blog
-              </Link>
-              {categories.slice(0, 3).map((cat) => {
-                const active = categoryParam === String(cat.id);
-                return (
-                  <Link
-                    key={cat.id}
-                    to={`/?category=${cat.id}`}
-                    className={active ? "text-cat-amber" : "text-muted hover:text-cat-amber transition-colors"}
-                  >
-                    ./{cat.name.toLowerCase()}
-                  </Link>
-                );
-              })}
-              <Link
-                to="/chat"
-                className={
-                  location.pathname.startsWith("/chat")
-                    ? "text-cat-green"
-                    : "text-muted hover:text-cat-green transition-colors"
-                }
-              >
-                ./chat
-              </Link>
-            </nav>
-
-            <div className="flex items-center gap-1.5">
-              {searchOpen ? (
-                <form onSubmit={submitSearch} className="flex items-center gap-1">
-                  <div className="flex items-center h-7 border border-border-mid bg-bg-2 px-2 text-[12px]">
-                    <span className="prompt-green mr-1.5">grep</span>
-                    <input
-                      ref={searchInputRef}
-                      type="text"
-                      value={searchValue}
-                      onChange={(e) => setSearchValue(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Escape") setSearchOpen(false);
-                      }}
-                      placeholder="pattern…"
-                      className="w-40 sm:w-52 bg-transparent text-ink placeholder:text-faint outline-none"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setSearchOpen(false)}
-                    className="h-7 w-7 text-muted hover:text-ink-bright"
-                    aria-label="Close search"
-                  >
-                    ×
-                  </button>
-                </form>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setSearchOpen(true)}
-                  className="h-7 px-2 border border-border-dim hover:border-border-mid text-[11px] text-muted hover:text-cat-green transition-colors"
-                  title="Search"
-                >
-                  grep
-                </button>
-              )}
+        {mobileOpen && (
+          <div className="md:hidden border-t border-rule bg-paper">
+            <div className="max-w-[1180px] mx-auto px-6 py-3 flex flex-col text-[14px]">
+              <Link to="/" className="py-2 text-ink-soft hover:text-ink">Home</Link>
               <button
-                onClick={toggleTheme}
-                className="h-7 w-7 border border-border-dim hover:border-border-mid flex items-center justify-center text-muted hover:text-cat-amber transition-colors text-[12px]"
-                title={theme === "dark" ? "Light mode" : "Dark mode"}
-                aria-label="Toggle theme"
+                onClick={() => {
+                  setChatOpen(true);
+                  setMobileOpen(false);
+                }}
+                className="py-2 text-left text-accent"
               >
-                {theme === "dark" ? "☼" : "☾"}
+                Ask
               </button>
               {isAdmin ? (
                 <>
-                  <Link
-                    to="/posts/create"
-                    className="hidden sm:inline-flex h-7 px-2.5 border border-border-dim hover:border-cat-green text-[11px] text-muted hover:text-cat-green items-center transition-colors"
-                  >
-                    :new
-                  </Link>
-                  <Link
-                    to="/admin/posts"
-                    className="hidden sm:inline-flex h-7 px-2.5 border border-border-dim hover:border-cat-amber text-[11px] text-muted hover:text-cat-amber items-center transition-colors"
-                  >
-                    :admin
-                  </Link>
-                  <Link
-                    to="/admin/rag"
-                    className="hidden sm:inline-flex h-7 px-2.5 border border-border-dim hover:border-cat-blue text-[11px] text-muted hover:text-cat-blue items-center transition-colors"
-                  >
-                    :rag
-                  </Link>
-                  <BackfillButton />
-                  <button
-                    onClick={handleLogout}
-                    className="h-7 px-2.5 border border-cat-pink text-cat-pink hover:bg-cat-pink hover:text-bg text-[11px] transition-colors"
-                  >
+                  <div className="h-px bg-rule-soft my-1.5" />
+                  <Link to="/posts/create" className="py-2 text-ink-soft hover:text-ink">:new</Link>
+                  <Link to="/admin/posts" className="py-2 text-ink-soft hover:text-ink">:admin</Link>
+                  <Link to="/admin/rag" className="py-2 text-ink-soft hover:text-ink">:rag</Link>
+                  <button onClick={handleLogout} className="py-2 text-left text-danger">
                     :logout
                   </button>
                 </>
               ) : (
-                <Link
-                  to="/login"
-                  className="h-7 px-2.5 border border-cat-green text-cat-green hover:bg-cat-green hover:text-bg text-[11px] flex items-center transition-colors"
-                >
-                  :login
-                </Link>
+                <Link to="/login" className="py-2 text-ink-soft hover:text-ink">:login</Link>
               )}
-              <button
-                onClick={() => setMobileOpen(!mobileOpen)}
-                className="md:hidden h-7 w-7 border border-border-dim text-muted text-[12px]"
-                aria-label="Menu"
-              >
-                {mobileOpen ? "×" : "≡"}
-              </button>
             </div>
           </div>
+        )}
+      </nav>
 
-          {/* Mobile menu */}
-          {mobileOpen && (
-            <div className="md:hidden border-t border-border-dim bg-bg-2">
-              <nav className="max-w-[1200px] mx-auto px-6 py-2 flex flex-col text-[12px]">
-                <Link
-                  to="/"
-                  className={`py-2 ${isHomeAll ? "text-ink-bright" : "text-muted"}`}
-                >
-                  ./blog
-                </Link>
-                {categories.map((cat) => (
-                  <Link
-                    key={cat.id}
-                    to={`/?category=${cat.id}`}
-                    className={`py-2 ${categoryParam === String(cat.id) ? "text-cat-amber" : "text-muted"}`}
-                  >
-                    ./{cat.name.toLowerCase()}
-                  </Link>
-                ))}
-                <Link
-                  to="/chat"
-                  className={`py-2 ${location.pathname.startsWith("/chat") ? "text-cat-green" : "text-muted"}`}
-                >
-                  ./chat
-                </Link>
-                {isAdmin && (
-                  <>
-                    <div className="border-t border-border-dim my-1" />
-                    <Link
-                      to="/posts/create"
-                      className={`py-2 ${location.pathname === "/posts/create" ? "text-cat-green" : "text-muted"}`}
-                    >
-                      :new
-                    </Link>
-                    <Link
-                      to="/admin/posts"
-                      className={`py-2 ${location.pathname === "/admin/posts" ? "text-cat-amber" : "text-muted"}`}
-                    >
-                      :admin
-                    </Link>
-                    <Link
-                      to="/admin/rag"
-                      className={`py-2 ${location.pathname === "/admin/rag" ? "text-cat-blue" : "text-muted"}`}
-                    >
-                      :rag
-                    </Link>
-                  </>
-                )}
-              </nav>
-            </div>
-          )}
-        </header>
+      <div className="max-w-[1180px] mx-auto w-full px-6 md:px-10 pt-8 md:pt-9 pb-6 flex justify-between items-baseline border-b-2 border-ink font-meta text-[11px] tracking-[0.2em] uppercase text-muted">
+        <span>{formatToday()}</span>
+        <span className="hidden sm:inline font-display text-[12px] tracking-[0.15em] text-ink font-medium normal-case">
+          Essays · Notes · Readings
+        </span>
+        <span>Vol · {new Date().getFullYear()}</span>
       </div>
 
-      {/* Page content */}
-      <main className="flex-1">
+      <main className="flex-1 max-w-[1180px] w-full mx-auto">
         <Outlet />
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-dashed border-border-mid mt-10">
-        <div className="max-w-[1200px] mx-auto px-6 py-8 flex flex-wrap items-center justify-between gap-4 text-[11px] text-muted">
-          <span>
-            <span className="prompt-green">$</span> exit &nbsp;·&nbsp; © 2026 sinseong
-          </span>
+      <footer className="border-t border-rule mt-16">
+        <div className="max-w-[1180px] mx-auto px-6 md:px-10 py-10 flex flex-wrap items-center justify-between gap-4 font-meta text-[11px] text-muted tracking-[0.1em] uppercase">
+          <span>© {new Date().getFullYear()} — seeeeeeong</span>
           <div className="flex items-center gap-5">
             <a
               href="https://github.com/seeeeeeong"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-cat-green transition-colors"
+              className="hover:text-ink transition-colors"
             >
               github
             </a>
-            <a href="mailto:lsinsung@gmail.com" className="hover:text-cat-green transition-colors">
+            <a href="mailto:lsinsung@gmail.com" className="hover:text-ink transition-colors">
               contact
             </a>
-            <span className="prompt-green">connection closed</span>
+            <span>fin.</span>
           </div>
         </div>
       </footer>
+
+      <ChatDrawer open={chatOpen} onClose={() => setChatOpen(false)} />
+
+      <button
+        type="button"
+        onClick={() => setChatOpen((v) => !v)}
+        className={`md:hidden fixed bottom-5 right-5 z-40 h-12 px-4 rounded-full border font-meta text-[11px] tracking-[0.15em] uppercase transition-all ${
+          chatOpen
+            ? "bg-ink text-paper border-ink"
+            : "bg-paper text-ink border-rule shadow-[0_8px_20px_rgba(0,0,0,0.12)]"
+        }`}
+      >
+        {chatOpen ? "close" : "ask"}
+      </button>
     </div>
   );
 }
@@ -336,13 +306,13 @@ function BackfillButton() {
     <button
       onClick={run}
       disabled={status === "running"}
-      className={`hidden sm:inline-flex h-7 px-2.5 border text-[11px] items-center transition-colors ${
+      className={`h-[30px] inline-flex items-center px-2.5 border rounded-sm transition-colors lowercase tracking-[0.06em] disabled:opacity-50 ${
         status === "done"
-          ? "border-cat-green text-cat-green"
+          ? "border-accent text-accent"
           : status === "error"
             ? "border-danger text-danger"
-            : "border-border-dim hover:border-cat-blue text-muted hover:text-cat-blue"
-      } disabled:opacity-40`}
+            : "border-rule text-muted hover:border-ink hover:text-ink"
+      }`}
     >
       {label}
     </button>

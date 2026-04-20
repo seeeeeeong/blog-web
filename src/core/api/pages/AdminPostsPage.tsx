@@ -54,17 +54,20 @@ export function AdminPostsPage() {
   };
 
   return (
-    <div className="max-w-[1100px] mx-auto px-6 py-10 animate-fade-in">
-      <div className="flex items-center justify-between mb-8">
+    <div className="max-w-[1100px] mx-auto px-6 md:px-10 py-10 animate-fade-in">
+      <div className="flex items-baseline justify-between mb-8 pb-6 border-b border-rule">
         <div>
-          <h1 className="text-[22px] font-semibold tracking-tighter-plus text-ink mb-1">
-            Admin · Posts
+          <p className="eyebrow mb-2">Admin</p>
+          <h1 className="font-display text-[36px] font-medium tracking-[-0.02em] text-ink leading-none mb-2">
+            Posts
           </h1>
-          <p className="text-[13px] text-faint font-mono">{posts.length} in view</p>
+          <p className="font-meta text-[11px] text-muted tracking-[0.08em] uppercase">
+            {posts.length} in view
+          </p>
         </div>
         <Link
           to="/posts/create"
-          className="h-9 px-4 rounded-md bg-white text-black text-[13px] font-medium hover:bg-gray-100 inline-flex items-center transition-colors"
+          className="h-10 px-5 bg-ink text-paper font-meta text-[11px] uppercase tracking-[0.12em] hover:bg-accent inline-flex items-center transition-colors"
         >
           New post
         </Link>
@@ -77,10 +80,10 @@ export function AdminPostsPage() {
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`h-7 px-3 rounded-md text-[12px] font-mono transition-colors ${
+              className={`h-8 px-3 font-meta text-[11px] uppercase tracking-[0.1em] transition-colors border ${
                 active
-                  ? "bg-raised border border-border-dim text-ink"
-                  : "text-muted hover:text-ink"
+                  ? "border-ink text-ink bg-paper-2"
+                  : "border-transparent text-muted hover:text-ink"
               }`}
             >
               {f}
@@ -94,34 +97,42 @@ export function AdminPostsPage() {
           <Spinner />
         </div>
       ) : posts.length === 0 ? (
-        <p className="py-16 text-center text-[13px] text-faint">No posts found.</p>
+        <p className="py-16 text-center font-body italic text-[15px] text-muted">
+          No posts found.
+        </p>
       ) : (
         <>
-          <div className="border border-border-dim rounded-lg overflow-hidden">
+          <div className="border border-rule">
             {posts.map((post, idx) => (
               <div
                 key={post.id}
-                className={`flex items-center gap-4 px-4 py-3 text-[13px] group ${
-                  idx < posts.length - 1 ? "border-b border-border-dim" : ""
+                className={`flex items-center gap-4 px-4 py-3.5 group ${
+                  idx < posts.length - 1 ? "border-b border-rule-soft" : ""
                 }`}
               >
                 <Link
                   to={`/posts/${post.id}`}
-                  className="flex-1 min-w-0 font-medium text-ink truncate group-hover:text-muted transition-colors"
+                  className="flex-1 min-w-0 font-display text-[16px] font-medium text-ink truncate group-hover:text-accent transition-colors"
                 >
                   {post.title}
                 </Link>
-                <span className="pill shrink-0">
-                  <span
-                    className={`pill-dot ${post.status === "DRAFT" ? "bg-cat-amber" : "bg-cat-green"}`}
-                  />
+                <span
+                  className={`shrink-0 font-meta text-[10px] uppercase tracking-[0.1em] px-2 py-[3px] border ${
+                    post.status === "DRAFT"
+                      ? "border-accent text-accent"
+                      : "border-rule text-muted"
+                  }`}
+                >
                   {post.status === "DRAFT" ? "Draft" : "Published"}
                 </span>
-                <span className="text-[12px] text-faint font-mono hidden sm:block w-24 text-right shrink-0">
+                <span className="font-meta text-[11px] text-muted tracking-[0.05em] hidden sm:block w-24 text-right shrink-0">
                   {formatDate(post.createdAt)}
                 </span>
-                <div className="flex gap-2 shrink-0 text-[12px]">
-                  <Link to={`/posts/${post.id}/edit`} className="text-muted hover:text-ink transition-colors">
+                <div className="flex gap-3 shrink-0 font-meta text-[11px] uppercase tracking-[0.08em]">
+                  <Link
+                    to={`/posts/${post.id}/edit`}
+                    className="text-muted hover:text-ink transition-colors"
+                  >
                     Edit
                   </Link>
                   <button

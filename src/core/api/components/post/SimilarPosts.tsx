@@ -48,36 +48,35 @@ export function SimilarPosts({ postId }: SimilarPostsProps) {
   }
 
   return (
-    <section className="lg:pt-0 pt-8 lg:border-t-0 border-t border-dashed border-border-mid">
-      <div className="flex items-baseline gap-2 mb-4 text-[13px]">
-        <h2 className="text-cat-amber">
-          <span className="text-muted">$ grep </span>--related
-        </h2>
+    <section className="lg:pt-0 pt-8 lg:border-t-0 border-t border-rule">
+      <div className="eyebrow mb-4 pb-2 border-b border-rule-soft">
+        Further reading
       </div>
 
       {status === "LOADING" || status === "PENDING" ? (
-        <p className="text-[12px] text-faint">
-          <span className="prompt-green">▸</span>{" "}
+        <p className="font-meta text-[11px] text-faint tracking-[0.08em] uppercase">
           {status === "PENDING" ? "indexing…" : "loading…"}
         </p>
       ) : items.length === 0 ? (
-        <p className="text-[12px] text-faint">
-          <span className="prompt-muted">—</span> no related entries
+        <p className="font-body text-[14px] text-muted italic">
+          No related entries.
         </p>
       ) : (
-        <ul className="grid grid-cols-1 gap-2 auto-rows-fr">
+        <ul className="flex flex-col gap-3.5">
           {items.map((item) => (
-            <li key={item.id} className="flex">
+            <li key={item.id}>
               <a
                 href={item.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 flex flex-col border border-border-dim hover:border-cat-green p-3 min-h-[78px] transition-colors group"
+                className="group block"
               >
-                <p className="text-[12.5px] text-ink-bright leading-snug mb-auto line-clamp-2 group-hover:text-cat-green transition-colors">
-                  <span className="prompt-green">▸</span> {item.title}
+                <p className="font-display text-[15.5px] font-medium leading-[1.3] text-ink group-hover:text-accent transition-colors mb-1.5 line-clamp-2">
+                  {item.title}
                 </p>
-                <p className="text-[11px] text-muted pl-4 mt-1.5 truncate">@ {item.company}</p>
+                <p className="font-meta text-[10px] text-muted tracking-[0.08em] uppercase truncate">
+                  @ {item.company}
+                </p>
               </a>
             </li>
           ))}

@@ -10,7 +10,7 @@ interface CommentFormProps {
 
 export function CommentForm({
   onSubmit,
-  placeholder = "Leave a comment…",
+  placeholder = "Leave a note…",
   buttonText = "Post",
   autoFocus = false,
 }: CommentFormProps) {
@@ -38,16 +38,16 @@ export function CommentForm({
         autoFocus={autoFocus}
         rows={4}
         maxLength={COMMENT_LIMITS.CONTENT_MAX_LENGTH}
-        className="block w-full resize-none rounded-lg border border-border-dim bg-raised p-3 text-[14px] text-ink placeholder:text-faint focus:border-border-mid focus:outline-none transition-colors"
+        className="block w-full resize-none border border-rule bg-paper p-3.5 font-body text-[15px] text-ink placeholder:text-faint placeholder:italic focus:border-ink focus:outline-none transition-colors"
       />
       <div className="flex justify-between items-center">
-        <span className="text-[11px] text-faint font-mono">
-          {content.length}/{COMMENT_LIMITS.CONTENT_MAX_LENGTH}
+        <span className="font-meta text-[10px] text-faint tracking-[0.08em]">
+          {content.length} / {COMMENT_LIMITS.CONTENT_MAX_LENGTH}
         </span>
         <button
           type="submit"
           disabled={!content.trim() || isSubmitting}
-          className="h-8 px-4 rounded-md bg-white text-black text-[13px] font-medium hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="h-9 px-4 bg-ink text-paper font-meta text-[11px] uppercase tracking-[0.12em] hover:bg-accent disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
           {isSubmitting ? "Posting…" : buttonText}
         </button>

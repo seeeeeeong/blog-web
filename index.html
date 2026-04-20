@@ -1,15 +1,27 @@
 <!doctype html>
-<html lang="en">
+<html lang="ko">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/gif" href="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>seeeeeeong.log</title>
+    <title>seeeeeeong.log — The Reading Room</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <script>
-      // Apply saved theme before render to prevent flash. Default is dark.
-      (function(){if(localStorage.getItem('theme')==='light'){document.documentElement.classList.add('light')}})();
+      // Apply saved theme before render to prevent flash. Default is light (Reading Room).
+      (function () {
+        if (localStorage.getItem("theme") === "dark") {
+          document.documentElement.classList.remove("light");
+        } else {
+          document.documentElement.classList.add("light");
+        }
+      })();
     </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>

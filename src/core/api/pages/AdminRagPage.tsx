@@ -53,18 +53,21 @@ export function AdminRagPage() {
   };
 
   return (
-    <div className="max-w-[700px] mx-auto px-6 py-10 animate-fade-in">
-      <div className="flex items-baseline justify-between mb-8">
+    <div className="max-w-[760px] mx-auto px-6 md:px-10 py-10 animate-fade-in">
+      <div className="flex items-baseline justify-between mb-8 pb-6 border-b border-rule">
         <div>
-          <h1 className="text-[18px] text-cat-amber">
-            <span className="text-muted">$ </span>admin --rag
+          <p className="eyebrow mb-2">Admin</p>
+          <h1 className="font-display text-[36px] font-medium tracking-[-0.02em] text-ink leading-none mb-2">
+            RAG pipeline
           </h1>
-          <p className="text-[12px] text-faint mt-1">RAG pipeline management</p>
+          <p className="font-meta text-[11px] text-muted tracking-[0.08em] uppercase">
+            Content & embedding management
+          </p>
         </div>
         <button
           onClick={() => void loadStats()}
           disabled={loading}
-          className="h-7 px-2.5 border border-border-dim text-[11px] text-muted hover:text-cat-green hover:border-cat-green transition-colors disabled:opacity-40"
+          className="h-8 px-3 border border-rule font-meta text-[11px] uppercase tracking-[0.1em] text-muted hover:border-ink hover:text-ink transition-colors disabled:opacity-40"
         >
           :refresh
         </button>
@@ -74,11 +77,9 @@ export function AdminRagPage() {
         <div className="py-16 flex justify-center"><Spinner /></div>
       ) : stats ? (
         <>
-          <section className="border border-border-dim rounded-lg p-5 mb-6">
-            <h2 className="text-[13px] text-muted mb-4 font-mono">
-              <span className="prompt-green">▸</span> stats
-            </h2>
-            <div className="grid grid-cols-3 gap-4">
+          <section className="border border-rule p-6 mb-6">
+            <h2 className="eyebrow mb-5">Stats</h2>
+            <div className="grid grid-cols-3 gap-6">
               <StatCard label="Total Articles" value={stats.totalArticles} />
               <StatCard
                 label="Without Content"
@@ -93,13 +94,11 @@ export function AdminRagPage() {
             </div>
           </section>
 
-          <section className="border border-border-dim rounded-lg p-5 mb-6">
-            <h2 className="text-[13px] text-muted mb-4 font-mono">
-              <span className="prompt-green">▸</span> actions
-            </h2>
-            <div className="space-y-3">
+          <section className="border border-rule p-6 mb-6">
+            <h2 className="eyebrow mb-5">Actions</h2>
+            <div className="space-y-5">
               <ActionRow
-                title="Content Backfill"
+                title="Content backfill"
                 description="content가 없는 아티클의 URL을 크롤링하여 본문을 채웁니다"
                 buttonLabel=":backfill content"
                 loading={running === "content"}
@@ -107,7 +106,7 @@ export function AdminRagPage() {
                 onClick={runBackfillContent}
               />
               <ActionRow
-                title="Embedding Reprocess"
+                title="Embedding reprocess"
                 description="임베딩이 없는 아티클을 임베딩합니다 (content backfill 후 실행)"
                 buttonLabel=":backfill embedding"
                 loading={running === "embedding"}
@@ -118,9 +117,10 @@ export function AdminRagPage() {
           </section>
 
           {lastResult && (
-            <div className="border border-border-dim rounded-lg p-4">
-              <p className="text-[13px] text-cat-green font-mono">
-                <span className="prompt-green">✓</span> {lastResult}
+            <div className="border border-rule p-4 bg-paper-2/40">
+              <p className="font-body text-[14px] text-ink leading-relaxed">
+                <span className="text-accent font-meta mr-2">✓</span>
+                {lastResult}
               </p>
             </div>
           )}
@@ -140,11 +140,13 @@ function StatCard({
   warn?: boolean;
 }) {
   return (
-    <div className="text-center">
-      <p className={`text-[24px] font-mono ${warn ? "text-cat-amber" : "text-ink"}`}>
+    <div>
+      <p className={`font-display text-[32px] font-medium leading-none ${warn ? "text-accent" : "text-ink"}`}>
         {value.toLocaleString()}
       </p>
-      <p className="text-[11px] text-faint mt-1">{label}</p>
+      <p className="font-meta text-[10px] text-muted mt-2 tracking-[0.1em] uppercase">
+        {label}
+      </p>
     </div>
   );
 }
@@ -165,15 +167,15 @@ function ActionRow({
   onClick: () => void;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 py-2">
+    <div className="flex items-start justify-between gap-4 pb-4 border-b border-rule-soft last:border-b-0 last:pb-0">
       <div className="min-w-0">
-        <p className="text-[13px] text-ink">{title}</p>
-        <p className="text-[11px] text-faint mt-0.5">{description}</p>
+        <p className="font-display text-[16px] font-medium text-ink mb-1">{title}</p>
+        <p className="font-body text-[13.5px] text-muted leading-relaxed">{description}</p>
       </div>
       <button
         onClick={onClick}
         disabled={disabled}
-        className="shrink-0 h-8 px-3 border border-cat-amber text-cat-amber text-[12px] hover:bg-cat-amber hover:text-bg transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        className="shrink-0 h-9 px-3 border border-ink font-meta text-[11px] uppercase tracking-[0.1em] text-ink hover:bg-ink hover:text-paper transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:border-rule disabled:text-muted disabled:hover:bg-transparent disabled:hover:text-muted"
       >
         {loading ? "running…" : buttonLabel}
       </button>

@@ -12,10 +12,10 @@ interface AlertProps {
 }
 
 const DOT_COLOR: Record<AlertType, string> = {
-  success: "bg-cat-green",
+  success: "bg-accent",
   error: "bg-danger",
-  warning: "bg-cat-amber",
-  info: "bg-cat-blue",
+  warning: "bg-accent",
+  info: "bg-ink",
   confirm: "bg-ink",
 };
 
@@ -35,19 +35,19 @@ export function Alert({
   }, [duration, onClose, type]);
 
   const base =
-    "w-80 rounded-lg border border-border-dim bg-raised shadow-[0_8px_24px_rgba(0,0,0,0.35)] animate-fade-in";
+    "w-80 border border-rule bg-paper shadow-[0_12px_28px_rgba(0,0,0,0.18)] animate-fade-in";
 
   if (type === "confirm") {
     return (
       <div className={base} role="alertdialog">
-        <div className="flex items-start gap-3 px-4 py-3">
+        <div className="flex items-start gap-3 px-4 py-4">
           <span className={`mt-1.5 h-1.5 w-1.5 rounded-full ${DOT_COLOR[type]} shrink-0`} />
-          <p className="text-[13px] text-ink leading-relaxed">{message}</p>
+          <p className="font-body text-[14px] text-ink leading-relaxed">{message}</p>
         </div>
-        <div className="flex justify-end gap-2 border-t border-border-dim px-3 py-2">
+        <div className="flex justify-end gap-2 border-t border-rule px-3 py-2">
           <button
             onClick={onClose}
-            className="h-7 px-3 rounded-md text-[12px] text-muted hover:text-ink transition-colors"
+            className="h-7 px-3 font-meta text-[11px] uppercase tracking-[0.08em] text-muted hover:text-ink transition-colors"
           >
             Cancel
           </button>
@@ -56,7 +56,7 @@ export function Alert({
               onConfirm?.();
               onClose();
             }}
-            className="h-7 px-3 rounded-md bg-white text-black text-[12px] font-medium hover:bg-gray-100 transition-colors"
+            className="h-7 px-3 bg-ink text-paper font-meta text-[11px] uppercase tracking-[0.1em] hover:bg-accent transition-colors"
           >
             Confirm
           </button>
@@ -69,11 +69,11 @@ export function Alert({
     <div className={base} role="alert">
       <div className="flex items-start gap-3 px-4 py-3">
         <span className={`mt-1.5 h-1.5 w-1.5 rounded-full ${DOT_COLOR[type]} shrink-0`} />
-        <p className="flex-1 text-[13px] text-ink leading-relaxed">{message}</p>
+        <p className="flex-1 font-body text-[14px] text-ink leading-relaxed">{message}</p>
         {showCloseButton && (
           <button
             onClick={onClose}
-            className="shrink-0 text-muted hover:text-ink transition-colors text-sm leading-none"
+            className="shrink-0 text-muted hover:text-ink transition-colors text-[16px] leading-none"
             aria-label="close"
           >
             ×
