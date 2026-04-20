@@ -6,8 +6,17 @@ export interface ChatMessage {
   content: string;
   streaming?: boolean;
   error?: boolean;
+  sources?: ChatSource[];
+  followUps?: string[];
+  feedback?: "up" | "down";
 }
 
 export interface ChatSession {
   sessionId: string;
+}
+
+export interface ChatSource {
+  company: string;
+  title: string;
+  url: string;
 }

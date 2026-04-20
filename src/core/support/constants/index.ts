@@ -35,4 +35,5 @@ export const TABLE_DEFAULTS = {
 
 export const CHAT_LIMITS = {
   QUESTION_MAX_LENGTH: 500,
+  MAX_MESSAGES_PER_SESSION: 30,
 } as const;
