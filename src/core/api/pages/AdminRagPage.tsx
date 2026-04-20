@@ -2,10 +2,12 @@ import { useCallback, useEffect, useState } from "react";
 import { adminAiApi, type BackfillStats } from "../../../storage/admin/adminAiApi";
 import { Spinner } from "../components/common/Spinner";
 
+type RunningAction = "content" | "embedding" | "full" | null;
+
 export function AdminRagPage() {
   const [stats, setStats] = useState<BackfillStats | null>(null);
   const [loading, setLoading] = useState(true);
-  const [running, setRunning] = useState<string | null>(null);
+  const [running, setRunning] = useState<RunningAction>(null);
   const [lastResult, setLastResult] = useState<string | null>(null);
 
   const loadStats = useCallback(async () => {
@@ -52,16 +54,33 @@ export function AdminRagPage() {
     }
   };
 
+  const runFullSync = async () => {
+    setRunning("full");
+    setLastResult(null);
+    try {
+      const filled = await adminAiApi.backfillContent();
+      const processed = await adminAiApi.backfillEmbedding();
+      setLastResult(`Full sync 완료: content ${filled}개 · embedding ${processed}개`);
+      await loadStats();
+    } catch {
+      setLastResult("Full sync 실패");
+    } finally {
+      setRunning(null);
+    }
+  };
+
+  const busy = running !== null;
+
   return (
     <div className="max-w-[760px] mx-auto px-6 md:px-10 py-10 animate-fade-in">
       <div className="flex items-baseline justify-between mb-8 pb-6 border-b border-rule">
         <div>
           <p className="eyebrow mb-2">Admin</p>
           <h1 className="font-display text-[36px] font-medium tracking-[-0.02em] text-ink leading-none mb-2">
-            RAG pipeline
+            Index
           </h1>
           <p className="font-meta text-[11px] text-muted tracking-[0.08em] uppercase">
-            Content & embedding management
+            Search index · content & embeddings
           </p>
         </div>
         <button
@@ -95,14 +114,33 @@ export function AdminRagPage() {
           </section>
 
           <section className="border border-rule p-6 mb-6">
-            <h2 className="eyebrow mb-5">Actions</h2>
+            <div className="flex items-start justify-between gap-4 pb-5 mb-5 border-b border-rule-soft">
+              <div className="min-w-0">
+                <p className="eyebrow mb-1">Quick action</p>
+                <p className="font-display text-[18px] font-medium text-ink mb-1">
+                  Run full sync
+                </p>
+                <p className="font-body text-[13.5px] text-muted leading-relaxed">
+                  content backfill → embedding 재생성을 순서대로 실행합니다
+                </p>
+              </div>
+              <button
+                onClick={runFullSync}
+                disabled={busy || (stats.withoutContent === 0 && stats.unembedded === 0)}
+                className="shrink-0 h-10 px-5 bg-ink text-paper font-meta text-[11px] uppercase tracking-[0.12em] hover:bg-accent transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-ink"
+              >
+                {running === "full" ? "running…" : ":run full sync"}
+              </button>
+            </div>
+
+            <h2 className="eyebrow mb-4">Individual steps</h2>
             <div className="space-y-5">
               <ActionRow
                 title="Content backfill"
                 description="content가 없는 아티클의 URL을 크롤링하여 본문을 채웁니다"
                 buttonLabel=":backfill content"
                 loading={running === "content"}
-                disabled={running !== null || stats.withoutContent === 0}
+                disabled={busy || stats.withoutContent === 0}
                 onClick={runBackfillContent}
               />
               <ActionRow
@@ -110,7 +148,7 @@ export function AdminRagPage() {
                 description="임베딩이 없는 아티클을 임베딩합니다 (content backfill 후 실행)"
                 buttonLabel=":backfill embedding"
                 loading={running === "embedding"}
-                disabled={running !== null || stats.unembedded === 0}
+                disabled={busy || stats.unembedded === 0}
                 onClick={runBackfillEmbedding}
               />
             </div>

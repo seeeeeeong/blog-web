@@ -1,7 +1,6 @@
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { clearAuthData, isExpiredToken, checkIsAdmin } from "../../../support/auth/authToken";
-import { adminAiApi } from "../../../../storage/admin/adminAiApi";
 import { useTheme } from "../../../support/hooks/useTheme";
 import { ChatDrawer } from "./ChatDrawer";
 
@@ -23,7 +22,9 @@ export function Layout() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [chatOpen, setChatOpen] = useState(false);
+  const [adminMenuOpen, setAdminMenuOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const adminMenuRef = useRef<HTMLDivElement>(null);
   const { theme, toggleTheme } = useTheme();
 
   const urlParams = new URLSearchParams(location.search);
@@ -44,6 +45,7 @@ export function Layout() {
   const handleLogout = () => {
     clearAuthData();
     setIsAdmin(false);
+    setAdminMenuOpen(false);
     navigate("/");
   };
 
@@ -51,6 +53,7 @@ export function Layout() {
     refreshAdminState();
     setMobileOpen(false);
     setSearchOpen(false);
+    setAdminMenuOpen(false);
   }, [location.pathname, location.search]);
 
   useEffect(() => {
@@ -59,6 +62,24 @@ export function Layout() {
       requestAnimationFrame(() => searchInputRef.current?.focus());
     }
   }, [searchOpen, qParam]);
+
+  useEffect(() => {
+    if (!adminMenuOpen) return;
+    const onClick = (e: MouseEvent) => {
+      if (!adminMenuRef.current?.contains(e.target as Node)) {
+        setAdminMenuOpen(false);
+      }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setAdminMenuOpen(false);
+    };
+    window.addEventListener("mousedown", onClick);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("mousedown", onClick);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [adminMenuOpen]);
 
   const submitSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,7 +92,7 @@ export function Layout() {
     <div className="min-h-screen flex flex-col bg-paper text-ink">
       <nav className="sticky top-0 z-30 border-b border-rule bg-paper/95 backdrop-blur">
         <div className="max-w-[1180px] mx-auto px-6 md:px-10 py-5 md:py-6 grid grid-cols-[1fr_auto_1fr] items-center gap-6">
-          <div className="hidden md:flex gap-6 text-[13px] text-muted">
+          <div className="hidden md:flex gap-6 text-[13px] text-muted items-center">
             <Link
               to="/"
               className={`relative py-1 hover:text-ink transition-colors ${
@@ -81,12 +102,6 @@ export function Layout() {
               }`}
             >
               Home
-            </Link>
-            <Link
-              to="/?category=1"
-              className="hover:text-ink transition-colors"
-            >
-              Categories
             </Link>
             {searchOpen ? (
               <form onSubmit={submitSearch} className="flex items-center gap-1">
@@ -107,8 +122,13 @@ export function Layout() {
               <button
                 type="button"
                 onClick={() => setSearchOpen(true)}
-                className="hover:text-ink transition-colors"
+                className="hover:text-ink transition-colors inline-flex items-center gap-1.5"
+                aria-label="Search"
               >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
                 Search
               </button>
             )}
@@ -123,7 +143,7 @@ export function Layout() {
             </span>
           </Link>
 
-          <div className="flex items-center justify-end gap-2 md:gap-3 font-meta text-[11px] text-muted">
+          <div className="flex items-center justify-end gap-2 md:gap-2.5 font-meta text-[11px] text-muted">
             <button
               type="button"
               onClick={() => setChatOpen((v) => !v)}
@@ -136,43 +156,70 @@ export function Layout() {
             >
               :ask
             </button>
-            {isAdmin && (
-              <div className="hidden md:flex gap-2">
-                <Link
-                  to="/posts/create"
-                  className="h-[30px] inline-flex items-center px-2.5 border border-rule rounded-sm text-muted hover:border-ink hover:text-ink transition-colors lowercase tracking-[0.06em]"
-                >
-                  :new
-                </Link>
-                <Link
-                  to="/admin/posts"
-                  className="h-[30px] inline-flex items-center px-2.5 border border-rule rounded-sm text-muted hover:border-ink hover:text-ink transition-colors lowercase tracking-[0.06em]"
+
+            {isAdmin ? (
+              <div ref={adminMenuRef} className="hidden md:block relative">
+                <button
+                  type="button"
+                  onClick={() => setAdminMenuOpen((v) => !v)}
+                  className={`h-[30px] inline-flex items-center gap-1.5 px-3 rounded-sm border transition-colors lowercase tracking-[0.06em] ${
+                    adminMenuOpen
+                      ? "border-ink text-ink bg-paper-2"
+                      : "border-rule text-muted hover:border-ink hover:text-ink"
+                  }`}
+                  aria-haspopup="menu"
+                  aria-expanded={adminMenuOpen}
                 >
                   :admin
-                </Link>
-                <Link
-                  to="/admin/rag"
-                  className="h-[30px] inline-flex items-center px-2.5 border border-rule rounded-sm text-muted hover:border-ink hover:text-ink transition-colors lowercase tracking-[0.06em]"
-                >
-                  :rag
-                </Link>
-                <BackfillButton />
-                <button
-                  onClick={handleLogout}
-                  className="h-[30px] inline-flex items-center px-2.5 border border-rule rounded-sm text-danger hover:border-danger transition-colors lowercase tracking-[0.06em]"
-                >
-                  :logout
+                  <svg
+                    width="9"
+                    height="9"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className={`transition-transform ${adminMenuOpen ? "rotate-180" : ""}`}
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
                 </button>
+
+                {adminMenuOpen && (
+                  <div
+                    role="menu"
+                    className="absolute right-0 top-full mt-2 min-w-[180px] border border-rule bg-paper shadow-[0_12px_32px_rgba(0,0,0,0.18)] py-1.5 z-40"
+                  >
+                    <AdminMenuItem to="/posts/create" onSelect={() => setAdminMenuOpen(false)}>
+                      New post
+                    </AdminMenuItem>
+                    <AdminMenuItem to="/admin/posts" onSelect={() => setAdminMenuOpen(false)}>
+                      All posts
+                    </AdminMenuItem>
+                    <AdminMenuItem to="/admin/rag" onSelect={() => setAdminMenuOpen(false)}>
+                      Index
+                    </AdminMenuItem>
+                    <div className="h-px bg-rule-soft my-1.5 mx-3" />
+                    <button
+                      type="button"
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 font-body text-[14px] text-danger hover:bg-paper-2 transition-colors"
+                    >
+                      Log out
+                    </button>
+                  </div>
+                )}
               </div>
-            )}
-            {!isAdmin && (
+            ) : (
               <Link
                 to="/login"
-                className="hidden md:inline-flex h-[30px] items-center px-2.5 border border-rule rounded-sm text-muted hover:border-ink hover:text-ink transition-colors lowercase tracking-[0.06em]"
+                className="hidden md:inline-flex h-[30px] items-center px-3 border border-rule rounded-sm text-muted hover:border-ink hover:text-ink transition-colors lowercase tracking-[0.06em]"
               >
                 :login
               </Link>
             )}
+
             <button
               onClick={toggleTheme}
               className="w-[30px] h-[30px] rounded-full border border-rule hover:border-ink flex items-center justify-center transition-colors"
@@ -217,15 +264,23 @@ export function Layout() {
               {isAdmin ? (
                 <>
                   <div className="h-px bg-rule-soft my-1.5" />
-                  <Link to="/posts/create" className="py-2 text-ink-soft hover:text-ink">:new</Link>
-                  <Link to="/admin/posts" className="py-2 text-ink-soft hover:text-ink">:admin</Link>
-                  <Link to="/admin/rag" className="py-2 text-ink-soft hover:text-ink">:rag</Link>
+                  <Link to="/posts/create" className="py-2 text-ink-soft hover:text-ink">
+                    New post
+                  </Link>
+                  <Link to="/admin/posts" className="py-2 text-ink-soft hover:text-ink">
+                    All posts
+                  </Link>
+                  <Link to="/admin/rag" className="py-2 text-ink-soft hover:text-ink">
+                    Index
+                  </Link>
                   <button onClick={handleLogout} className="py-2 text-left text-danger">
-                    :logout
+                    Log out
                   </button>
                 </>
               ) : (
-                <Link to="/login" className="py-2 text-ink-soft hover:text-ink">:login</Link>
+                <Link to="/login" className="py-2 text-ink-soft hover:text-ink">
+                  Sign in
+                </Link>
               )}
             </div>
           </div>
@@ -281,40 +336,23 @@ export function Layout() {
   );
 }
 
-function BackfillButton() {
-  const [status, setStatus] = useState<"idle" | "running" | "done" | "error">("idle");
-
-  const run = async () => {
-    setStatus("running");
-    try {
-      const contentCount = await adminAiApi.backfillContent();
-      const embedCount = await adminAiApi.backfillEmbedding();
-      alert(`Backfill 완료\n- Content: ${contentCount}개\n- Embedding: ${embedCount}개`);
-      setStatus("done");
-    } catch {
-      alert("Backfill 실패");
-      setStatus("error");
-    } finally {
-      setTimeout(() => setStatus("idle"), 3000);
-    }
-  };
-
-  const label =
-    status === "running" ? "running…" : status === "done" ? "done" : ":backfill";
-
+function AdminMenuItem({
+  to,
+  onSelect,
+  children,
+}: {
+  to: string;
+  onSelect: () => void;
+  children: React.ReactNode;
+}) {
   return (
-    <button
-      onClick={run}
-      disabled={status === "running"}
-      className={`h-[30px] inline-flex items-center px-2.5 border rounded-sm transition-colors lowercase tracking-[0.06em] disabled:opacity-50 ${
-        status === "done"
-          ? "border-accent text-accent"
-          : status === "error"
-            ? "border-danger text-danger"
-            : "border-rule text-muted hover:border-ink hover:text-ink"
-      }`}
+    <Link
+      to={to}
+      onClick={onSelect}
+      role="menuitem"
+      className="block px-4 py-2 font-body text-[14px] text-ink-soft hover:text-ink hover:bg-paper-2 transition-colors"
     >
-      {label}
-    </button>
+      {children}
+    </Link>
   );
 }
