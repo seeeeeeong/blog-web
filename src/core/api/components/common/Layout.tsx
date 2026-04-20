@@ -282,20 +282,14 @@ export function Layout() {
   );
 }
 
-const AI_ADMIN_KEY = import.meta.env.VITE_AI_ADMIN_KEY ?? "";
-
 function BackfillButton() {
   const [status, setStatus] = useState<"idle" | "running" | "done" | "error">("idle");
 
   const run = async () => {
-    if (!AI_ADMIN_KEY) {
-      alert("VITE_AI_ADMIN_KEY 환경변수가 설정되지 않았습니다.");
-      return;
-    }
     setStatus("running");
     try {
-      const contentCount = await adminAiApi.backfillContent(AI_ADMIN_KEY);
-      const embedCount = await adminAiApi.backfillEmbedding(AI_ADMIN_KEY);
+      const contentCount = await adminAiApi.backfillContent();
+      const embedCount = await adminAiApi.backfillEmbedding();
       alert(`Backfill 완료\n- Content: ${contentCount}개\n- Embedding: ${embedCount}개`);
       setStatus("done");
     } catch {

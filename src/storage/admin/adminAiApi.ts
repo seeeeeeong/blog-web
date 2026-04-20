@@ -1,4 +1,4 @@
-import aiClient from "../common/aiClient";
+import apiClient from "../common/client";
 
 export interface BackfillStats {
   totalArticles: number;
@@ -7,28 +7,22 @@ export interface BackfillStats {
 }
 
 export const adminAiApi = {
-  getStats: async (adminKey: string): Promise<BackfillStats> => {
-    const response = await aiClient.get<BackfillStats>("/v1/admin/stats", {
-      headers: { "X-Admin-Key": adminKey },
-    });
+  getStats: async (): Promise<BackfillStats> => {
+    const response = await apiClient.get<BackfillStats>("/v1/admin/backfill/stats");
     return response.data;
   },
 
-  backfillContent: async (adminKey: string, batchSize = 50): Promise<number> => {
-    const response = await aiClient.post<number>(
+  backfillContent: async (batchSize = 50): Promise<number> => {
+    const response = await apiClient.post<{ filled: number }>(
       `/v1/admin/backfill/content?batchSize=${batchSize}`,
-      null,
-      { headers: { "X-Admin-Key": adminKey } },
     );
-    return response.data;
+    return (response.data as { filled: number }).filled;
   },
 
-  backfillEmbedding: async (adminKey: string): Promise<number> => {
-    const response = await aiClient.post<number>(
+  backfillEmbedding: async (): Promise<number> => {
+    const response = await apiClient.post<{ processed: number }>(
       "/v1/admin/backfill/embedding",
-      null,
-      { headers: { "X-Admin-Key": adminKey } },
     );
-    return response.data;
+    return (response.data as { processed: number }).processed;
   },
 };

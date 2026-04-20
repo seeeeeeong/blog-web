@@ -2,49 +2,35 @@ import { useCallback, useEffect, useState } from "react";
 import { adminAiApi, type BackfillStats } from "../../../storage/admin/adminAiApi";
 import { Spinner } from "../components/common/Spinner";
 
-const ADMIN_KEY_STORAGE = "blog-ai:adminKey";
-
 export function AdminRagPage() {
-  const [adminKey, setAdminKey] = useState(
-    () => sessionStorage.getItem(ADMIN_KEY_STORAGE) ?? "",
-  );
-  const [authenticated, setAuthenticated] = useState(false);
   const [stats, setStats] = useState<BackfillStats | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState<string | null>(null);
   const [lastResult, setLastResult] = useState<string | null>(null);
 
-  const loadStats = useCallback(async (key: string) => {
+  const loadStats = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await adminAiApi.getStats(key);
+      const data = await adminAiApi.getStats();
       setStats(data);
-      setAuthenticated(true);
-      sessionStorage.setItem(ADMIN_KEY_STORAGE, key);
     } catch {
-      setAuthenticated(false);
-      setLastResult("Admin key 인증 실패");
+      setLastResult("Stats 조회 실패");
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    if (adminKey) void loadStats(adminKey);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleAuth = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (adminKey.trim()) void loadStats(adminKey.trim());
-  };
+    void loadStats();
+  }, [loadStats]);
 
   const runBackfillContent = async () => {
     setRunning("content");
     setLastResult(null);
     try {
-      const filled = await adminAiApi.backfillContent(adminKey);
+      const filled = await adminAiApi.backfillContent();
       setLastResult(`Content backfill 완료: ${filled}개 아티클 크롤링됨`);
-      await loadStats(adminKey);
+      await loadStats();
     } catch {
       setLastResult("Content backfill 실패");
     } finally {
@@ -56,47 +42,15 @@ export function AdminRagPage() {
     setRunning("embedding");
     setLastResult(null);
     try {
-      const count = await adminAiApi.backfillEmbedding(adminKey);
+      const count = await adminAiApi.backfillEmbedding();
       setLastResult(`Embedding 재생성 완료: ${count}개 처리됨`);
-      await loadStats(adminKey);
+      await loadStats();
     } catch {
       setLastResult("Embedding 재생성 실패");
     } finally {
       setRunning(null);
     }
   };
-
-  if (!authenticated) {
-    return (
-      <div className="max-w-[500px] mx-auto px-6 py-16 animate-fade-in">
-        <h1 className="text-[18px] text-cat-amber mb-6">
-          <span className="text-muted">$ </span>admin --rag
-        </h1>
-        <form onSubmit={handleAuth} className="space-y-4">
-          <div>
-            <label className="text-[12px] text-faint block mb-1.5">Admin API Key</label>
-            <input
-              type="password"
-              value={adminKey}
-              onChange={(e) => setAdminKey(e.target.value)}
-              placeholder="Enter admin key"
-              className="w-full bg-bg-2 border border-border-dim focus:border-cat-green outline-none px-3 py-2 text-[13px] text-ink font-mono"
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={!adminKey.trim() || loading}
-            className="h-9 px-4 border border-cat-green text-cat-green text-[12px] hover:bg-cat-green hover:text-bg transition-colors disabled:opacity-40"
-          >
-            {loading ? "connecting…" : ":connect"}
-          </button>
-          {lastResult && (
-            <p className="text-[12px] text-danger">{lastResult}</p>
-          )}
-        </form>
-      </div>
-    );
-  }
 
   return (
     <div className="max-w-[700px] mx-auto px-6 py-10 animate-fade-in">
@@ -108,7 +62,7 @@ export function AdminRagPage() {
           <p className="text-[12px] text-faint mt-1">RAG pipeline management</p>
         </div>
         <button
-          onClick={() => void loadStats(adminKey)}
+          onClick={() => void loadStats()}
           disabled={loading}
           className="h-7 px-2.5 border border-border-dim text-[11px] text-muted hover:text-cat-green hover:border-cat-green transition-colors disabled:opacity-40"
         >
