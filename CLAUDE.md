@@ -20,7 +20,7 @@ src/
 ├── core/
 │   ├── api/
 │   │   ├── components/       # UI components
-│   │   │   ├── common/       # Layout, Spinner, Alert, PaginationControls, CatTag
+│   │   │   ├── common/       # Layout, Spinner, Alert, PaginationControls
 │   │   │   ├── comment/      # CommentForm, CommentItem, CommentSection
 │   │   │   ├── editor/       # TipTapEditor, EditorToolbar, EditorLinkInput, EditorTableControls, MenuButton, MarkdownViewer
 │   │   │   └── post/         # SimilarPosts
@@ -146,7 +146,6 @@ Components are reusable UI units. They:
 | `Alert` | Toast notification with confirm dialog variant |
 | `TerminalDots` | macOS traffic light dots (terminal chrome) |
 | `PaginationControls` | Prev/next pagination with item count |
-| `CatTag` | Colored category tag badge |
 
 ---
 
