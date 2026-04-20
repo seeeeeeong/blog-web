@@ -193,6 +193,12 @@ export function Layout() {
                   >
                     :admin
                   </Link>
+                  <Link
+                    to="/admin/rag"
+                    className="hidden sm:inline-flex h-7 px-2.5 border border-border-dim hover:border-cat-blue text-[11px] text-muted hover:text-cat-blue items-center transition-colors"
+                  >
+                    :rag
+                  </Link>
                   <button
                     onClick={handleLogout}
                     className="h-7 px-2.5 border border-cat-pink text-cat-pink hover:bg-cat-pink hover:text-bg text-[11px] transition-colors"

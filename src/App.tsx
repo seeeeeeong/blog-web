@@ -23,6 +23,9 @@ const PostEditPage = lazy(() =>
 const AdminPostsPage = lazy(() =>
   import("./core/api/pages/AdminPostsPage").then((m) => ({ default: m.AdminPostsPage }))
 );
+const AdminRagPage = lazy(() =>
+  import("./core/api/pages/AdminRagPage").then((m) => ({ default: m.AdminRagPage }))
+);
 const ChatPage = lazy(() =>
   import("./core/api/pages/ChatPage").then((m) => ({ default: m.ChatPage }))
 );
@@ -76,6 +79,14 @@ export function App() {
                 element={
                   <PrivateRoute>
                     <AdminPostsPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/admin/rag"
+                element={
+                  <PrivateRoute>
+                    <AdminRagPage />
                   </PrivateRoute>
                 }
               />
