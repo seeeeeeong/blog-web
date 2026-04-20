@@ -194,6 +194,12 @@ export function Layout() {
                   >
                     :admin
                   </Link>
+                  <Link
+                    to="/admin/rag"
+                    className="hidden sm:inline-flex h-7 px-2.5 border border-border-dim hover:border-cat-blue text-[11px] text-muted hover:text-cat-blue items-center transition-colors"
+                  >
+                    :rag
+                  </Link>
                   <BackfillButton />
                   <button
                     onClick={handleLogout}
@@ -245,6 +251,29 @@ export function Layout() {
                 >
                   ./chat
                 </Link>
+                {isAdmin && (
+                  <>
+                    <div className="border-t border-border-dim my-1" />
+                    <Link
+                      to="/posts/create"
+                      className={`py-2 ${location.pathname === "/posts/create" ? "text-cat-green" : "text-muted"}`}
+                    >
+                      :new
+                    </Link>
+                    <Link
+                      to="/admin/posts"
+                      className={`py-2 ${location.pathname === "/admin/posts" ? "text-cat-amber" : "text-muted"}`}
+                    >
+                      :admin
+                    </Link>
+                    <Link
+                      to="/admin/rag"
+                      className={`py-2 ${location.pathname === "/admin/rag" ? "text-cat-blue" : "text-muted"}`}
+                    >
+                      :rag
+                    </Link>
+                  </>
+                )}
               </nav>
             </div>
           )}
