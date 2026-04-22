@@ -38,7 +38,7 @@ export function CommentForm({
         autoFocus={autoFocus}
         rows={4}
         maxLength={COMMENT_LIMITS.CONTENT_MAX_LENGTH}
-        className="block w-full resize-none border border-rule bg-paper p-3.5 font-body text-[15px] text-ink placeholder:text-faint placeholder:italic focus:border-ink focus:outline-none transition-colors"
+        className="block w-full resize-none rounded-md border border-rule bg-paper p-3 text-[14px] text-ink placeholder:text-faint focus:border-accent focus:outline-none transition-colors"
       />
       <div className="flex justify-between items-center">
         <span className="font-meta text-[10px] text-faint tracking-[0.08em]">
@@ -47,7 +47,7 @@ export function CommentForm({
         <button
           type="submit"
           disabled={!content.trim() || isSubmitting}
-          className="h-9 px-4 bg-ink text-paper font-meta text-[11px] uppercase tracking-[0.12em] hover:bg-accent disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="h-8 px-4 rounded-md bg-accent text-paper text-[12.5px] font-medium hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
         >
           {isSubmitting ? "Posting…" : buttonText}
         </button>

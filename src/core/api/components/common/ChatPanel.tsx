@@ -8,8 +8,8 @@ import { Spinner } from "./Spinner";
 const SESSION_STORAGE_KEY = "blog-ai:chatSessionId";
 
 const SAMPLE_PROMPTS = [
-  "Spring AI로 RAG 시스템 만드는 방법이 뭐야?",
-  "쿠팡은 실시간 DB 스트리밍을 어떻게 처리해?",
+  "이 블로그에서 Spring AI 관련 글 보여줘",
+  "쿠팡의 실시간 DB 스트리밍을 요약해줘",
   "pgvector HNSW 인덱스 튜닝 팁 알려줘",
 ];
 
@@ -61,19 +61,18 @@ function createId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-interface ChatDrawerProps {
-  open: boolean;
-  onClose: () => void;
+interface ChatPanelProps {
+  variant?: "fixed" | "drawer";
+  onClose?: () => void;
 }
 
-export function ChatDrawer({ open, onClose }: ChatDrawerProps) {
+export function ChatPanel({ variant = "fixed", onClose }: ChatPanelProps) {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [sessionError, setSessionError] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
   const [remaining, setRemaining] = useState<number>(CHAT_LIMITS.MAX_MESSAGES_PER_SESSION);
-  const [booted, setBooted] = useState(false);
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const closeStreamRef = useRef<(() => void) | null>(null);
@@ -105,11 +104,8 @@ export function ChatDrawer({ open, onClose }: ChatDrawerProps) {
   }, []);
 
   useEffect(() => {
-    if (open && !booted) {
-      void bootstrap(false);
-      setBooted(true);
-    }
-  }, [open, booted, bootstrap]);
+    void bootstrap(false);
+  }, [bootstrap]);
 
   useEffect(() => {
     return () => {
@@ -118,18 +114,8 @@ export function ChatDrawer({ open, onClose }: ChatDrawerProps) {
   }, []);
 
   useEffect(() => {
-    if (open) {
-      bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-    }
-  }, [messages, open]);
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && open) onClose();
-    };
-    if (open) window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [messages]);
 
   const appendChunk = (id: string, chunk: string) => {
     setMessages((prev) =>
@@ -238,106 +224,89 @@ export function ChatDrawer({ open, onClose }: ChatDrawerProps) {
     [sessionId],
   );
 
-  if (!open) return null;
+  const containerClass =
+    variant === "drawer"
+      ? "animate-drawer-in fixed right-0 top-0 bottom-0 z-50 w-full sm:w-[380px] bg-paper border-l border-rule flex flex-col shadow-[0_0_40px_rgba(0,0,0,0.15)]"
+      : "h-full flex flex-col bg-paper-2 border-l border-rule";
 
   return (
-    <>
-      <div
-        onClick={onClose}
-        className="fixed inset-0 z-40 bg-ink/20 backdrop-blur-[1px] lg:hidden"
-        aria-hidden
-      />
-      <aside
-        className="animate-drawer-in fixed right-0 top-0 bottom-0 z-50 w-full sm:w-[420px] lg:w-[440px] bg-paper border-l border-rule flex flex-col shadow-[0_0_40px_rgba(0,0,0,0.25)]"
-        aria-label="Chat drawer"
-      >
-        <header className="px-5 py-5 border-b border-rule flex items-center justify-between">
-          <div>
-            <p className="eyebrow mb-1">Correspondence</p>
-            <h2 className="font-display text-[22px] font-medium tracking-[-0.02em] text-ink leading-none">
-              Ask the Room
-            </h2>
-            <p className="font-meta text-[10px] text-faint mt-1.5 tracking-[0.08em]">
-              session · {sessionShort} · {remaining} left
-            </p>
+    <aside className={containerClass} aria-label="Ask this blog">
+      <header className="px-5 py-3.5 border-b border-rule bg-paper flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="w-6 h-6 rounded-md bg-ink text-paper grid place-items-center font-meta text-[10px] font-semibold shrink-0">
+            AI
           </div>
-          <div className="flex items-center gap-1.5">
-            <button
-              onClick={resetSession}
-              disabled={streaming}
-              className="h-7 px-2.5 border border-rule rounded-sm font-meta text-[10px] text-muted hover:border-ink hover:text-ink transition-colors lowercase tracking-[0.08em] disabled:opacity-40"
-              title="Clear"
-            >
-              :clear
-            </button>
+          <div className="min-w-0">
+            <div className="text-[13.5px] font-semibold text-ink leading-tight">Space assistant</div>
+            <div className="font-meta text-[10.5px] text-faint leading-tight truncate">
+              rag · {sessionShort} · {remaining} left
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center gap-1 shrink-0">
+          <button
+            onClick={resetSession}
+            disabled={streaming}
+            className="h-7 px-2 font-meta text-[10.5px] text-muted hover:text-ink hover:bg-chip rounded-md transition-colors disabled:opacity-40"
+            title="Clear session"
+          >
+            clear
+          </button>
+          {variant === "drawer" && onClose && (
             <button
               onClick={onClose}
-              className="w-7 h-7 border border-rule rounded-sm text-muted hover:border-ink hover:text-ink flex items-center justify-center text-[16px] leading-none transition-colors"
+              className="w-7 h-7 grid place-items-center text-muted hover:text-ink hover:bg-chip rounded-md text-[18px] leading-none transition-colors"
               aria-label="Close"
             >
               ×
             </button>
-          </div>
-        </header>
-
-        <div className="flex-1 overflow-y-auto px-5 py-5">
-          {sessionError ? (
-            <div className="py-12 text-center">
-              <p className="text-danger text-[13px] mb-4">! {sessionError}</p>
-              <button
-                onClick={() => void bootstrap(true)}
-                className="h-8 px-3 border border-rule rounded-sm font-meta text-[11px] text-muted hover:border-ink hover:text-ink transition-colors"
-              >
-                :retry
-              </button>
-            </div>
-          ) : !sessionId ? (
-            <div className="py-16 flex justify-center">
-              <Spinner />
-            </div>
-          ) : isEmpty ? (
-            <div>
-              <p className="eyebrow mb-4">Try a question</p>
-              <ul className="space-y-2.5">
-                {SAMPLE_PROMPTS.map((p) => (
-                  <li key={p}>
-                    <button
-                      onClick={() => send(p)}
-                      className="w-full text-left text-[14.5px] text-ink-soft hover:text-accent transition-colors leading-snug font-body"
-                    >
-                      <span className="text-accent mr-1.5">›</span>
-                      {p}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-10 text-[13px] text-muted italic leading-relaxed font-body">
-                A small correspondence desk. Ask about the essays or the engineering,
-                and the room will answer in kind.
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-6">
-              {messages.map((m) => (
-                <ChatMessageBlock
-                  key={m.id}
-                  message={m}
-                  onFeedback={handleFeedback}
-                  onFollowUp={send}
-                />
-              ))}
-              <div ref={bottomRef} />
-            </div>
           )}
         </div>
+      </header>
 
-        <footer className="border-t border-rule px-5 py-4 bg-paper-2/40">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              send(input);
-            }}
-            className="space-y-2"
+      <div className="flex-1 overflow-y-auto px-4 py-4">
+        {sessionError ? (
+          <div className="py-12 text-center">
+            <p className="text-danger text-[13px] mb-4">! {sessionError}</p>
+            <button
+              onClick={() => void bootstrap(true)}
+              className="h-8 px-3 border border-rule rounded-md font-meta text-[11px] text-muted hover:border-ink hover:text-ink transition-colors"
+            >
+              retry
+            </button>
+          </div>
+        ) : !sessionId ? (
+          <div className="py-16 flex justify-center">
+            <Spinner />
+          </div>
+        ) : isEmpty ? (
+          <EmptyPrompts onSelect={send} />
+        ) : (
+          <div className="space-y-4">
+            {messages.map((m) => (
+              <ChatMessageBlock
+                key={m.id}
+                message={m}
+                onFeedback={handleFeedback}
+                onFollowUp={send}
+              />
+            ))}
+            <div ref={bottomRef} />
+          </div>
+        )}
+      </div>
+
+      <footer className="border-t border-rule px-3.5 py-3 bg-paper">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            send(input);
+          }}
+        >
+          <div
+            className={`flex items-end gap-2 pl-3 pr-1.5 py-1.5 rounded-md bg-paper-2 border transition-colors ${
+              streaming ? "border-accent" : "border-rule focus-within:border-accent focus-within:bg-paper"
+            }`}
           >
             <textarea
               ref={inputRef}
@@ -345,42 +314,66 @@ export function ChatDrawer({ open, onClose }: ChatDrawerProps) {
               onChange={(e) => setInput(e.target.value.slice(0, CHAT_LIMITS.QUESTION_MAX_LENGTH))}
               onKeyDown={handleKeyDown}
               disabled={streaming || remaining <= 0 || !sessionId}
-              rows={2}
+              rows={1}
               placeholder={
                 remaining <= 0
-                  ? "메시지 한도에 도달했습니다. 세션을 초기화해주세요."
+                  ? "메시지 한도에 도달했습니다"
                   : streaming
                     ? "응답 생성 중…"
-                    : "질문을 입력하세요 (Enter=전송)"
+                    : "이 블로그에 대해 물어보세요"
               }
-              className="w-full bg-paper border border-rule focus:border-ink rounded-sm px-3 py-2 text-[14px] text-ink placeholder:text-faint outline-none resize-none font-body transition-colors"
+              className="flex-1 bg-transparent outline-none resize-none text-[13.5px] text-ink placeholder:text-faint py-1.5 max-h-[140px]"
             />
-            <div className="flex items-center justify-between">
-              <span className="font-meta text-[10px] text-faint tracking-[0.08em]">
-                {streaming ? "● streaming…" : `${charCount} / ${CHAT_LIMITS.QUESTION_MAX_LENGTH}`}
-              </span>
-              {streaming ? (
-                <button
-                  type="button"
-                  onClick={stopStreaming}
-                  className="h-8 px-3 border border-danger text-danger rounded-sm font-meta text-[11px] hover:bg-danger hover:text-paper transition-colors lowercase tracking-[0.08em]"
-                >
-                  :stop
-                </button>
-              ) : (
-                <button
-                  type="submit"
-                  disabled={!input.trim() || remaining <= 0 || !sessionId}
-                  className="h-8 px-3 border border-ink bg-ink text-paper rounded-sm font-meta text-[11px] hover:bg-accent hover:border-accent transition-colors lowercase tracking-[0.08em] disabled:opacity-30 disabled:cursor-not-allowed"
-                >
-                  :send
-                </button>
-              )}
-            </div>
-          </form>
-        </footer>
-      </aside>
-    </>
+            {streaming ? (
+              <button
+                type="button"
+                onClick={stopStreaming}
+                className="w-7 h-7 rounded-md bg-danger text-paper grid place-items-center text-[11px] font-semibold hover:bg-danger/90 transition-colors"
+                title="Stop"
+              >
+                ■
+              </button>
+            ) : (
+              <button
+                type="submit"
+                disabled={!input.trim() || remaining <= 0 || !sessionId}
+                className="w-7 h-7 rounded-md bg-accent text-paper grid place-items-center text-[12px] font-semibold hover:opacity-90 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed"
+                title="Send"
+              >
+                ↑
+              </button>
+            )}
+          </div>
+          <div className="mt-2 flex items-center justify-between font-meta text-[10.5px] text-faint">
+            <span>{streaming ? "● streaming…" : `${charCount} / ${CHAT_LIMITS.QUESTION_MAX_LENGTH}`}</span>
+            <span>↵ send · ⇧↵ newline</span>
+          </div>
+        </form>
+      </footer>
+    </aside>
+  );
+}
+
+function EmptyPrompts({ onSelect }: { onSelect: (q: string) => void }) {
+  return (
+    <div>
+      <p className="eyebrow mb-3">Try asking</p>
+      <div className="flex flex-col gap-2 mb-6">
+        {SAMPLE_PROMPTS.map((p) => (
+          <button
+            key={p}
+            onClick={() => onSelect(p)}
+            className="group text-left text-[13px] px-3 py-2 rounded-md bg-paper border border-rule hover:border-accent hover:text-accent text-ink-soft transition-colors flex items-center justify-between gap-3"
+          >
+            <span>{p}</span>
+            <span className="font-meta text-faint group-hover:text-accent">→</span>
+          </button>
+        ))}
+      </div>
+      <p className="text-[12.5px] text-muted leading-relaxed">
+        이 블로그의 모든 글을 학습한 어시스턴트입니다. 포스트 요약, 개념 설명, 관련 글 찾기를 해드려요.
+      </p>
+    </div>
   );
 }
 
@@ -395,9 +388,8 @@ function ChatMessageBlock({
 }) {
   if (message.role === "user") {
     return (
-      <div>
-        <p className="eyebrow mb-1.5 text-[9px]">You</p>
-        <div className="font-body text-[15px] leading-[1.65] text-ink whitespace-pre-wrap break-words pl-3 border-l border-rule">
+      <div className="flex justify-end">
+        <div className="max-w-[92%] bg-accent text-paper px-3 py-2 rounded-lg text-[13.5px] leading-[1.55] whitespace-pre-wrap break-words">
           {message.content}
         </div>
       </div>
@@ -405,44 +397,54 @@ function ChatMessageBlock({
   }
 
   return (
-    <div>
-      <p className="eyebrow mb-2 text-[9px]">
-        <span className="text-accent">The Room</span>
-        {message.streaming && <span className="ml-2 text-faint normal-case tracking-normal">· streaming…</span>}
-        {message.error && <span className="ml-2 text-danger normal-case tracking-normal">· error</span>}
-      </p>
-      {message.content ? (
-        <>
-          <div
-            className="chat-markdown text-ink font-body"
-            dangerouslySetInnerHTML={{ __html: renderMarkdown(message.content) }}
-          />
-          {message.sources && message.sources.length > 0 && (
-            <ChatSources sources={message.sources} />
-          )}
-          {!message.streaming && !message.error && (
-            <ChatFeedback
-              messageId={message.id}
-              current={message.feedback}
-              onFeedback={onFeedback}
-            />
-          )}
-          {message.followUps && message.followUps.length > 0 && (
-            <ChatFollowUps followUps={message.followUps} onSelect={onFollowUp} />
-          )}
-        </>
-      ) : (
-        <p className="font-meta text-[11px] text-faint">◦ thinking…</p>
-      )}
+    <div className="flex gap-2.5 items-start">
+      <div className="w-6 h-6 rounded-md bg-ink text-paper grid place-items-center font-meta text-[10px] font-semibold shrink-0 mt-0.5">
+        AI
+      </div>
+      <div className="min-w-0 flex-1">
+        {message.content ? (
+          <>
+            <div className="bg-paper border border-rule rounded-lg px-3 py-2">
+              <div
+                className="chat-markdown"
+                dangerouslySetInnerHTML={{ __html: renderMarkdown(message.content) }}
+              />
+              {message.streaming && (
+                <p className="font-meta text-[10.5px] text-faint mt-1.5">● streaming…</p>
+              )}
+              {message.error && (
+                <p className="font-meta text-[10.5px] text-danger mt-1.5">! error</p>
+              )}
+              {message.sources && message.sources.length > 0 && (
+                <ChatSources sources={message.sources} />
+              )}
+            </div>
+            {!message.streaming && !message.error && (
+              <ChatFeedback
+                messageId={message.id}
+                current={message.feedback}
+                onFeedback={onFeedback}
+              />
+            )}
+            {message.followUps && message.followUps.length > 0 && (
+              <ChatFollowUps followUps={message.followUps} onSelect={onFollowUp} />
+            )}
+          </>
+        ) : (
+          <p className="font-meta text-[11px] text-faint py-1">◦ thinking…</p>
+        )}
+      </div>
     </div>
   );
 }
 
 function ChatSources({ sources }: { sources: ChatSource[] }) {
   return (
-    <div className="mt-3 pt-3 border-t border-rule-soft">
-      <p className="eyebrow mb-2 text-[9px]">Sources</p>
-      <ul className="space-y-1.5">
+    <div className="mt-2.5 pt-2.5 border-t border-rule-soft">
+      <p className="font-meta text-[10px] text-faint uppercase tracking-[0.08em] font-semibold mb-1.5">
+        Sources
+      </p>
+      <ul className="space-y-1">
         {sources.map((source, i) => (
           <li key={source.url}>
             <a
@@ -452,7 +454,9 @@ function ChatSources({ sources }: { sources: ChatSource[] }) {
               className="block text-[12.5px] text-ink-soft hover:text-accent transition-colors leading-snug"
             >
               <span className="font-meta text-[10px] text-accent mr-1.5">[{i + 1}]</span>
-              <span className="font-meta text-[10px] text-muted mr-1.5 uppercase tracking-[0.06em]">{source.company}</span>
+              <span className="font-meta text-[10px] text-muted mr-1.5 uppercase tracking-[0.04em]">
+                {source.company}
+              </span>
               {source.title}
             </a>
           </li>
@@ -470,20 +474,17 @@ function ChatFollowUps({
   onSelect: (q: string) => void;
 }) {
   return (
-    <div className="mt-3 pt-3 border-t border-rule-soft">
-      <p className="eyebrow mb-2 text-[9px]">Related</p>
-      <div className="flex flex-col gap-1.5">
-        {followUps.map((q) => (
-          <button
-            key={q}
-            onClick={() => onSelect(q)}
-            className="text-left text-[13px] text-ink-soft hover:text-accent transition-colors leading-snug"
-          >
-            <span className="text-accent mr-1.5">›</span>
-            {q}
-          </button>
-        ))}
-      </div>
+    <div className="mt-2 flex flex-col gap-1.5">
+      {followUps.map((q) => (
+        <button
+          key={q}
+          onClick={() => onSelect(q)}
+          className="text-left text-[12.5px] px-3 py-1.5 rounded-md border border-rule bg-paper hover:border-accent hover:text-accent text-ink-soft transition-colors flex items-center justify-between gap-3"
+        >
+          <span>{q}</span>
+          <span className="font-meta text-faint">→</span>
+        </button>
+      ))}
     </div>
   );
 }
@@ -498,28 +499,30 @@ function ChatFeedback({
   onFeedback: (id: string, rating: "up" | "down") => void;
 }) {
   return (
-    <div className="mt-3 flex items-center gap-2">
+    <div className="mt-1.5 ml-1 flex items-center gap-1.5">
       <button
         onClick={() => onFeedback(messageId, "up")}
         disabled={current !== undefined}
-        className={`font-meta text-[10px] px-2 py-0.5 border rounded-sm transition-colors tracking-[0.08em] ${
+        className={`font-meta text-[10.5px] px-1.5 py-0.5 rounded transition-colors ${
           current === "up"
-            ? "border-accent text-accent"
-            : "border-rule text-muted hover:border-ink hover:text-ink"
+            ? "text-accent"
+            : "text-faint hover:text-ink"
         }`}
+        title="Helpful"
       >
-        +1
+        ▲
       </button>
       <button
         onClick={() => onFeedback(messageId, "down")}
         disabled={current !== undefined}
-        className={`font-meta text-[10px] px-2 py-0.5 border rounded-sm transition-colors tracking-[0.08em] ${
+        className={`font-meta text-[10.5px] px-1.5 py-0.5 rounded transition-colors ${
           current === "down"
-            ? "border-danger text-danger"
-            : "border-rule text-muted hover:border-danger hover:text-danger"
+            ? "text-danger"
+            : "text-faint hover:text-ink"
         }`}
+        title="Not helpful"
       >
-        −1
+        ▼
       </button>
     </div>
   );

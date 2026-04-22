@@ -3,7 +3,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        // ─── Reading Room palette ───
+        // ─── Wiki Clean palette ───
         paper: "var(--c-paper)",
         "paper-2": "var(--c-paper-2)",
         chip: "var(--c-chip)",
@@ -16,8 +16,10 @@ export default {
         accent: "var(--c-accent)",
         "accent-soft": "var(--c-accent-soft)",
         danger: "var(--c-danger)",
+        success: "var(--c-success)",
+        warning: "var(--c-warning)",
 
-        // ─── Legacy aliases → Reading Room palette ───
+        // ─── Legacy aliases (kept so existing utility classes still compile) ───
         bg: "var(--c-paper)",
         "bg-2": "var(--c-paper-2)",
         raised: "var(--c-chip)",
@@ -26,13 +28,11 @@ export default {
         "border-mid": "var(--c-rule)",
         "ink-bright": "var(--c-ink)",
         ghost: "var(--c-faint)",
-
         "cat-blue": "var(--c-accent)",
         "cat-purple": "var(--c-accent)",
         "cat-amber": "var(--c-accent)",
         "cat-pink": "var(--c-danger)",
-        "cat-green": "var(--c-accent)",
-
+        "cat-green": "var(--c-success)",
         panel: "var(--c-paper)",
         "panel-hover": "var(--c-chip)",
         "panel-active": "var(--c-chip)",
@@ -47,35 +47,24 @@ export default {
         "ink-faint": "var(--c-faint)",
         "ink-ghost": "var(--c-rule)",
         "accent-text": "var(--c-paper)",
-        "term-green": "var(--c-accent)",
+        "term-green": "var(--c-success)",
         "term-green-dim": "var(--c-accent-soft)",
-        "term-amber": "var(--c-accent)",
+        "term-amber": "var(--c-warning)",
         "term-blue": "var(--c-accent)",
         "term-pink": "var(--c-danger)",
         "term-white": "var(--c-ink)",
         info: "var(--c-accent)",
-        success: "var(--c-accent)",
-        warning: "var(--c-accent)",
         draft: "var(--c-muted)",
       },
       fontFamily: {
-        serif: ['"Fraunces"', '"Newsreader"', "Georgia", "ui-serif", "serif"],
-        sans: ['"Newsreader"', "Georgia", "ui-serif", "serif"],
+        sans: ['"Inter"', "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+        serif: ['"Inter"', "-apple-system", "sans-serif"],
         mono: ['"JetBrains Mono"', "ui-monospace", '"SF Mono"', "Menlo", "monospace"],
-      },
-      borderRadius: {
-        DEFAULT: "2px",
-        sm: "2px",
-        md: "2px",
-        lg: "2px",
-        xl: "2px",
-        "2xl": "2px",
-        full: "9999px",
       },
       letterSpacing: {
         "tightest-plus": "-0.025em",
         "tighter-plus": "-0.02em",
-        "widest-plus": "0.25em",
+        "widest-plus": "0.12em",
       },
     },
   },

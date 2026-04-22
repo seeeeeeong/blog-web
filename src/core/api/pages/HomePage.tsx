@@ -8,15 +8,12 @@ import { Spinner } from "../components/common/Spinner";
 import { PAGINATION } from "../../support/constants";
 import { calculateWordCount } from "../../support/converter/format";
 
-const MONTHS_EN = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-
-function parseIsoDate(iso: string) {
+function formatDateShort(iso: string): string {
   const d = new Date(iso);
-  return {
-    day: String(d.getDate()).padStart(2, "0"),
-    month: MONTHS_EN[d.getMonth()],
-    year: d.getFullYear(),
-  };
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
 }
 
 function readMinutes(excerpt: string | null | undefined, title: string): number {
@@ -80,203 +77,159 @@ export function HomePage() {
   }, [loadPage]);
 
   const isSearching = Boolean(qParam);
-  const isFiltered = Boolean(categoryParam) || isSearching;
-
   const activeCategory = useMemo(() => {
     if (!categoryParam) return null;
     return categories.find((c) => c.id === Number(categoryParam)) ?? null;
   }, [categoryParam, categories]);
 
-  const [featured, ...rest] = posts;
+  const pageTitle = isSearching
+    ? `Search: "${qParam}"`
+    : activeCategory
+      ? activeCategory.name
+      : "SEEEEEEONG.LOG";
+
+  const showFilteredBreadcrumb = isSearching || Boolean(activeCategory);
 
   return (
-    <div className="px-6 md:px-10 pt-10 pb-20 animate-fade-in">
-      <div className="grid md:grid-cols-[200px_1fr] gap-10 md:gap-14">
-        <aside className="hidden md:block">
-          <div className="eyebrow mb-4 pb-2.5 border-b border-rule">
-            {isSearching ? "Search" : "Categories"}
-          </div>
-          <div className="flex flex-col gap-0.5 mb-10">
-            <CategoryLink
-              to="/"
-              active={!categoryParam && !isSearching}
-              label="All posts"
-              count={posts.length}
-            />
-            {categories.map((cat) => (
-              <CategoryLink
-                key={cat.id}
-                to={`/?category=${cat.id}`}
-                active={categoryParam === String(cat.id)}
-                label={cat.name}
-              />
-            ))}
-          </div>
+    <div className="px-6 md:px-10 py-7 md:py-8">
+      {/* Breadcrumbs (only for filtered views) */}
+      {showFilteredBreadcrumb && (
+        <div className="flex items-center gap-1.5 text-[12.5px] text-muted mb-5">
+          <Link to="/" className="hover:text-ink transition-colors">
+            seeeeeeong.log
+          </Link>
+          <span className="text-faint">/</span>
+          <span className="text-ink font-medium">
+            {isSearching ? "search" : activeCategory?.name}
+          </span>
+        </div>
+      )}
 
-          <div className="eyebrow mb-3 pb-2 border-b border-rule-soft">About</div>
-          <p className="text-[14px] text-muted leading-[1.6] font-body">
-            A slow blog on software, books, and the long interval between them.
-            Updated when there's something worth saying.{" "}
-            <em className="text-ink-soft not-italic font-body italic">— seeeeeeong</em>
-          </p>
-        </aside>
+      {/* Page header */}
+      <div className="pb-5 border-b border-rule mb-6">
+        <h1 className={`text-[28px] md:text-[30px] font-bold leading-tight text-ink mb-1.5 ${!activeCategory && !isSearching ? "tracking-[0.04em]" : "tracking-[-0.02em]"}`}>
+          {pageTitle}
+        </h1>
+        <div className="flex items-center gap-3 mt-3 text-[12px] text-muted">
+          <span className="inline-flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-success" />
+            {posts.length} posts
+          </span>
+          <span className="text-faint">·</span>
+          <span>updated recently</span>
+        </div>
+      </div>
 
-        <section className="min-w-0">
-          {isSearching && (
-            <div className="mb-10 pb-6 border-b border-rule">
-              <p className="eyebrow mb-2">Search results</p>
-              <h1 className="font-display text-[32px] md:text-[40px] font-medium tracking-[-0.025em] leading-[1.05] text-ink">
-                “{qParam}”
-              </h1>
-              <p className="font-meta text-[11px] text-muted mt-3 tracking-[0.08em] uppercase">
-                {posts.length} {posts.length === 1 ? "result" : "results"}
-              </p>
-            </div>
-          )}
+      {/* Filter bar */}
+      <div className="flex items-center gap-2 mb-5 px-3 py-2 bg-paper-2 border border-rule rounded-md flex-wrap">
+        <FilterChip to="/" active={!categoryParam && !isSearching}>
+          All
+        </FilterChip>
+        {categories.slice(0, 6).map((cat) => (
+          <FilterChip
+            key={cat.id}
+            to={`/?category=${cat.id}`}
+            active={categoryParam === String(cat.id)}
+          >
+            {cat.name}
+          </FilterChip>
+        ))}
+        <span className="ml-auto text-[12px] text-muted flex items-center gap-1.5">
+          Sort: <span className="font-semibold text-ink">Updated ↓</span>
+        </span>
+      </div>
 
-          {activeCategory && !isSearching && (
-            <div className="mb-10 pb-6 border-b border-rule">
-              <p className="eyebrow mb-2">Category</p>
-              <h1 className="font-display text-[32px] md:text-[40px] font-medium tracking-[-0.025em] leading-[1.05] text-ink">
-                {activeCategory.name}
-              </h1>
-            </div>
-          )}
-
-          {loading && posts.length === 0 ? (
-            <div className="py-24 flex justify-center">
-              <Spinner />
-            </div>
-          ) : error ? (
-            <div className="py-24 text-center">
-              <p className="text-danger text-[14px] mb-4">{error}</p>
-              <button
-                onClick={() => loadPage(0, false)}
-                className="h-8 px-3 border border-rule rounded-sm font-meta text-[11px] text-muted hover:border-ink hover:text-ink transition-colors"
-              >
-                :retry
-              </button>
-            </div>
-          ) : posts.length === 0 ? (
-            <div className="py-24 text-center font-body text-[15px] text-muted italic">
-              No matching entries{isSearching && ` for "${qParam}"`}.
-            </div>
-          ) : (
-            <>
-              {!isFiltered && featured && (
-                <FeaturedArticle
-                  post={featured}
-                  categoryName={categoryName(featured.categoryId)}
-                />
-              )}
-
-              <div>
-                {(isFiltered ? posts : rest).map((post) => (
+      {/* Content */}
+      {loading && posts.length === 0 ? (
+        <div className="py-24 flex justify-center">
+          <Spinner />
+        </div>
+      ) : error ? (
+        <div className="py-20 text-center">
+          <p className="text-danger text-[13.5px] mb-4">{error}</p>
+          <button
+            onClick={() => loadPage(0, false)}
+            className="h-8 px-3 border border-rule rounded-md font-meta text-[11.5px] text-muted hover:border-ink hover:text-ink transition-colors"
+          >
+            retry
+          </button>
+        </div>
+      ) : posts.length === 0 ? (
+        <div className="py-24 text-center text-[14px] text-muted">
+          No matching entries{isSearching && ` for "${qParam}"`}.
+        </div>
+      ) : (
+        <>
+          <div className="rounded-md border border-rule overflow-hidden">
+            <table className="w-full text-left text-[14px]">
+              <thead className="bg-paper-2">
+                <tr>
+                  <Th className="w-[44%]">Title</Th>
+                  <Th className="w-[14%] hidden md:table-cell">Category</Th>
+                  <Th className="w-[12%] hidden md:table-cell">Status</Th>
+                  <Th className="w-[16%]">Updated</Th>
+                </tr>
+              </thead>
+              <tbody>
+                {posts.map((post) => (
                   <PostRow
                     key={post.id}
                     post={post}
                     categoryName={categoryName(post.categoryId)}
                   />
                 ))}
-              </div>
+              </tbody>
+            </table>
+          </div>
 
-              {hasNext && (
-                <div className="mt-14 pt-7 border-t-2 border-ink flex items-center justify-between font-meta text-[11px] uppercase tracking-[0.1em]">
-                  <span className="text-muted">
-                    Page {page + 1}
-                  </span>
-                  <button
-                    onClick={() => loadPage(page + 1, true)}
-                    disabled={loadingMore}
-                    className="text-muted hover:text-ink transition-colors disabled:opacity-50"
-                  >
-                    {loadingMore ? "loading…" : "Older →"}
-                  </button>
-                </div>
-              )}
-
-              {!hasNext && posts.length > 3 && (
-                <div className="mt-16 text-center font-display text-rule text-[22px] tracking-[1em] pl-[1em]">
-                  ❦❦❦
-                </div>
-              )}
-            </>
+          {hasNext && (
+            <div className="mt-6 flex items-center justify-between text-[12.5px] text-muted">
+              <span>Page {page + 1}</span>
+              <button
+                onClick={() => loadPage(page + 1, true)}
+                disabled={loadingMore}
+                className="h-8 px-3 border border-rule rounded-md hover:border-ink hover:text-ink transition-colors disabled:opacity-40"
+              >
+                {loadingMore ? "loading…" : "Load more →"}
+              </button>
+            </div>
           )}
-        </section>
-      </div>
+        </>
+      )}
     </div>
   );
 }
 
-function CategoryLink({
+function Th({ children, className }: { children: React.ReactNode; className?: string }) {
+  return (
+    <th
+      className={`text-left px-3 py-2 text-[11.5px] font-semibold text-faint uppercase tracking-[0.06em] border-b border-rule ${className ?? ""}`}
+    >
+      {children}
+    </th>
+  );
+}
+
+function FilterChip({
   to,
   active,
-  label,
-  count,
+  children,
 }: {
   to: string;
   active: boolean;
-  label: string;
-  count?: number;
+  children: React.ReactNode;
 }) {
   return (
     <Link
       to={to}
-      className={`flex justify-between items-center py-[7px] pl-2.5 pr-2 text-[15px] transition-colors border-l-2 font-body ${
+      className={`px-2.5 py-1 rounded-full text-[12.5px] border transition-colors ${
         active
-          ? "text-ink border-accent font-medium"
-          : "text-ink-soft border-transparent hover:text-ink hover:bg-paper-2"
+          ? "bg-paper text-ink border-rule font-medium"
+          : "text-muted border-transparent hover:bg-paper hover:text-ink hover:border-rule"
       }`}
     >
-      <span>{label}</span>
-      {count !== undefined && (
-        <span className="font-meta text-[11px] text-faint">
-          {String(count).padStart(2, "0")}
-        </span>
-      )}
+      {children}
     </Link>
-  );
-}
-
-function FeaturedArticle({
-  post,
-  categoryName,
-}: {
-  post: PostSummary;
-  categoryName: string;
-}) {
-  const { day, month } = parseIsoDate(post.createdAt);
-  const readTime = readMinutes(post.excerpt, post.title);
-  return (
-    <article className="grid md:grid-cols-[1.1fr_1fr] gap-8 md:gap-10 items-start pb-11 mb-11 border-b border-rule">
-      <div>
-        <div className="font-meta text-[10px] tracking-[0.3em] uppercase text-accent mb-3.5">
-          Featured · {categoryName}
-        </div>
-        <h1 className="font-display text-[40px] md:text-[48px] font-normal leading-[1.05] tracking-[-0.025em] mb-4 text-balance">
-          <Link to={`/posts/${post.id}`} className="text-ink hover:text-accent transition-colors">
-            {post.title}
-          </Link>
-        </h1>
-        {post.excerpt && (
-          <p className="font-body italic text-[17px] text-ink-soft leading-[1.6] mb-5">
-            {post.excerpt}
-          </p>
-        )}
-        <div className="flex flex-wrap items-center gap-5 font-meta text-[11px] tracking-[0.08em] uppercase text-muted">
-          <span className="text-accent">{categoryName}</span>
-          <span>{month} {day}</span>
-          <span>{readTime} min read</span>
-        </div>
-      </div>
-      <Link to={`/posts/${post.id}`} className="block">
-        <div className="aspect-[4/3] thumb-hatch flex items-end p-4">
-          <span className="font-meta text-[10px] tracking-[0.15em] uppercase text-muted bg-paper px-2 py-[3px] border border-rule">
-            cover · 4:3
-          </span>
-        </div>
-      </Link>
-    </article>
   );
 }
 
@@ -287,34 +240,42 @@ function PostRow({
   post: PostSummary;
   categoryName: string;
 }) {
-  const { day, month, year } = parseIsoDate(post.createdAt);
+  const isDraft = post.status === "DRAFT";
   const readTime = readMinutes(post.excerpt, post.title);
   return (
-    <Link
-      to={`/posts/${post.id}`}
-      className="grid grid-cols-[64px_1fr] md:grid-cols-[80px_1fr_110px] gap-6 md:gap-[30px] py-6 rule-dotted-bottom items-start transition-[padding] duration-200 hover:pl-2"
-    >
-      <div className="font-meta text-[11px] text-muted tracking-[0.05em] leading-[1.5] pt-1">
-        <span className="block font-display text-[26px] text-ink font-medium leading-none tracking-[-0.02em] mb-1">
-          {day}
+    <tr className="border-b border-rule last:border-b-0 hover:bg-paper-2 transition-colors">
+      <td className="px-3 py-3 align-top">
+        <Link to={`/posts/${post.id}`} className="block group">
+          <div className="flex items-start gap-2">
+            <span className="text-faint text-[13px] pt-[2px]">📄</span>
+            <div className="min-w-0">
+              <div className={`text-[14.5px] font-medium leading-snug group-hover:text-accent transition-colors ${isDraft ? "text-muted" : "text-ink"}`}>
+                {post.title}
+              </div>
+              {post.excerpt && (
+                <div className="text-[13px] text-muted mt-1 line-clamp-2">
+                  {post.excerpt}
+                </div>
+              )}
+              <div className="mt-1.5 font-meta text-[10.5px] text-faint">
+                {readTime} min read
+              </div>
+            </div>
+          </div>
+        </Link>
+      </td>
+      <td className="px-3 py-3 align-top hidden md:table-cell">
+        <span className="font-meta text-[12px] text-muted">{categoryName}</span>
+      </td>
+      <td className="px-3 py-3 align-top hidden md:table-cell">
+        <span className={`status-chip ${isDraft ? "draft" : "published"}`}>
+          <span className="dot" />
+          {isDraft ? "Draft" : "Published"}
         </span>
-        {month} {year}
-      </div>
-      <div className="min-w-0">
-        <h2 className="font-display text-[22px] md:text-[24px] font-medium leading-[1.2] tracking-[-0.015em] mb-2 text-balance text-ink">
-          {post.title}
-        </h2>
-        {post.excerpt && (
-          <p className="font-body text-[15.5px] text-ink-soft leading-[1.6] mb-3 line-clamp-2">
-            {post.excerpt}
-          </p>
-        )}
-        <div className="flex gap-4 font-meta text-[11px] tracking-[0.08em] uppercase text-muted">
-          <span className="text-accent">{categoryName}</span>
-          <span>{readTime} min</span>
-        </div>
-      </div>
-      <div className="hidden md:block aspect-square thumb-hatch" />
-    </Link>
+      </td>
+      <td className="px-3 py-3 align-top font-meta text-[12px] text-muted">
+        {formatDateShort(post.updatedAt ?? post.createdAt)}
+      </td>
+    </tr>
   );
 }

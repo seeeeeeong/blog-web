@@ -12,11 +12,9 @@ import { SimilarPosts } from "../components/post/SimilarPosts";
 import { Spinner } from "../components/common/Spinner";
 import { calculateWordCount } from "../../support/converter/format";
 
-const MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-
 function formatPrettyDate(iso: string): string {
   const d = new Date(iso);
-  return `${MONTHS[d.getMonth()]} ${String(d.getDate()).padStart(2, "0")}, ${d.getFullYear()}`;
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
 function readMinutes(content: string | undefined): number {
@@ -99,11 +97,11 @@ export function PostDetailPage() {
   if (parsedId == null) {
     return (
       <div className="max-w-[760px] mx-auto px-6 md:px-10 py-24 text-center">
-        <p className="font-meta text-[11px] text-danger mb-4 tracking-[0.1em] uppercase">
+        <p className="font-meta text-[11px] text-danger mb-4 tracking-[0.08em] uppercase">
           404 · Not found
         </p>
-        <Link to="/" className="font-meta text-[12px] text-muted hover:text-ink transition-colors">
-          ← Back to the reading room
+        <Link to="/" className="text-[13px] text-muted hover:text-ink transition-colors">
+          ← Home
         </Link>
       </div>
     );
@@ -120,19 +118,19 @@ export function PostDetailPage() {
   if (error === "server_error") {
     return (
       <div className="max-w-[760px] mx-auto px-6 md:px-10 py-24 text-center">
-        <p className="font-meta text-[11px] text-danger mb-4 tracking-[0.1em] uppercase">
+        <p className="font-meta text-[11px] text-danger mb-4 tracking-[0.08em] uppercase">
           Failed to load post
         </p>
         <div className="flex items-center justify-center gap-3">
           <button
             onClick={() => fetchPost(parsedId)}
-            className="h-8 px-3 border border-rule rounded-sm font-meta text-[11px] text-muted hover:border-ink hover:text-ink transition-colors"
+            className="h-8 px-3 border border-rule rounded-md font-meta text-[11.5px] text-muted hover:border-ink hover:text-ink transition-colors"
           >
-            :retry
+            retry
           </button>
           <Link
             to="/"
-            className="h-8 px-3 font-meta text-[11px] text-muted hover:text-ink inline-flex items-center transition-colors"
+            className="h-8 px-3 font-meta text-[11.5px] text-muted hover:text-ink inline-flex items-center transition-colors"
           >
             ← Home
           </Link>
@@ -145,75 +143,105 @@ export function PostDetailPage() {
 
   const readTime = readMinutes(post.content);
   const wordCount = calculateWordCount(post.content ?? "");
+  const isDraft = post.status === "DRAFT";
 
   return (
-    <div className="px-6 md:px-10 pt-10 pb-16 animate-fade-in">
-      <div className="lg:grid lg:grid-cols-[1fr_260px] lg:gap-14">
-        <article className="max-w-[720px] mx-auto lg:mx-0 w-full min-w-0">
-          <div className="mb-6 font-meta text-[11px] text-muted tracking-[0.08em] uppercase">
-            <Link to="/" className="hover:text-ink transition-colors">
-              The Reading Room
-            </Link>
-            <span className="mx-2 text-faint">/</span>
-            <Link
-              to={`/?category=${post.categoryId}`}
-              className="text-accent hover:underline"
-            >
-              {categoryName}
-            </Link>
-          </div>
+    <div className="px-6 md:px-10 py-7 md:py-8">
+      <div className="max-w-[860px]">
+        {/* Breadcrumbs */}
+        <div className="flex items-center gap-1.5 text-[12.5px] text-muted mb-5 flex-wrap">
+          <Link to="/" className="hover:text-ink transition-colors">
+            seeeeeeong.log
+          </Link>
+          <span className="text-faint">/</span>
+          <Link
+            to={`/?category=${post.categoryId}`}
+            className="hover:text-ink transition-colors"
+          >
+            {categoryName}
+          </Link>
+          <span className="text-faint">/</span>
+          <span className="text-ink font-medium truncate">{post.title}</span>
+        </div>
 
-          <h1 className="font-display text-[40px] md:text-[52px] font-normal leading-[1.02] tracking-[-0.025em] text-ink mb-6 text-balance">
-            {post.title}
-          </h1>
+        <article>
+          {/* Article head */}
+          <header className="mb-7">
+            <div className="flex items-center gap-1.5 mb-3.5">
+              <span className="tag-chip">{categoryName.toLowerCase()}</span>
+              {isDraft && (
+                <span className="status-chip draft">
+                  <span className="dot" />
+                  Draft
+                </span>
+              )}
+            </div>
 
+            <h1 className="text-[30px] md:text-[32px] font-bold tracking-[-0.02em] leading-[1.2] text-ink mb-4">
+              {post.title}
+            </h1>
+
+            <div className="flex items-center gap-3 text-[13px] text-muted flex-wrap">
+              <span className="inline-flex items-center gap-2">
+                <span className="w-[22px] h-[22px] rounded-full bg-gradient-to-br from-[#8aa4ff] to-[#c28aff]" />
+                <span className="font-medium text-ink">seeeeeeong</span>
+              </span>
+              <span className="text-faint">·</span>
+              <span className="font-meta text-[12px]">{formatPrettyDate(post.createdAt)}</span>
+              <span className="text-faint">·</span>
+              <span>{readTime} min read</span>
+              <span className="text-faint">·</span>
+              <span>{wordCount.toLocaleString()} words</span>
+              {!isDraft && (
+                <>
+                  <span className="text-faint">·</span>
+                  <span className="status-chip published">
+                    <span className="dot" />
+                    Published
+                  </span>
+                </>
+              )}
+              {isAuthor && (
+                <div className="ml-auto flex items-center gap-2">
+                  <Link
+                    to={`/posts/${parsedId}/edit`}
+                    className="h-7 px-3 inline-flex items-center rounded-md text-[12px] text-muted hover:bg-chip hover:text-ink transition-colors"
+                  >
+                    Edit
+                  </Link>
+                  <button
+                    onClick={handleDelete}
+                    className="h-7 px-3 inline-flex items-center rounded-md text-[12px] text-danger hover:bg-danger hover:text-paper transition-colors"
+                  >
+                    Delete
+                  </button>
+                </div>
+              )}
+            </div>
+          </header>
+
+          {/* Lead / TL;DR */}
           {post.excerpt && (
-            <p className="font-body italic text-[19px] md:text-[21px] text-ink-soft leading-[1.55] mb-8 text-pretty">
+            <div className="bg-paper-2 border-l-[3px] border-accent rounded-r-md px-4 py-3.5 mb-8 text-[14.5px] leading-[1.6] text-ink-soft">
+              <span className="font-semibold text-ink">TL;DR</span>
+              <span className="text-faint mx-2">—</span>
               {post.excerpt}
-            </p>
+            </div>
           )}
 
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 font-meta text-[11px] text-muted tracking-[0.08em] uppercase py-4 border-t border-b border-rule mb-10">
-            <span className="text-ink">by seeeeeeong</span>
-            <span>{formatPrettyDate(post.createdAt)}</span>
-            <span>{readTime} min read</span>
-            <span>{wordCount.toLocaleString()} words</span>
-            {isAuthor && (
-              <div className="ml-auto flex items-center gap-3">
-                <Link
-                  to={`/posts/${parsedId}/edit`}
-                  className="text-ink hover:text-accent transition-colors"
-                >
-                  :edit
-                </Link>
-                <button
-                  onClick={handleDelete}
-                  className="text-danger hover:underline"
-                >
-                  :delete
-                </button>
-              </div>
-            )}
-          </div>
-
-          <div className="mb-14">
+          {/* Body */}
+          <div className="mb-10">
             <MarkdownViewer contentHtml={post.contentHtml} />
           </div>
 
-          <div className="text-center font-display text-rule text-[22px] tracking-[1em] pl-[1em] my-12">
-            ❦❦❦
-          </div>
-
-          <div className="lg:hidden mb-14">
+          {/* Similar posts */}
+          <div className="mb-10 pt-6 border-t border-rule">
             <SimilarPosts postId={parsedId} />
           </div>
 
+          {/* Comments */}
           <CommentSection postId={parsedId} />
         </article>
-
-        <aside className="hidden lg:block lg:sticky lg:top-28 lg:self-start lg:h-fit">
-          <SimilarPosts postId={parsedId} />
-        </aside>
       </div>
     </div>
   );

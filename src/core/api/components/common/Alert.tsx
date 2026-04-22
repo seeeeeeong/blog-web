@@ -12,11 +12,11 @@ interface AlertProps {
 }
 
 const DOT_COLOR: Record<AlertType, string> = {
-  success: "bg-accent",
+  success: "bg-success",
   error: "bg-danger",
-  warning: "bg-accent",
-  info: "bg-ink",
-  confirm: "bg-ink",
+  warning: "bg-warning",
+  info: "bg-accent",
+  confirm: "bg-accent",
 };
 
 export function Alert({
@@ -35,7 +35,7 @@ export function Alert({
   }, [duration, onClose, type]);
 
   const base =
-    "w-80 border border-rule bg-paper shadow-[0_12px_28px_rgba(0,0,0,0.18)] animate-fade-in";
+    "w-80 rounded-md border border-rule bg-paper shadow-[0_8px_24px_rgba(0,0,0,0.08)] animate-fade-in";
 
   if (type === "confirm") {
     return (
@@ -56,7 +56,7 @@ export function Alert({
               onConfirm?.();
               onClose();
             }}
-            className="h-7 px-3 bg-ink text-paper font-meta text-[11px] uppercase tracking-[0.1em] hover:bg-accent transition-colors"
+            className="h-7 px-3 rounded-md bg-accent text-paper text-[12px] font-medium hover:opacity-90 transition-opacity"
           >
             Confirm
           </button>

@@ -65,14 +65,16 @@ export function PostEditPage() {
 
   if (loadError) {
     return (
-      <div className="max-w-[760px] mx-auto px-6 md:px-10 py-24 text-center animate-fade-in">
-        <p className="eyebrow mb-3">Not found</p>
-        <p className="font-body italic text-[16px] text-muted mb-8">
+      <div className="max-w-[760px] px-6 md:px-10 py-24 text-center">
+        <p className="font-meta text-[11px] text-danger uppercase tracking-[0.08em] mb-3">
+          Not found
+        </p>
+        <p className="text-[14.5px] text-muted mb-6">
           Could not load the post or you do not have permission to edit.
         </p>
         <Link
           to="/"
-          className="inline-flex h-10 px-5 items-center bg-ink text-paper font-meta text-[12px] uppercase tracking-[0.12em] hover:bg-accent transition-colors"
+          className="inline-flex h-9 px-4 items-center rounded-md bg-accent text-paper text-[13px] font-medium hover:opacity-90 transition-opacity"
         >
           ← Back to home
         </Link>
@@ -81,15 +83,24 @@ export function PostEditPage() {
   }
 
   return (
-    <div className="max-w-[920px] mx-auto px-6 md:px-10 py-10 animate-fade-in">
-      <div className="mb-8 pb-6 border-b border-rule">
-        <p className="eyebrow mb-2">Editorial</p>
-        <h1 className="font-display text-[36px] font-medium tracking-[-0.02em] text-ink leading-none mb-3">
+    <div className="max-w-[920px] px-6 md:px-10 py-7 md:py-8">
+      <div className="flex items-center gap-1.5 text-[12.5px] text-muted mb-5">
+        <Link to="/" className="hover:text-ink transition-colors">seeeeeeong.log</Link>
+        <span className="text-faint">/</span>
+        <Link to="/admin/posts" className="hover:text-ink transition-colors">admin · posts</Link>
+        <span className="text-faint">/</span>
+        <span className="text-ink font-medium">edit</span>
+      </div>
+
+      <div className="pb-5 border-b border-rule mb-6">
+        <h1 className="text-[28px] md:text-[30px] font-bold tracking-[-0.02em] leading-tight text-ink mb-1.5">
           Revise entry
         </h1>
-        <div className="flex flex-wrap items-center gap-5 font-meta text-[11px] text-muted tracking-[0.08em] uppercase">
+        <div className="flex flex-wrap items-center gap-3 font-meta text-[11.5px] text-muted">
           <span>title · {title.length}/{titleMaxLength}</span>
+          <span className="text-faint">·</span>
           <span>words · {wordCount}</span>
+          <span className="text-faint">·</span>
           <span>chars · {contentCharacters}</span>
         </div>
       </div>
@@ -99,11 +110,11 @@ export function PostEditPage() {
           e.preventDefault();
           handleSubmit(false);
         }}
-        className="space-y-6 pb-24"
+        className="space-y-5 pb-24"
       >
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div className="md:col-span-2">
-            <label htmlFor="title" className="mb-1.5 block eyebrow">
+            <label htmlFor="title" className="block text-[12px] font-semibold text-ink mb-1.5">
               Title
             </label>
             <input
@@ -113,20 +124,20 @@ export function PostEditPage() {
               onChange={(e) => setTitle(e.target.value)}
               required
               maxLength={titleMaxLength}
-              className="h-10 w-full border border-rule bg-paper px-3 font-display text-[18px] text-ink placeholder:text-faint focus:border-ink focus:outline-none transition-colors"
+              className="h-10 w-full rounded-md border border-rule bg-paper px-3 text-[15px] font-medium text-ink placeholder:text-faint focus:border-accent focus:outline-none transition-colors"
               placeholder="Title"
             />
           </div>
 
           <div>
-            <label htmlFor="category" className="mb-1.5 block eyebrow">
+            <label htmlFor="category" className="block text-[12px] font-semibold text-ink mb-1.5">
               Category
             </label>
             <select
               id="category"
               value={categoryId}
               onChange={(e) => setCategoryId(Number(e.target.value))}
-              className="h-10 w-full border border-rule bg-paper px-3 font-body text-[14px] text-ink focus:border-ink focus:outline-none transition-colors"
+              className="h-10 w-full rounded-md border border-rule bg-paper px-3 text-[13.5px] text-ink focus:border-accent focus:outline-none transition-colors"
             >
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
@@ -139,20 +150,22 @@ export function PostEditPage() {
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="eyebrow">Body</label>
-            <span className="font-meta text-[10px] text-faint">
+            <label className="block text-[12px] font-semibold text-ink">Body</label>
+            <span className="font-meta text-[10.5px] text-faint">
               Paste or upload images directly
             </span>
           </div>
-          <TipTapEditor value={content} onChange={setContent} />
+          <div className="rounded-md border border-rule bg-paper overflow-hidden">
+            <TipTapEditor value={content} onChange={setContent} />
+          </div>
         </div>
 
-        <div className="sticky bottom-3 z-20 border border-rule bg-paper/95 backdrop-blur p-3">
+        <div className="sticky bottom-3 z-20 rounded-md border border-rule bg-paper/95 backdrop-blur p-3 shadow-[0_4px_16px_rgba(0,0,0,0.04)]">
           <div className="flex flex-col-reverse items-stretch justify-between gap-3 sm:flex-row sm:items-center">
             <button
               type="button"
               onClick={() => navigate(`/posts/${postId}`)}
-              className="h-9 px-4 border border-rule font-meta text-[11px] uppercase tracking-[0.1em] text-muted hover:border-ink hover:text-ink transition-colors"
+              className="h-9 px-4 rounded-md border border-rule text-[13px] text-muted hover:border-ink hover:text-ink transition-colors"
             >
               Cancel
             </button>
@@ -161,14 +174,14 @@ export function PostEditPage() {
                 type="button"
                 onClick={() => handleSubmit(true)}
                 disabled={loading}
-                className="h-9 px-4 border border-rule font-meta text-[11px] uppercase tracking-[0.1em] text-muted hover:border-ink hover:text-ink transition-colors disabled:opacity-30"
+                className="h-9 px-4 rounded-md border border-rule text-[13px] text-muted hover:border-ink hover:text-ink transition-colors disabled:opacity-40"
               >
                 {loading ? "…" : "Save draft"}
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="h-9 px-5 bg-ink text-paper font-meta text-[11px] uppercase tracking-[0.12em] hover:bg-accent transition-colors disabled:opacity-30"
+                className="h-9 px-5 rounded-md bg-accent text-paper text-[13px] font-medium hover:opacity-90 transition-opacity disabled:opacity-40"
               >
                 {loading ? "…" : "Update"}
               </button>
