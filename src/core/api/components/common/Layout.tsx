@@ -338,16 +338,7 @@ function WorkspaceTree({
   return (
     <>
       <TreeSection title="Workspace">
-        <TreeLink to="/" emoji="🏠" active={isAllPosts} onNavigate={onNavigate}>
-          Overview
-        </TreeLink>
-        <TreeLink
-          to="/"
-          emoji="📝"
-          active={isAllPosts}
-          count={undefined}
-          onNavigate={onNavigate}
-        >
+        <TreeLink to="/" emoji="📝" active={isAllPosts} onNavigate={onNavigate}>
           All posts
         </TreeLink>
       </TreeSection>
