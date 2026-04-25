@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { postApi } from "../../../storage/post/postApi";
@@ -21,6 +21,53 @@ function readMinutes(content: string | undefined): number {
   if (!content) return 1;
   const words = calculateWordCount(content);
   return Math.max(1, Math.round(words / 200));
+}
+
+interface InsightCard {
+  value: string;
+  label: string;
+}
+
+function buildInsightCards(
+  content: string | undefined,
+  readTime: number,
+  wordCount: number,
+  categoryName: string,
+): InsightCard[] {
+  const source = content ?? "";
+  const cards: InsightCard[] = [];
+
+  const refreshTime = source.match(/(\d+)분에서\s*(\d+)초/);
+  if (refreshTime) {
+    cards.push({
+      value: `${refreshTime[1]}m → ${refreshTime[2]}s`,
+      label: "refresh time",
+    });
+  }
+
+  const externalCalls = source.match(/(\d+)만 번[\s\S]*?(\d+)번/);
+  if (externalCalls) {
+    cards.push({
+      value: `${externalCalls[1]}만 → ${externalCalls[2]}`,
+      label: "external DB calls",
+    });
+  }
+
+  const filteredRows = source.match(/(\d+)만 건[\s\S]{0,40}제거/);
+  if (filteredRows) {
+    cards.push({
+      value: `${filteredRows[1]}만`,
+      label: "rows filtered before join",
+    });
+  }
+
+  if (cards.length >= 3) return cards.slice(0, 3);
+
+  return [
+    { value: `${readTime} min`, label: "read time" },
+    { value: wordCount.toLocaleString(), label: "words" },
+    { value: categoryName, label: "category" },
+  ];
 }
 
 function parsePostId(raw: string | undefined): number | null {
@@ -46,15 +93,7 @@ export function PostDetailPage() {
     categoryApi.getCategories().then(setCategories).catch(() => {});
   }, []);
 
-  useEffect(() => {
-    if (parsedId == null) return;
-    fetchPost(parsedId);
-    return () => {
-      requestIdRef.current += 1;
-    };
-  }, [parsedId]);
-
-  function fetchPost(id: number) {
+  const fetchPost = useCallback((id: number) => {
     const thisRequest = ++requestIdRef.current;
     setLoading(true);
     setError(null);
@@ -79,7 +118,15 @@ export function PostDetailPage() {
       .finally(() => {
         if (thisRequest === requestIdRef.current) setLoading(false);
       });
-  }
+  }, [navigate]);
+
+  useEffect(() => {
+    if (parsedId == null) return;
+    fetchPost(parsedId);
+    return () => {
+      requestIdRef.current += 1;
+    };
+  }, [parsedId, fetchPost]);
 
   const handleDelete = async () => {
     try {
@@ -144,6 +191,7 @@ export function PostDetailPage() {
   const readTime = readMinutes(post.content);
   const wordCount = calculateWordCount(post.content ?? "");
   const isDraft = post.status === "DRAFT";
+  const insightCards = buildInsightCards(post.content, readTime, wordCount, categoryName);
 
   return (
     <div className="px-6 md:px-10 py-7 md:py-8">
@@ -220,14 +268,27 @@ export function PostDetailPage() {
             </div>
           </header>
 
-          {/* Lead / TL;DR */}
-          {post.excerpt && (
-            <div className="bg-paper-2 border-l-[3px] border-accent rounded-r-md px-4 py-3.5 mb-8 text-[14.5px] leading-[1.6] text-ink-soft">
-              <span className="font-semibold text-ink">TL;DR</span>
-              <span className="text-faint mx-2">—</span>
-              {post.excerpt}
+          <section className="mb-8 rounded-lg border border-rule bg-paper overflow-hidden">
+            {post.excerpt && (
+              <div className="border-b border-rule bg-paper-2 px-4 py-3.5 text-[14.5px] leading-[1.6] text-ink-soft">
+                <span className="font-semibold text-ink">Case summary</span>
+                <span className="text-faint mx-2">—</span>
+                {post.excerpt}
+              </div>
+            )}
+            <div className="grid gap-px bg-rule md:grid-cols-3">
+              {insightCards.map((card) => (
+                <div key={`${card.value}-${card.label}`} className="bg-paper px-4 py-3.5">
+                  <div className="text-[20px] font-semibold leading-tight text-ink">
+                    {card.value}
+                  </div>
+                  <div className="mt-1 font-meta text-[10px] uppercase tracking-[0.08em] text-faint">
+                    {card.label}
+                  </div>
+                </div>
+              ))}
             </div>
-          )}
+          </section>
 
           {/* Body */}
           <div className="mb-10">
