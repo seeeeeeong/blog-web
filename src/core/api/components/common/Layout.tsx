@@ -1,5 +1,7 @@
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+import { Activity, BookOpen, Circle, Database } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { clearAuthData, isExpiredToken, checkIsAdmin } from "../../../support/auth/authToken";
 import { categoryApi } from "../../../../storage/category/categoryApi";
 import type { Category } from "../../../domain/category";
@@ -272,11 +274,12 @@ export function Layout() {
       {/* 3-col shell */}
       <div className="flex-1 grid lg:grid-cols-[260px_minmax(0,1fr)_340px]">
         {/* Left workspace tree */}
-        <aside className="hidden lg:block border-r border-rule bg-paper-2 sticky top-[52px] self-start h-[calc(100vh-52px)] overflow-y-auto px-3 py-4">
+        <aside className="hidden lg:block border-r border-[#1f2937] bg-[#111827] sticky top-[52px] self-start h-[calc(100vh-52px)] overflow-y-auto px-2.5 py-3">
           <WorkspaceTree
             categories={categories}
             isAllPosts={isAllPosts}
             categoryParam={categoryParam}
+            variant="dark"
           />
         </aside>
 
@@ -326,43 +329,91 @@ function WorkspaceTree({
   isAllPosts,
   categoryParam,
   onNavigate,
+  variant = "light",
 }: {
   categories: Category[];
   isAllPosts: boolean;
   categoryParam: string | null;
   onNavigate?: () => void;
+  variant?: WorkspaceTreeVariant;
 }) {
+  const isDark = variant === "dark";
+
   return (
-    <>
-      <TreeSection title="Workspace">
-        <TreeLink to="/" emoji="📝" active={isAllPosts} onNavigate={onNavigate}>
+    <nav aria-label="Workspace navigation" className={isDark ? "text-slate-100" : undefined}>
+      {isDark && (
+        <div className="mb-5 flex items-center gap-2.5 px-1.5">
+          <div className="w-7 h-7 rounded-md bg-slate-50 text-slate-950 grid place-items-center font-meta text-[11px] font-semibold shrink-0">
+            S
+          </div>
+          <div className="min-w-0">
+            <div className="text-[11.5px] font-semibold leading-tight tracking-[0.03em] text-slate-50">
+              WORKSPACE
+            </div>
+            <div className="mt-0.5 text-[10.5px] leading-tight text-slate-400 truncate">
+              technical notes
+            </div>
+          </div>
+        </div>
+      )}
+
+      <TreeSection title={isDark ? "Pinned" : "Workspace"} variant={variant}>
+        <TreeLink
+          to="/"
+          icon={BookOpen}
+          active={isAllPosts}
+          onNavigate={onNavigate}
+          variant={variant}
+        >
           All posts
         </TreeLink>
       </TreeSection>
 
       {categories.length > 0 && (
-        <TreeSection title="Categories">
+        <TreeSection title="Categories" variant={variant}>
           {categories.map((c) => (
             <TreeLink
               key={c.id}
               to={`/?category=${c.id}`}
-              emoji="●"
+              icon={getCategoryIcon(c.name)}
               active={categoryParam === String(c.id)}
               onNavigate={onNavigate}
+              variant={variant}
             >
               {c.name}
             </TreeLink>
           ))}
         </TreeSection>
       )}
-    </>
+    </nav>
   );
 }
 
-function TreeSection({ title, children }: { title: string; children: React.ReactNode }) {
+type WorkspaceTreeVariant = "light" | "dark";
+
+function getCategoryIcon(name: string): LucideIcon {
+  if (/database/i.test(name)) return Database;
+  if (/performance/i.test(name)) return Activity;
+  return Circle;
+}
+
+function TreeSection({
+  title,
+  children,
+  variant = "light",
+}: {
+  title: string;
+  children: React.ReactNode;
+  variant?: WorkspaceTreeVariant;
+}) {
+  const titleClass =
+    variant === "dark"
+      ? "text-slate-500 tracking-[0.08em]"
+      : "text-faint tracking-[0.06em]";
+
   return (
     <div className="mb-4">
-      <div className="flex items-center px-2.5 py-1 text-[10.5px] text-faint font-semibold uppercase tracking-[0.06em]">
+      <div className={`flex items-center px-2.5 py-1 text-[10.5px] font-semibold uppercase ${titleClass}`}>
         {title}
       </div>
       <div>{children}</div>
@@ -372,37 +423,55 @@ function TreeSection({ title, children }: { title: string; children: React.React
 
 function TreeLink({
   to,
-  emoji,
+  icon: Icon,
   active,
   count,
   children,
   onNavigate,
+  variant = "light",
 }: {
   to: string;
-  emoji?: string;
+  icon?: LucideIcon;
   active?: boolean;
   count?: number;
   children: React.ReactNode;
   onNavigate?: () => void;
+  variant?: WorkspaceTreeVariant;
 }) {
+  const linkClass =
+    variant === "dark"
+      ? active
+        ? "bg-[#1d4ed8]/25 text-white font-medium"
+        : "text-slate-300 hover:bg-white/[0.06] hover:text-white"
+      : active
+        ? "bg-accent-soft text-accent font-medium"
+        : "text-ink-soft hover:bg-chip";
+
+  const iconClass =
+    variant === "dark"
+      ? active
+        ? "text-[#6ab0ff]"
+        : "text-slate-500"
+      : active
+        ? "text-accent"
+        : "text-faint";
+
   return (
     <Link
       to={to}
       onClick={onNavigate}
-      className={`flex items-center gap-2 px-2.5 py-1 my-px rounded-md text-[13.5px] transition-colors ${
-        active
-          ? "bg-accent-soft text-accent font-medium"
-          : "text-ink-soft hover:bg-chip"
-      }`}
+      className={`flex h-8 items-center gap-2.5 px-2.5 my-px rounded-md text-[13.5px] transition-colors ${linkClass}`}
     >
-      {emoji && (
-        <span className={`w-4 text-center text-[12px] shrink-0 ${active ? "text-accent" : "text-faint"}`}>
-          {emoji}
+      {Icon && (
+        <span className={`w-4 h-4 shrink-0 ${iconClass}`}>
+          <Icon size={16} strokeWidth={2} />
         </span>
       )}
       <span className="truncate flex-1">{children}</span>
       {count !== undefined && (
-        <span className="font-meta text-[10.5px] text-faint">{count}</span>
+        <span className={`font-meta text-[10.5px] ${variant === "dark" ? "text-slate-500" : "text-faint"}`}>
+          {count}
+        </span>
       )}
     </Link>
   );

@@ -390,6 +390,32 @@
   margin: 0.6rem 0;
   font-size: 13px;
 }
+.chat-markdown-dark {
+  color: #e6edf7;
+}
+.chat-markdown-dark h1,
+.chat-markdown-dark h2,
+.chat-markdown-dark h3,
+.chat-markdown-dark h4,
+.chat-markdown-dark h5,
+.chat-markdown-dark h6 {
+  color: #f8fafc;
+}
+.chat-markdown-dark a {
+  color: #6ab0ff;
+}
+.chat-markdown-dark code {
+  background: #111827;
+  color: #d6e8ff;
+}
+.chat-markdown-dark pre {
+  background: #111827;
+  border: 1px solid #273244;
+}
+.chat-markdown-dark blockquote {
+  border-left-color: #273244;
+  color: #cbd5e1;
+}
 
 /* ─── TipTap Editor ────────────────────────────── */
 .tiptap-editor {
