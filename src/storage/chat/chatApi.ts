@@ -95,14 +95,4 @@ export const chatApi = {
 
     return close;
   },
-
-  submitFeedback: async (
-    sessionId: string,
-    messageId: string,
-    rating: "up" | "down",
-  ): Promise<void> => {
-    await aiClient.post(
-      `/v1/chat/${encodeURIComponent(sessionId)}/feedback?messageId=${encodeURIComponent(messageId)}&rating=${rating}`,
-    );
-  },
 };

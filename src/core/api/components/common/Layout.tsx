@@ -219,9 +219,6 @@ export function Layout() {
                     <AdminMenuItem to="/admin/posts" onSelect={() => setAdminMenuOpen(false)}>
                       All posts
                     </AdminMenuItem>
-                    <AdminMenuItem to="/admin/rag" onSelect={() => setAdminMenuOpen(false)}>
-                      Index
-                    </AdminMenuItem>
                     <div className="h-px bg-rule my-1 mx-3" />
                     <button
                       type="button"

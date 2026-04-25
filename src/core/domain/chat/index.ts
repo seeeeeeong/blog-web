@@ -8,7 +8,6 @@ export interface ChatMessage {
   error?: boolean;
   sources?: ChatSource[];
   followUps?: string[];
-  feedback?: "up" | "down";
 }
 
 export interface ChatSession {

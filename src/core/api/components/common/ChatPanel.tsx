@@ -209,14 +209,6 @@ export function ChatPanel({ variant = "fixed", onClose }: ChatPanelProps) {
     requestAnimationFrame(() => inputRef.current?.focus());
   };
 
-  const handleFeedback = (messageId: string, rating: "up" | "down") => {
-    if (!sessionId) return;
-    setMessages((prev) =>
-      prev.map((m) => (m.id === messageId ? { ...m, feedback: rating } : m)),
-    );
-    chatApi.submitFeedback(sessionId, messageId, rating).catch(() => {});
-  };
-
   const charCount = input.length;
   const isEmpty = messages.length === 0;
   const sessionShort = useMemo(
@@ -287,7 +279,6 @@ export function ChatPanel({ variant = "fixed", onClose }: ChatPanelProps) {
               <ChatMessageBlock
                 key={m.id}
                 message={m}
-                onFeedback={handleFeedback}
                 onFollowUp={send}
               />
             ))}
@@ -379,11 +370,9 @@ function EmptyPrompts({ onSelect }: { onSelect: (q: string) => void }) {
 
 function ChatMessageBlock({
   message,
-  onFeedback,
   onFollowUp,
 }: {
   message: ChatMessage;
-  onFeedback: (id: string, rating: "up" | "down") => void;
   onFollowUp: (q: string) => void;
 }) {
   if (message.role === "user") {
@@ -419,13 +408,6 @@ function ChatMessageBlock({
                 <ChatSources sources={message.sources} />
               )}
             </div>
-            {!message.streaming && !message.error && (
-              <ChatFeedback
-                messageId={message.id}
-                current={message.feedback}
-                onFeedback={onFeedback}
-              />
-            )}
             {message.followUps && message.followUps.length > 0 && (
               <ChatFollowUps followUps={message.followUps} onSelect={onFollowUp} />
             )}
@@ -489,41 +471,3 @@ function ChatFollowUps({
   );
 }
 
-function ChatFeedback({
-  messageId,
-  current,
-  onFeedback,
-}: {
-  messageId: string;
-  current?: "up" | "down";
-  onFeedback: (id: string, rating: "up" | "down") => void;
-}) {
-  return (
-    <div className="mt-1.5 ml-1 flex items-center gap-1.5">
-      <button
-        onClick={() => onFeedback(messageId, "up")}
-        disabled={current !== undefined}
-        className={`font-meta text-[10.5px] px-1.5 py-0.5 rounded transition-colors ${
-          current === "up"
-            ? "text-accent"
-            : "text-faint hover:text-ink"
-        }`}
-        title="Helpful"
-      >
-        ▲
-      </button>
-      <button
-        onClick={() => onFeedback(messageId, "down")}
-        disabled={current !== undefined}
-        className={`font-meta text-[10.5px] px-1.5 py-0.5 rounded transition-colors ${
-          current === "down"
-            ? "text-danger"
-            : "text-faint hover:text-ink"
-        }`}
-        title="Not helpful"
-      >
-        ▼
-      </button>
-    </div>
-  );
-}
