@@ -174,29 +174,59 @@ function Hero({
   totalPosts: number;
   latestUpdate: string | null;
 }) {
+  const topics = [
+    { name: "spring", value: "w-[92%]", color: "bg-[#dce8f7]" },
+    { name: "postgres", value: "w-[78%]", color: "bg-[#d8ece2]" },
+    { name: "rag", value: "w-[64%]", color: "bg-[#e7e0f4]" },
+    { name: "ops", value: "w-[88%]", color: "bg-[#f1e4d1]" },
+  ];
+
   return (
-    <section className="px-6 md:px-11 pt-12 md:pt-14 pb-10 border-b border-rule bg-gradient-to-b from-accent-soft to-paper">
-      <div className="inline-flex items-center gap-2 pl-1 pr-3 py-1 mb-5 bg-paper border border-rule rounded-full text-[12px] text-muted shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
-        <span className="px-2 py-[2px] rounded-full bg-accent text-paper font-meta text-[10px] font-bold tracking-wider">
-          NEW
-        </span>
-        <span>Long-form notes — read the latest essay</span>
-      </div>
-      <h1 className="text-[28px] md:text-[34px] font-bold leading-[1.18] tracking-[-0.025em] text-ink mb-3 max-w-[600px]">
-        Notes from a backend engineer who reads more than they ship.
-      </h1>
-      <p className="text-[14.5px] md:text-[15.5px] text-muted leading-[1.6] max-w-[560px] mb-5">
-        Long-form notes on Spring, Postgres, RAG, and the design decisions that survive contact with production.
-      </p>
-      <div className="flex items-center gap-3 text-[13px] text-muted flex-wrap">
-        <span className="inline-flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-success" />
-          <b className="text-ink font-semibold">{totalPosts}</b> posts
-        </span>
-        <span className="text-faint">·</span>
-        <span>
-          updated <b className="text-ink font-semibold">{latestUpdate ? formatRelative(latestUpdate) : "—"}</b>
-        </span>
+    <section className="px-6 md:px-11 pt-12 md:pt-14 pb-10 border-b border-rule bg-paper">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_250px] lg:items-center">
+        <div>
+          <div className="inline-flex items-center gap-2 pl-1 pr-3 py-1 mb-5 bg-paper-2 border border-rule rounded-full text-[12px] text-muted shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+            <span className="px-2 py-[2px] rounded-full bg-accent text-paper font-meta text-[10px] font-bold tracking-[0.08em]">
+              NEW
+            </span>
+            <span>Long-form notes — read the latest essay</span>
+          </div>
+          <h1 className="text-[28px] md:text-[34px] font-bold leading-[1.18] text-ink mb-3 max-w-[640px]">
+            Backend notes for systems that have to survive production.
+          </h1>
+          <p className="text-[14.5px] md:text-[15.5px] text-muted leading-[1.6] max-w-[590px] mb-5">
+            Essays on Spring, Postgres, RAG, performance, and the tradeoffs behind reliable software.
+          </p>
+          <div className="flex items-center gap-3 text-[13px] text-muted flex-wrap">
+            <span className="inline-flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-success" />
+              <b className="text-ink font-semibold">{totalPosts}</b> posts
+            </span>
+            <span className="text-faint">·</span>
+            <span>
+              updated <b className="text-ink font-semibold">{latestUpdate ? formatRelative(latestUpdate) : "—"}</b>
+            </span>
+            <span className="text-faint">·</span>
+            <span>Spring · Postgres · RAG</span>
+          </div>
+        </div>
+
+        <div className="border border-rule rounded-lg bg-paper-2 p-4">
+          <div className="flex items-center justify-between mb-4">
+            <span className="font-meta text-[10.5px] text-accent">topics.index</span>
+            <span className="font-meta text-[10px] text-faint">live</span>
+          </div>
+          <div className="space-y-3">
+            {topics.map((topic) => (
+              <div key={topic.name} className="grid grid-cols-[70px_1fr] gap-3 items-center">
+                <span className="font-meta text-[10.5px] text-muted">{topic.name}</span>
+                <span className="h-2.5 rounded-full bg-rule-soft overflow-hidden">
+                  <span className={`block h-full rounded-full ${topic.color} ${topic.value}`} />
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
