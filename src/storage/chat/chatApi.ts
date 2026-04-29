@@ -64,23 +64,37 @@ export const chatApi = {
         const decoder = new TextDecoder();
         let buffer = "";
 
+        const dispatch = (event: string): boolean => {
+          const dataLines: string[] = [];
+          for (const raw of event.split("\n")) {
+            const line = raw.endsWith("\r") ? raw.slice(0, -1) : raw;
+            if (!line.startsWith("data:")) continue;
+            const value = line.slice(5);
+            dataLines.push(value.startsWith(" ") ? value.slice(1) : value);
+          }
+          if (dataLines.length === 0) return false;
+          const data = dataLines.join("\n");
+          if (data === "[DONE]") {
+            handlers.onDone();
+            close();
+            return true;
+          }
+          handlers.onChunk(data);
+          return false;
+        };
+
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
 
           buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split("\n");
-          buffer = lines.pop() ?? "";
 
-          for (const line of lines) {
-            if (!line.startsWith("data:")) continue;
-            const data = line.slice(5);
-            if (data === "[DONE]") {
-              handlers.onDone();
-              close();
-              return;
-            }
-            handlers.onChunk(data);
+          while (true) {
+            const sep = buffer.indexOf("\n\n");
+            if (sep === -1) break;
+            const event = buffer.slice(0, sep);
+            buffer = buffer.slice(sep + 2);
+            if (dispatch(event)) return;
           }
         }
 
