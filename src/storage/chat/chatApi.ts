@@ -69,8 +69,7 @@ export const chatApi = {
           for (const raw of event.split("\n")) {
             const line = raw.endsWith("\r") ? raw.slice(0, -1) : raw;
             if (!line.startsWith("data:")) continue;
-            const value = line.slice(5);
-            dataLines.push(value.startsWith(" ") ? value.slice(1) : value);
+            dataLines.push(line.slice(5));
           }
           if (dataLines.length === 0) return false;
           const data = dataLines.join("\n");

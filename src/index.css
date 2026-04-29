@@ -383,8 +383,16 @@
 .chat-markdown h4 { font-size: 13px; margin: 0.7rem 0 0.25rem; }
 .chat-markdown ul, .chat-markdown ol { margin: 0.4rem 0 0.7rem; padding-left: 1.2rem; }
 .chat-markdown ul li, .chat-markdown ol li { margin-bottom: 2px; }
-.chat-markdown pre { margin: 0.6rem 0; padding: 10px 12px; font-size: 12px; border-radius: 4px; }
-.chat-markdown code { font-size: 0.88em; }
+.chat-markdown pre {
+  margin: 0.6rem 0;
+  padding: 10px 12px;
+  font-size: 12px;
+  border-radius: 4px;
+  overflow-x: auto;
+  max-width: 100%;
+}
+.chat-markdown pre code { white-space: pre; word-break: normal; }
+.chat-markdown code { font-size: 0.88em; word-break: break-word; }
 .chat-markdown blockquote {
   padding: 4px 12px;
   margin: 0.6rem 0;
