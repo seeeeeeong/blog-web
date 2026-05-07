@@ -66,7 +66,7 @@ export function LoginPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full h-10 px-3 bg-paper border border-rule rounded-md text-[13.5px] text-ink placeholder:text-faint outline-none focus:border-accent transition-colors"
+            className="w-full h-10 px-3 bg-[var(--c-input)] border border-rule rounded-md text-[13.5px] text-ink placeholder:text-faint outline-none focus:border-accent transition-colors"
             placeholder="Email"
           />
           <input
@@ -77,7 +77,7 @@ export function LoginPage() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full h-10 px-3 bg-paper border border-rule rounded-md text-[13.5px] text-ink placeholder:text-faint outline-none focus:border-accent transition-colors"
+            className="w-full h-10 px-3 bg-[var(--c-input)] border border-rule rounded-md text-[13.5px] text-ink placeholder:text-faint outline-none focus:border-accent transition-colors"
             placeholder="Password"
           />
 
@@ -88,7 +88,7 @@ export function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full h-10 bg-accent text-paper rounded-md text-[13.5px] font-medium hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+            className="w-full h-10 bg-accent text-[var(--c-on-accent)] rounded-md text-[13.5px] font-medium hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
           >
             {loading ? "Signing in…" : "Sign in"}
           </button>

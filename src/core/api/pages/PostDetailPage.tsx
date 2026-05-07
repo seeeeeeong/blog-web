@@ -183,7 +183,7 @@ export function PostDetailPage() {
 
             <div className="flex items-center gap-3 text-[13px] text-muted flex-wrap">
               <span className="inline-flex items-center gap-2">
-                <span className="w-[22px] h-[22px] rounded-full bg-gradient-to-br from-[#8aa4ff] to-[#c28aff]" />
+                <span className="w-[22px] h-[22px] rounded-full bg-gradient-to-br from-accent to-[oklch(0.55_0.16_300)]" />
                 <span className="font-medium text-ink">seeeeeeong</span>
               </span>
               <span className="text-faint">·</span>
@@ -211,7 +211,7 @@ export function PostDetailPage() {
                   </Link>
                   <button
                     onClick={handleDelete}
-                    className="h-7 px-3 inline-flex items-center rounded-md text-[12px] text-danger hover:bg-danger hover:text-paper transition-colors"
+                    className="h-7 px-3 inline-flex items-center rounded-md text-[12px] text-danger hover:bg-[var(--c-input)] transition-colors"
                   >
                     Delete
                   </button>
@@ -221,7 +221,7 @@ export function PostDetailPage() {
           </header>
 
           {post.excerpt && (
-            <section className="mb-8 rounded-lg border border-rule bg-paper-2 px-4 py-3.5 text-[14.5px] leading-[1.6] text-ink-soft">
+            <section className="mb-8 rounded-2xl border border-rule bg-[var(--c-surface)] px-4 py-3.5 text-[14px] leading-[1.6] text-muted">
               <span className="font-semibold text-ink">Case summary</span>
               <span className="text-faint mx-2">—</span>
               {post.excerpt}

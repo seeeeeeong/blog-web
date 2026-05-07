@@ -23,7 +23,7 @@ export function EditorLinkInput({ linkUrl, onUrlChange, onApply, onCancel }: Edi
       <button
         type="button"
         onClick={onApply}
-        className="h-8 px-3 rounded-md bg-white text-black text-[12px] font-medium hover:bg-gray-100 transition-colors"
+        className="h-8 px-3 rounded-md bg-accent text-[var(--c-on-accent)] text-[12px] font-medium hover:opacity-90 transition-opacity"
       >
         Apply
       </button>

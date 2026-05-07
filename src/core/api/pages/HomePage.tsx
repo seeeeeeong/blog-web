@@ -175,43 +175,44 @@ function Hero({
   latestUpdate: string | null;
 }) {
   const topics = [
-    { name: "spring", value: "w-[92%]", color: "bg-[#dce8f7]" },
-    { name: "postgres", value: "w-[78%]", color: "bg-[#d8ece2]" },
-    { name: "rag", value: "w-[64%]", color: "bg-[#e7e0f4]" },
-    { name: "ops", value: "w-[88%]", color: "bg-[#f1e4d1]" },
+    { name: "spring", value: "w-[92%]", opacity: "opacity-100" },
+    { name: "postgres", value: "w-[78%]", opacity: "opacity-80" },
+    { name: "rag", value: "w-[64%]", opacity: "opacity-60" },
+    { name: "ops", value: "w-[88%]", opacity: "opacity-90" },
   ];
 
   return (
     <section className="px-6 md:px-11 pt-12 md:pt-14 pb-10 border-b border-rule bg-paper">
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_250px] lg:items-center">
         <div>
-          <div className="inline-flex items-center gap-2 pl-1 pr-3 py-1 mb-5 bg-paper-2 border border-rule rounded-full text-[12px] text-muted shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
-            <span className="px-2 py-[2px] rounded-full bg-accent text-paper font-meta text-[10px] font-bold tracking-[0.08em]">
+          <div className="inline-flex items-center gap-2 pl-1 pr-3 py-1 mb-5 bg-[var(--c-surface)] border border-rule rounded-full text-[12px] text-muted">
+            <span className="px-2 py-[2px] rounded-full bg-accent text-[var(--c-on-accent)] font-meta text-[10px] font-bold tracking-[0.08em]">
               NEW
             </span>
             <span>Long-form notes — read the latest essay</span>
           </div>
-          <h1 className="text-[28px] md:text-[34px] font-bold leading-[1.18] text-ink mb-3 max-w-[640px]">
+          <h1 className="text-[26px] md:text-[32px] font-semibold leading-[1.18] tracking-[-0.015em] text-ink mb-3 max-w-[640px]">
+            <span className="text-accent mr-2">✦</span>
             Backend notes for systems that have to survive production.
           </h1>
-          <p className="text-[14.5px] md:text-[15.5px] text-muted leading-[1.6] max-w-[590px] mb-5">
+          <p className="text-[14px] md:text-[15px] text-muted leading-[1.6] max-w-[590px] mb-5">
             Essays on Spring, Postgres, RAG, performance, and the tradeoffs behind reliable software.
           </p>
-          <div className="flex items-center gap-3 text-[13px] text-muted flex-wrap">
+          <div className="flex items-center gap-3 text-[12.5px] text-muted flex-wrap">
             <span className="inline-flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-success" />
-              <b className="text-ink font-semibold">{totalPosts}</b> posts
+              <b className="text-ink font-semibold tabular-nums font-meta">{totalPosts}</b> posts
             </span>
             <span className="text-faint">·</span>
             <span>
-              updated <b className="text-ink font-semibold">{latestUpdate ? formatRelative(latestUpdate) : "—"}</b>
+              updated <b className="text-ink font-semibold font-meta">{latestUpdate ? formatRelative(latestUpdate) : "—"}</b>
             </span>
             <span className="text-faint">·</span>
-            <span>Spring · Postgres · RAG</span>
+            <span className="font-meta">Spring · Postgres · RAG</span>
           </div>
         </div>
 
-        <div className="border border-rule rounded-lg bg-paper-2 p-4">
+        <div className="border border-rule rounded-2xl bg-[var(--c-surface)] p-4">
           <div className="flex items-center justify-between mb-4">
             <span className="font-meta text-[10.5px] text-accent">topics.index</span>
             <span className="font-meta text-[10px] text-faint">live</span>
@@ -220,8 +221,8 @@ function Hero({
             {topics.map((topic) => (
               <div key={topic.name} className="grid grid-cols-[70px_1fr] gap-3 items-center">
                 <span className="font-meta text-[10.5px] text-muted">{topic.name}</span>
-                <span className="h-2.5 rounded-full bg-rule-soft overflow-hidden">
-                  <span className={`block h-full rounded-full ${topic.color} ${topic.value}`} />
+                <span className="h-2 rounded-full bg-[var(--c-input)] overflow-hidden">
+                  <span className={`block h-full rounded-full bg-accent ${topic.opacity} ${topic.value}`} />
                 </span>
               </div>
             ))}
@@ -252,9 +253,9 @@ function FeaturedSection({
       />
       <Link
         to={`/posts/${post.id}`}
-        className="grid grid-cols-[140px_1fr] md:grid-cols-[180px_1fr] gap-6 md:gap-7 items-center p-5 md:p-6 bg-paper border border-rule rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.02)] hover:-translate-y-[2px] hover:shadow-[0_8px_22px_rgba(0,0,0,0.06)] hover:border-accent transition-all group"
+        className="grid grid-cols-[140px_1fr] md:grid-cols-[180px_1fr] gap-6 md:gap-7 items-center p-5 md:p-6 bg-[var(--c-surface)] border border-rule rounded-2xl hover:-translate-y-[2px] hover:border-accent transition-all group"
       >
-        <div className="aspect-square rounded-[10px] grid place-items-center text-paper font-meta font-semibold text-[28px] md:text-[32px] bg-gradient-to-br from-accent to-[#5b8bff] shadow-[0_8px_22px_rgba(10,102,194,0.22)]">
+        <div className="aspect-square rounded-[12px] grid place-items-center text-[var(--c-on-accent)] font-meta font-semibold text-[28px] md:text-[32px] bg-gradient-to-br from-accent to-[oklch(0.55_0.16_300)]">
           {coverInitial(categoryName)}
         </div>
         <div className="min-w-0">
@@ -465,10 +466,10 @@ function FilterChip({
   return (
     <Link
       to={to}
-      className={`px-3 py-[5px] rounded-[5px] text-[12.5px] transition-colors ${
+      className={`px-3 py-[5px] rounded-[5px] text-[12px] transition-colors ${
         active
-          ? "bg-paper text-ink font-medium shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
-          : "text-muted hover:text-ink"
+          ? "bg-[var(--c-surface)] text-ink font-medium"
+          : "text-faint hover:text-ink"
       }`}
     >
       {children}
@@ -484,7 +485,7 @@ function PostsTable({
   categoryName: (id: number) => string;
 }) {
   return (
-    <div className="rounded-lg border border-rule overflow-hidden">
+    <div className="rounded-2xl border border-rule bg-[var(--c-surface)] overflow-hidden">
       {posts.map((post, i) => (
         <PostRow
           key={post.id}
@@ -510,12 +511,12 @@ function PostRow({
   return (
     <Link
       to={`/posts/${post.id}`}
-      className={`grid grid-cols-[1fr_90px] md:grid-cols-[1fr_100px_110px_80px] gap-3 md:gap-3.5 items-center px-4 py-3 cursor-pointer hover:bg-paper-2 transition-colors group ${
+      className={`grid grid-cols-[1fr_90px] md:grid-cols-[1fr_100px_110px_80px] gap-3 md:gap-3.5 items-center px-4 py-3 cursor-pointer hover:bg-[var(--c-input)] transition-colors group ${
         isLast ? "" : "border-b border-rule-soft"
       }`}
     >
       <div className="flex items-start gap-2 min-w-0">
-        <span className="text-faint text-[13px] pt-[2px] shrink-0">📄</span>
+        <span className="tag-dot pt-[7px] shrink-0" />
         <div className="min-w-0">
           <div
             className={`text-[14px] font-medium leading-snug group-hover:text-accent transition-colors ${
@@ -525,7 +526,7 @@ function PostRow({
             {post.title}
           </div>
           {post.excerpt && (
-            <div className="text-[12.5px] text-muted mt-1 line-clamp-1">
+            <div className="text-[12px] text-muted mt-0.5 line-clamp-1">
               {post.excerpt}
             </div>
           )}
@@ -540,7 +541,7 @@ function PostRow({
           {isDraft ? "Draft" : "Published"}
         </span>
       </div>
-      <div className="font-meta text-[11px] text-muted text-right">
+      <div className="font-meta text-[11px] text-faint text-right tabular-nums">
         {formatDateShort(post.updatedAt ?? post.createdAt).slice(5)}
       </div>
     </Link>

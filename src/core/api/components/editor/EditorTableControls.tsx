@@ -58,7 +58,7 @@ export function EditorTableControls({
           <button
             type="button"
             onClick={onInsert}
-            className="h-7 px-3 rounded-md bg-white text-black text-[11px] font-medium hover:bg-gray-100 transition-colors"
+            className="h-7 px-3 rounded-md bg-accent text-[var(--c-on-accent)] text-[11px] font-medium hover:opacity-90 transition-opacity"
           >
             Insert
           </button>

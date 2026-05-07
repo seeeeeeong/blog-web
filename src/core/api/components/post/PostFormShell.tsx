@@ -182,7 +182,7 @@ export function PostFormShell({
           </aside>
         </div>
 
-        <div className="sticky bottom-3 z-20 mt-5 rounded-lg border border-rule bg-paper/95 backdrop-blur p-3 shadow-[0_8px_24px_rgba(20,27,38,0.08)]">
+        <div className="sticky bottom-3 z-20 mt-5 rounded-2xl border border-rule bg-[var(--c-surface)]/95 backdrop-blur p-3 shadow-[0_12px_32px_rgba(0,0,0,0.5)]">
           <div className="flex flex-col-reverse items-stretch justify-between gap-3 sm:flex-row sm:items-center">
             <button
               type="button"
@@ -203,7 +203,7 @@ export function PostFormShell({
               <button
                 type="submit"
                 disabled={loading}
-                className="h-9 px-5 rounded-md bg-accent text-paper text-[13px] font-medium hover:opacity-90 transition-opacity disabled:opacity-40"
+                className="h-9 px-5 rounded-md bg-accent text-[var(--c-on-accent)] text-[13px] font-medium hover:opacity-90 transition-opacity disabled:opacity-40"
               >
                 {loading ? "…" : actionLabel}
               </button>

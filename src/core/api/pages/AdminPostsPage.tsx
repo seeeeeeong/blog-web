@@ -72,7 +72,7 @@ export function AdminPostsPage() {
         </div>
         <Link
           to="/posts/create"
-          className="h-9 px-4 rounded-md bg-accent text-paper text-[13px] font-medium hover:opacity-90 inline-flex items-center transition-opacity"
+          className="h-9 px-4 rounded-md bg-accent text-[var(--c-on-accent)] text-[13px] font-medium hover:opacity-90 inline-flex items-center transition-opacity"
         >
           + New post
         </Link>
@@ -158,7 +158,7 @@ export function AdminPostsPage() {
                           </Link>
                           <button
                             onClick={() => handleDelete(post.id)}
-                            className="h-7 px-2 inline-flex items-center rounded-md text-[12px] text-muted hover:bg-danger hover:text-paper transition-colors"
+                            className="h-7 px-2 inline-flex items-center rounded-md text-[12px] text-muted hover:bg-[var(--c-input)] hover:text-danger transition-colors"
                           >
                             Delete
                           </button>

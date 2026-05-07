@@ -4,22 +4,33 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── Wiki Clean palette ───────────────────────── */
+/* ─── designovel-derived dark palette ───────────── */
 :root {
-  --c-paper: #ffffff;
-  --c-paper-2: #f9fafb;
-  --c-chip: #f4f5f7;
-  --c-ink: #1a1d21;
-  --c-ink-soft: #2a2f36;
-  --c-muted: #656c75;
-  --c-faint: #9aa0a6;
-  --c-rule: #e5e7eb;
-  --c-rule-soft: #eef0f2;
-  --c-accent: #0a66c2;
-  --c-accent-soft: #e8f1fb;
-  --c-danger: #c83434;
-  --c-success: #1f9d55;
-  --c-warning: #c78a12;
+  --c-paper:      oklch(0.17 0.008 260);
+  --c-paper-2:    oklch(0.205 0.009 260);
+  --c-chip:       oklch(0.235 0.01 260);
+  --c-surface:    oklch(0.235 0.01 260);
+  --c-input:      oklch(0.27 0.011 260);
+
+  --c-ink:        oklch(0.97 0.005 260);
+  --c-ink-soft:   oklch(0.85 0.008 260);
+  --c-muted:      oklch(0.78 0.01 260);
+  --c-faint:      oklch(0.58 0.012 260);
+
+  --c-rule:       oklch(0.32 0.012 260);
+  --c-rule-soft:  oklch(0.27 0.01 260);
+
+  --c-accent:        oklch(0.82 0.13 168);
+  --c-accent-soft:   oklch(0.82 0.13 168 / 0.14);
+  --c-accent-amber:  oklch(0.82 0.13 168);
+  --c-accent-warn:   oklch(0.82 0.14 70);
+  --c-danger:        oklch(0.72 0.17 25);
+  --c-success:       oklch(0.78 0.15 150);
+  --c-warning:       oklch(0.82 0.14 70);
+
+  --c-on-accent:     oklch(0.17 0.008 260);
+
+  color-scheme: dark;
 }
 
 @layer base {
@@ -30,27 +41,31 @@
     background: var(--c-paper);
     color: var(--c-ink);
     font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    font-size: 14.5px;
-    line-height: 1.65;
+    font-size: 13.5px;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   ::selection {
     background: var(--c-accent-soft);
     color: var(--c-ink);
   }
   ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+    width: 6px;
+    height: 6px;
   }
   ::-webkit-scrollbar-track {
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: var(--c-rule);
-    border-radius: 5px;
+    background: rgba(160, 160, 170, 0.18);
+    border-radius: 9999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--c-faint);
+    background: rgba(160, 160, 170, 0.32);
+  }
+  * {
+    scrollbar-color: rgba(160, 160, 170, 0.18) transparent;
   }
 }
 
@@ -59,7 +74,7 @@
   box-shadow: 0 0 0 2px var(--c-paper), 0 0 0 3px var(--c-accent);
 }
 
-/* ─── Utility classes (redefined for wiki style) ── */
+/* ─── Utility classes ───────────────────────────── */
 @layer components {
   .font-display {
     font-family: "Inter", sans-serif;
@@ -76,7 +91,7 @@
   }
   .eyebrow {
     font-family: "JetBrains Mono", ui-monospace, monospace;
-    font-size: 11px;
+    font-size: 10.5px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--c-faint);
@@ -94,7 +109,25 @@
   .thumb-hatch {
     background: var(--c-chip);
     border: 1px solid var(--c-rule);
-    border-radius: 6px;
+    border-radius: 8px;
+  }
+
+  .tag-dot::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: var(--c-accent);
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  .hover-soft {
+    transition: background-color 0.15s ease;
+  }
+  .hover-soft:hover {
+    background: var(--c-chip);
   }
 
   /* Chips/tags */
@@ -103,8 +136,8 @@
     font-family: "JetBrains Mono", ui-monospace, monospace;
     font-size: 10.5px;
     padding: 1px 7px;
-    border-radius: 3px;
-    background: var(--c-accent-soft);
+    border-radius: 4px;
+    background: var(--c-input);
     color: var(--c-accent);
     letter-spacing: 0.02em;
   }
@@ -112,18 +145,18 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-size: 11.5px;
+    font-size: 11px;
     padding: 2px 8px;
     border-radius: 4px;
     font-weight: 500;
     font-family: "JetBrains Mono", ui-monospace, monospace;
   }
   .status-chip.published {
-    background: #e6f4ec;
+    background: var(--c-accent-soft);
     color: var(--c-success);
   }
   .status-chip.draft {
-    background: #fff5e0;
+    background: var(--c-input);
     color: var(--c-warning);
   }
   .status-chip .dot {
@@ -168,11 +201,11 @@
   animation: spin 0.7s linear infinite;
 }
 
-/* ─── Markdown Viewer (Wiki Clean) ─────────────── */
+/* ─── Markdown Viewer ──────────────────────────── */
 .markdown-viewer {
   font-family: "Inter", sans-serif;
-  font-size: 15.5px;
-  color: var(--c-ink-soft);
+  font-size: 14.5px;
+  color: var(--c-muted);
   line-height: 1.72;
   word-break: break-word;
 }
@@ -191,7 +224,7 @@
 }
 
 .markdown-viewer h1 {
-  font-size: 26px;
+  font-size: 24px;
   margin: 2.4rem 0 0.9rem;
 }
 .markdown-viewer h1:first-child {
@@ -199,27 +232,27 @@
 }
 
 .markdown-viewer h2 {
-  font-size: 22px;
+  font-size: 20px;
   margin: 2.2rem 0 0.8rem;
   padding-bottom: 0.4rem;
   border-bottom: 1px solid var(--c-rule);
 }
 
 .markdown-viewer h3 {
-  font-size: 17px;
+  font-size: 16px;
   margin: 1.8rem 0 0.6rem;
 }
 
 .markdown-viewer h4 {
-  font-size: 15px;
+  font-size: 14.5px;
   margin: 1.4rem 0 0.4rem;
   color: var(--c-ink);
 }
 
 .markdown-viewer p {
   margin-bottom: 1.1em;
-  color: var(--c-ink-soft);
-  font-size: 15.5px;
+  color: var(--c-muted);
+  font-size: 14.5px;
 }
 
 .markdown-viewer ul {
@@ -229,7 +262,7 @@
 }
 .markdown-viewer ul li {
   margin-bottom: 4px;
-  color: var(--c-ink-soft);
+  color: var(--c-muted);
 }
 .markdown-viewer ul li::marker {
   color: var(--c-faint);
@@ -242,7 +275,7 @@
 }
 .markdown-viewer ol li {
   margin-bottom: 4px;
-  color: var(--c-ink-soft);
+  color: var(--c-muted);
 }
 .markdown-viewer ol li::marker {
   color: var(--c-faint);
@@ -251,22 +284,24 @@
 }
 
 .markdown-viewer code {
-  background: var(--c-chip);
-  color: #b93469;
+  background: var(--c-input);
+  border: 1px solid var(--c-rule);
+  color: var(--c-accent);
   padding: 1px 6px;
-  border-radius: 3px;
+  border-radius: 4px;
   font-family: "JetBrains Mono", ui-monospace, monospace;
   font-size: 0.87em;
 }
 
 .markdown-viewer pre {
-  background: #1e2428;
-  color: #e2e2e2;
-  border-radius: 6px;
-  padding: 16px 18px;
+  background: var(--c-paper-2);
+  color: var(--c-ink-soft);
+  border: 1px solid var(--c-rule);
+  border-radius: 10px;
+  padding: 14px 16px;
   overflow-x: auto;
   margin: 1.2rem 0 1.5rem;
-  font-size: 13px;
+  font-size: 12.5px;
   line-height: 1.7;
   font-family: "JetBrains Mono", ui-monospace, monospace;
 }
@@ -289,10 +324,11 @@
 }
 
 .markdown-viewer blockquote {
-  border-left: 3px solid var(--c-rule);
-  padding: 2px 18px;
+  border-left: 2px solid var(--c-accent);
+  padding: 2px 14px;
   margin: 1.3rem 0;
-  color: var(--c-muted);
+  color: var(--c-faint);
+  font-style: italic;
 }
 .markdown-viewer blockquote p {
   margin-bottom: 0.6em;
@@ -310,7 +346,7 @@
 .markdown-viewer img {
   max-width: 100%;
   border: 1px solid var(--c-rule);
-  border-radius: 6px;
+  border-radius: 10px;
   margin: 1.3rem 0;
 }
 
@@ -318,9 +354,9 @@
   width: 100%;
   border-collapse: collapse;
   margin: 1.2rem 0;
-  font-size: 14px;
+  font-size: 13.5px;
   border: 1px solid var(--c-rule);
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
 }
 .markdown-viewer thead {
@@ -340,7 +376,7 @@
 .markdown-viewer td {
   padding: 9px 14px;
   border-top: 1px solid var(--c-rule-soft);
-  color: var(--c-ink-soft);
+  color: var(--c-muted);
 }
 .markdown-viewer tbody tr:hover {
   background: var(--c-paper-2);
@@ -357,10 +393,10 @@
 
 /* ─── Comment Content ──────────────────────────── */
 .comment-content {
-  color: var(--c-ink-soft);
+  color: var(--c-muted);
   line-height: 1.65;
   font-family: "Inter", sans-serif;
-  font-size: 14.5px;
+  font-size: 13.5px;
 }
 .comment-content a {
   color: var(--c-accent);
@@ -370,65 +406,84 @@
 /* ─── Chat markdown (tighter) ──────────────────── */
 .chat-markdown {
   font-family: "Inter", sans-serif;
-  font-size: 13.5px;
+  font-size: 12.5px;
   line-height: 1.6;
-  color: var(--c-ink-soft);
+  color: var(--c-muted);
 }
 .chat-markdown > *:first-child { margin-top: 0 !important; }
 .chat-markdown > *:last-child { margin-bottom: 0 !important; }
 .chat-markdown p { margin-bottom: 0.7em; }
-.chat-markdown h1 { font-size: 16px; margin: 0.9rem 0 0.4rem; border-bottom: none; padding-bottom: 0; }
-.chat-markdown h2 { font-size: 15px; margin: 0.9rem 0 0.4rem; border-bottom: none; padding-bottom: 0; }
-.chat-markdown h3 { font-size: 14px; margin: 0.8rem 0 0.3rem; }
-.chat-markdown h4 { font-size: 13px; margin: 0.7rem 0 0.25rem; }
+.chat-markdown h1 { font-size: 15px; margin: 0.9rem 0 0.4rem; border-bottom: none; padding-bottom: 0; color: var(--c-ink); }
+.chat-markdown h2 { font-size: 14px; margin: 0.9rem 0 0.4rem; border-bottom: none; padding-bottom: 0; color: var(--c-ink); }
+.chat-markdown h3 { font-size: 13px; margin: 0.8rem 0 0.3rem; color: var(--c-ink); }
+.chat-markdown h4 { font-size: 12.5px; margin: 0.7rem 0 0.25rem; color: var(--c-ink); }
+.chat-markdown a { color: var(--c-accent); }
 .chat-markdown ul, .chat-markdown ol { margin: 0.4rem 0 0.7rem; padding-left: 1.2rem; }
 .chat-markdown ul li, .chat-markdown ol li { margin-bottom: 2px; }
+.chat-markdown code {
+  background: var(--c-input);
+  border: 1px solid var(--c-rule);
+  color: var(--c-accent);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 0.88em;
+  word-break: break-word;
+}
 .chat-markdown pre {
   margin: 0.6rem 0;
   padding: 10px 12px;
   font-size: 12px;
-  border-radius: 4px;
+  border-radius: 8px;
   overflow-x: auto;
   max-width: 100%;
+  background: var(--c-paper-2);
+  border: 1px solid var(--c-rule);
+  color: var(--c-ink-soft);
 }
-.chat-markdown pre code { white-space: pre; word-break: normal; }
-.chat-markdown code { font-size: 0.88em; word-break: break-word; }
+.chat-markdown pre code {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  padding: 0;
+  white-space: pre;
+  word-break: normal;
+}
 .chat-markdown blockquote {
+  border-left: 2px solid var(--c-accent);
   padding: 4px 12px;
   margin: 0.6rem 0;
-  font-size: 13px;
+  font-size: 12.5px;
+  color: var(--c-faint);
+  font-style: italic;
 }
-.chat-markdown-dark {
-  color: #e6edf7;
-}
+
+/* dark variant kept for backwards compat with existing markup */
+.chat-markdown-dark { color: var(--c-muted); }
 .chat-markdown-dark h1,
 .chat-markdown-dark h2,
 .chat-markdown-dark h3,
 .chat-markdown-dark h4,
 .chat-markdown-dark h5,
-.chat-markdown-dark h6 {
-  color: #f8fafc;
-}
-.chat-markdown-dark a {
-  color: #6ab0ff;
-}
+.chat-markdown-dark h6 { color: var(--c-ink); }
+.chat-markdown-dark a { color: var(--c-accent); }
 .chat-markdown-dark code {
-  background: #111827;
-  color: #d6e8ff;
+  background: var(--c-input);
+  border: 1px solid var(--c-rule);
+  color: var(--c-accent);
 }
 .chat-markdown-dark pre {
-  background: #111827;
-  border: 1px solid #273244;
+  background: var(--c-paper-2);
+  border: 1px solid var(--c-rule);
 }
 .chat-markdown-dark blockquote {
-  border-left-color: #273244;
-  color: #cbd5e1;
+  border-left-color: var(--c-accent);
+  color: var(--c-faint);
 }
 
 /* ─── TipTap Editor ────────────────────────────── */
 .tiptap-editor {
   font-family: "Inter", sans-serif;
-  font-size: 15px;
+  font-size: 14.5px;
   line-height: 1.7;
   color: var(--c-ink-soft);
 }
@@ -456,7 +511,7 @@
 .tiptap-editor h1 { font-size: 22px; }
 .tiptap-editor h2 { font-size: 18px; }
 .tiptap-editor h3 { font-size: 16px; }
-.tiptap-editor p { margin: 0.55rem 0; }
+.tiptap-editor p { margin: 0.55rem 0; color: var(--c-ink-soft); }
 
 .tiptap-editor ul,
 .tiptap-editor ol {
@@ -468,17 +523,19 @@
 
 .tiptap-editor blockquote {
   margin: 1rem 0;
-  border-left: 3px solid var(--c-rule);
+  border-left: 2px solid var(--c-accent);
   padding: 0.3rem 1rem;
-  color: var(--c-muted);
+  color: var(--c-faint);
+  font-style: italic;
 }
 
 .tiptap-editor pre {
   margin: 0.9rem 0;
-  background: #1e2428;
-  color: #e2e2e2;
-  padding: 14px 18px;
-  border-radius: 6px;
+  background: var(--c-paper-2);
+  color: var(--c-ink-soft);
+  border: 1px solid var(--c-rule);
+  padding: 14px 16px;
+  border-radius: 10px;
   font-family: "JetBrains Mono", ui-monospace, monospace;
 }
 .tiptap-editor pre code {
@@ -487,13 +544,14 @@
   color: inherit;
   padding: 0;
   font-family: inherit;
-  font-size: 13px;
+  font-size: 12.5px;
 }
 
 .tiptap-editor code {
-  background: var(--c-chip);
-  color: #b93469;
-  border-radius: 3px;
+  background: var(--c-input);
+  border: 1px solid var(--c-rule);
+  color: var(--c-accent);
+  border-radius: 4px;
   padding: 1px 6px;
   font-family: "JetBrains Mono", ui-monospace, monospace;
   font-size: 0.88em;
@@ -504,7 +562,7 @@
   border-collapse: collapse;
   margin: 0.9rem 0;
   border: 1px solid var(--c-rule);
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
 }
 .tiptap-editor .editor-table th,
@@ -512,6 +570,7 @@
   border: 1px solid var(--c-rule-soft);
   padding: 0.5rem 0.75rem;
   vertical-align: top;
+  color: var(--c-ink-soft);
 }
 .tiptap-editor .editor-table th {
   background: var(--c-paper-2);

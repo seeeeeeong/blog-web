@@ -35,7 +35,7 @@ export function Alert({
   }, [duration, onClose, type]);
 
   const base =
-    "w-80 rounded-md border border-rule bg-paper shadow-[0_8px_24px_rgba(0,0,0,0.08)] animate-fade-in";
+    "w-80 rounded-xl border border-rule bg-[var(--c-surface)] shadow-[0_12px_32px_rgba(0,0,0,0.5)] animate-fade-in";
 
   if (type === "confirm") {
     return (
@@ -56,7 +56,7 @@ export function Alert({
               onConfirm?.();
               onClose();
             }}
-            className="h-7 px-3 rounded-md bg-accent text-paper text-[12px] font-medium hover:opacity-90 transition-opacity"
+            className="h-7 px-3 rounded-md bg-accent text-[var(--c-on-accent)] text-[12px] font-medium hover:opacity-90 transition-opacity"
           >
             Confirm
           </button>

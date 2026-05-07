@@ -90,7 +90,7 @@ export function Layout() {
   return (
     <div className="min-h-screen flex flex-col bg-paper text-ink">
       {/* Topbar */}
-      <header className="sticky top-0 z-30 h-[52px] bg-paper border-b border-rule flex items-center">
+      <header className="sticky top-0 z-30 h-[52px] bg-paper-2 border-b border-rule flex items-center">
         <div className="w-full px-4 md:px-5 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2 min-w-0">
             <button
@@ -213,7 +213,7 @@ export function Layout() {
                 {adminMenuOpen && (
                   <div
                     role="menu"
-                    className="absolute right-0 top-full mt-1.5 min-w-[180px] border border-rule bg-paper shadow-[0_8px_24px_rgba(0,0,0,0.08)] rounded-md py-1 z-40"
+                    className="absolute right-0 top-full mt-1.5 min-w-[180px] border border-rule bg-[var(--c-surface)] shadow-[0_8px_24px_rgba(0,0,0,0.5)] rounded-md py-1 z-40"
                   >
                     <AdminMenuItem to="/posts/create" onSelect={() => setAdminMenuOpen(false)}>
                       New post
@@ -258,7 +258,7 @@ export function Layout() {
 
         {/* Mobile nav dropdown */}
         {mobileNavOpen && (
-          <div className="lg:hidden absolute top-full left-0 right-0 bg-paper border-b border-rule shadow-[0_8px_20px_rgba(0,0,0,0.05)] z-30 animate-fade-in">
+          <div className="lg:hidden absolute top-full left-0 right-0 bg-paper-2 border-b border-rule shadow-[0_8px_20px_rgba(0,0,0,0.4)] z-30 animate-fade-in">
             <div className="p-4 max-h-[70vh] overflow-y-auto">
               <WorkspaceTree
                 categories={categories}
@@ -274,12 +274,11 @@ export function Layout() {
       {/* 3-col shell */}
       <div className="flex-1 grid lg:grid-cols-[260px_minmax(0,1fr)_340px]">
         {/* Left workspace tree */}
-        <aside className="hidden lg:block border-r border-[#1f2937] bg-[#111827] sticky top-[52px] self-start h-[calc(100vh-52px)] overflow-y-auto px-2.5 py-3">
+        <aside className="hidden lg:block border-r border-rule bg-paper-2 sticky top-[52px] self-start h-[calc(100vh-52px)] overflow-y-auto px-2.5 py-3">
           <WorkspaceTree
             categories={categories}
             isAllPosts={isAllPosts}
             categoryParam={categoryParam}
-            variant="dark"
           />
         </aside>
 
@@ -312,10 +311,10 @@ export function Layout() {
       <button
         type="button"
         onClick={() => setMobileChatOpen((v) => !v)}
-        className={`lg:hidden fixed bottom-5 right-5 z-40 h-11 px-4 rounded-full text-[12px] font-semibold transition-all shadow-[0_8px_20px_rgba(10,102,194,0.25)] ${
+        className={`lg:hidden fixed bottom-5 right-5 z-40 h-11 px-4 rounded-full text-[12px] font-semibold transition-all shadow-[0_8px_20px_rgba(0,0,0,0.4)] ${
           mobileChatOpen
-            ? "bg-ink text-paper"
-            : "bg-accent text-paper"
+            ? "bg-chip text-ink border border-rule"
+            : "bg-accent text-[var(--c-on-accent)]"
         }`}
       >
         {mobileChatOpen ? "Close" : "Ask"}
@@ -329,48 +328,41 @@ function WorkspaceTree({
   isAllPosts,
   categoryParam,
   onNavigate,
-  variant = "light",
 }: {
   categories: Category[];
   isAllPosts: boolean;
   categoryParam: string | null;
   onNavigate?: () => void;
-  variant?: WorkspaceTreeVariant;
 }) {
-  const isDark = variant === "dark";
-
   return (
-    <nav aria-label="Workspace navigation" className={isDark ? "text-slate-100" : undefined}>
-      {isDark && (
-        <div className="mb-5 flex items-center gap-2.5 px-1.5">
-          <div className="w-7 h-7 rounded-md bg-slate-50 text-slate-950 grid place-items-center font-meta text-[11px] font-semibold shrink-0">
-            S
+    <nav aria-label="Workspace navigation">
+      <div className="mb-5 flex items-center gap-2.5 px-1.5">
+        <div className="w-7 h-7 rounded-md bg-ink text-paper grid place-items-center font-meta text-[11px] font-semibold shrink-0">
+          S
+        </div>
+        <div className="min-w-0">
+          <div className="text-[11.5px] font-semibold leading-tight tracking-[0.03em] text-ink">
+            WORKSPACE
           </div>
-          <div className="min-w-0">
-            <div className="text-[11.5px] font-semibold leading-tight tracking-[0.03em] text-slate-50">
-              WORKSPACE
-            </div>
-            <div className="mt-0.5 text-[10.5px] leading-tight text-slate-400 truncate">
-              technical notes
-            </div>
+          <div className="mt-0.5 text-[10.5px] leading-tight text-faint truncate font-meta">
+            technical notes
           </div>
         </div>
-      )}
+      </div>
 
-      <TreeSection title={isDark ? "Pinned" : "Workspace"} variant={variant}>
+      <TreeSection title="Pinned">
         <TreeLink
           to="/"
           icon={BookOpen}
           active={isAllPosts}
           onNavigate={onNavigate}
-          variant={variant}
         >
           All posts
         </TreeLink>
       </TreeSection>
 
       {categories.length > 0 && (
-        <TreeSection title="Categories" variant={variant}>
+        <TreeSection title="Categories">
           {categories.map((c) => (
             <TreeLink
               key={c.id}
@@ -378,7 +370,6 @@ function WorkspaceTree({
               icon={getCategoryIcon(c.name)}
               active={categoryParam === String(c.id)}
               onNavigate={onNavigate}
-              variant={variant}
             >
               {c.name}
             </TreeLink>
@@ -389,8 +380,6 @@ function WorkspaceTree({
   );
 }
 
-type WorkspaceTreeVariant = "light" | "dark";
-
 function getCategoryIcon(name: string): LucideIcon {
   if (/database/i.test(name)) return Database;
   if (/performance/i.test(name)) return Activity;
@@ -400,20 +389,13 @@ function getCategoryIcon(name: string): LucideIcon {
 function TreeSection({
   title,
   children,
-  variant = "light",
 }: {
   title: string;
   children: React.ReactNode;
-  variant?: WorkspaceTreeVariant;
 }) {
-  const titleClass =
-    variant === "dark"
-      ? "text-slate-500 tracking-[0.08em]"
-      : "text-faint tracking-[0.06em]";
-
   return (
     <div className="mb-4">
-      <div className={`flex items-center px-2.5 py-1 text-[10.5px] font-semibold uppercase ${titleClass}`}>
+      <div className="flex items-center px-2.5 py-1 text-[10.5px] font-semibold uppercase text-faint tracking-[0.08em]">
         {title}
       </div>
       <div>{children}</div>
@@ -428,7 +410,6 @@ function TreeLink({
   count,
   children,
   onNavigate,
-  variant = "light",
 }: {
   to: string;
   icon?: LucideIcon;
@@ -436,31 +417,18 @@ function TreeLink({
   count?: number;
   children: React.ReactNode;
   onNavigate?: () => void;
-  variant?: WorkspaceTreeVariant;
 }) {
-  const linkClass =
-    variant === "dark"
-      ? active
-        ? "bg-[#1d4ed8]/25 text-white font-medium"
-        : "text-slate-300 hover:bg-white/[0.06] hover:text-white"
-      : active
-        ? "bg-accent-soft text-accent font-medium"
-        : "text-ink-soft hover:bg-chip";
+  const linkClass = active
+    ? "bg-accent-soft text-accent font-medium"
+    : "text-ink-soft hover:bg-chip hover:text-ink";
 
-  const iconClass =
-    variant === "dark"
-      ? active
-        ? "text-[#6ab0ff]"
-        : "text-slate-500"
-      : active
-        ? "text-accent"
-        : "text-faint";
+  const iconClass = active ? "text-accent" : "text-faint";
 
   return (
     <Link
       to={to}
       onClick={onNavigate}
-      className={`flex h-8 items-center gap-2.5 px-2.5 my-px rounded-md text-[13.5px] transition-colors ${linkClass}`}
+      className={`flex h-8 items-center gap-2.5 px-2.5 my-px rounded-md text-[13px] transition-colors ${linkClass}`}
     >
       {Icon && (
         <span className={`w-4 h-4 shrink-0 ${iconClass}`}>
@@ -469,7 +437,7 @@ function TreeLink({
       )}
       <span className="truncate flex-1">{children}</span>
       {count !== undefined && (
-        <span className={`font-meta text-[10.5px] ${variant === "dark" ? "text-slate-500" : "text-faint"}`}>
+        <span className="font-meta text-[10.5px] text-faint">
           {count}
         </span>
       )}

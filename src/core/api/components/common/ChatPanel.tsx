@@ -212,19 +212,19 @@ export function ChatPanel({ variant = "fixed", onClose }: ChatPanelProps) {
 
   const containerClass =
     variant === "drawer"
-      ? "animate-drawer-in fixed right-0 top-0 bottom-0 z-50 w-full sm:w-[380px] bg-[#111827] border-l border-[#273244] flex flex-col shadow-[0_0_40px_rgba(0,0,0,0.28)]"
-      : "h-full flex flex-col bg-[#111827] border-l border-[#273244]";
+      ? "animate-drawer-in fixed right-0 top-0 bottom-0 z-50 w-full sm:w-[380px] bg-paper-2 border-l border-rule flex flex-col shadow-[0_0_40px_rgba(0,0,0,0.28)]"
+      : "h-full flex flex-col bg-paper-2 border-l border-rule";
 
   return (
     <aside className={containerClass} aria-label="Ask this blog">
-      <header className="px-5 py-3.5 border-b border-[#273244] bg-[#0f1724] flex items-center justify-between gap-3">
+      <header className="px-5 py-3.5 border-b border-rule bg-paper flex items-center justify-between gap-3">
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-6 h-6 rounded-md bg-slate-50 text-slate-950 grid place-items-center font-meta text-[10px] font-semibold shrink-0">
+          <div className="w-6 h-6 rounded-md bg-ink text-paper grid place-items-center font-meta text-[10px] font-semibold shrink-0">
             AI
           </div>
           <div className="min-w-0">
-            <div className="text-[13.5px] font-semibold text-slate-50 leading-tight">Space assistant</div>
-            <div className="font-meta text-[10.5px] text-slate-400 leading-tight truncate">
+            <div className="text-[13.5px] font-semibold text-ink leading-tight">Space assistant</div>
+            <div className="font-meta text-[10.5px] text-faint leading-tight truncate">
               rag · {sessionShort} · {remaining} left
             </div>
           </div>
@@ -233,7 +233,7 @@ export function ChatPanel({ variant = "fixed", onClose }: ChatPanelProps) {
           <button
             onClick={resetSession}
             disabled={streaming}
-            className="h-7 px-2 font-meta text-[10.5px] text-slate-400 hover:text-white hover:bg-white/[0.06] rounded-md transition-colors disabled:opacity-40"
+            className="h-7 px-2 font-meta text-[10.5px] text-faint hover:text-ink hover:bg-chip rounded-md transition-colors disabled:opacity-40"
             title="Clear session"
           >
             clear
@@ -241,7 +241,7 @@ export function ChatPanel({ variant = "fixed", onClose }: ChatPanelProps) {
           {variant === "drawer" && onClose && (
             <button
               onClick={onClose}
-              className="w-7 h-7 grid place-items-center text-slate-400 hover:text-white hover:bg-white/[0.06] rounded-md text-[18px] leading-none transition-colors"
+              className="w-7 h-7 grid place-items-center text-faint hover:text-ink hover:bg-chip rounded-md text-[18px] leading-none transition-colors"
               aria-label="Close"
             >
               ×
@@ -253,10 +253,10 @@ export function ChatPanel({ variant = "fixed", onClose }: ChatPanelProps) {
       <div className="flex-1 overflow-y-auto px-4 py-4">
         {sessionError ? (
           <div className="py-12 text-center">
-            <p className="text-red-300 text-[13px] mb-4">! {sessionError}</p>
+            <p className="text-danger text-[13px] mb-4">! {sessionError}</p>
             <button
               onClick={() => void bootstrap(true)}
-              className="h-8 px-3 border border-[#273244] rounded-md font-meta text-[11px] text-slate-400 hover:border-[#6ab0ff] hover:text-[#6ab0ff] transition-colors"
+              className="h-8 px-3 border border-rule rounded-md font-meta text-[11px] text-faint hover:border-accent hover:text-accent transition-colors"
             >
               retry
             </button>
@@ -281,7 +281,7 @@ export function ChatPanel({ variant = "fixed", onClose }: ChatPanelProps) {
         )}
       </div>
 
-      <footer className="border-t border-[#273244] px-3.5 py-3 bg-[#0f1724]">
+      <footer className="border-t border-rule px-3.5 py-3 bg-paper">
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -289,8 +289,8 @@ export function ChatPanel({ variant = "fixed", onClose }: ChatPanelProps) {
           }}
         >
           <div
-            className={`flex items-end gap-2 pl-3 pr-1.5 py-1.5 rounded-md bg-[#182231] border transition-colors ${
-              streaming ? "border-[#6ab0ff]" : "border-[#273244] focus-within:border-[#6ab0ff]"
+            className={`flex items-end gap-2 pl-3 pr-1.5 py-1.5 rounded-md bg-[var(--c-input)] border transition-colors ${
+              streaming ? "border-accent" : "border-rule focus-within:border-accent"
             }`}
           >
             <textarea
@@ -307,13 +307,13 @@ export function ChatPanel({ variant = "fixed", onClose }: ChatPanelProps) {
                     ? "Generating a response..."
                     : "Ask anything about this blog"
               }
-              className="flex-1 bg-transparent outline-none resize-none text-[13.5px] text-slate-100 placeholder:text-slate-500 py-1.5 max-h-[140px]"
+              className="flex-1 bg-transparent outline-none resize-none text-[13.5px] text-ink placeholder:text-ink0 py-1.5 max-h-[140px]"
             />
             {streaming ? (
               <button
                 type="button"
                 onClick={stopStreaming}
-                className="w-7 h-7 rounded-md bg-red-500 text-white grid place-items-center text-[11px] font-semibold hover:bg-red-400 transition-colors"
+                className="w-7 h-7 rounded-md bg-danger text-[var(--c-on-accent)] grid place-items-center text-[11px] font-semibold hover:opacity-90 transition-colors"
                 title="Stop"
               >
                 ■
@@ -322,14 +322,14 @@ export function ChatPanel({ variant = "fixed", onClose }: ChatPanelProps) {
               <button
                 type="submit"
                 disabled={!input.trim() || remaining <= 0 || !sessionId}
-                className="w-7 h-7 rounded-md bg-[#0a66c2] text-white grid place-items-center text-[12px] font-semibold hover:bg-[#1677d8] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                className="w-7 h-7 rounded-md bg-accent text-[var(--c-on-accent)] grid place-items-center text-[12px] font-semibold hover:opacity-90 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                 title="Send"
               >
                 ↑
               </button>
             )}
           </div>
-          <div className="mt-2 flex items-center justify-between font-meta text-[10.5px] text-slate-500">
+          <div className="mt-2 flex items-center justify-between font-meta text-[10.5px] text-ink0">
             <span>{streaming ? "● streaming…" : `${charCount} / ${CHAT_LIMITS.QUESTION_MAX_LENGTH}`}</span>
             <span>↵ send · ⇧↵ newline</span>
           </div>
@@ -342,7 +342,7 @@ export function ChatPanel({ variant = "fixed", onClose }: ChatPanelProps) {
 function EmptyPrompts() {
   return (
     <div>
-      <p className="text-[12.5px] text-slate-400 leading-relaxed">
+      <p className="text-[12.5px] text-faint leading-relaxed">
         This assistant has learned from every post on this blog. It can summarize posts, explain concepts, and find related articles.
       </p>
     </div>
@@ -359,7 +359,7 @@ function ChatMessageBlock({
   if (message.role === "user") {
     return (
       <div className="flex justify-end">
-        <div className="max-w-[92%] bg-[#0a66c2] text-white px-3 py-2 rounded-lg text-[13.5px] leading-[1.55] whitespace-pre-wrap break-words">
+        <div className="max-w-[92%] bg-accent text-[var(--c-on-accent)] px-3 py-2 rounded-lg text-[13.5px] leading-[1.55] whitespace-pre-wrap break-words">
           {message.content}
         </div>
       </div>
@@ -368,22 +368,22 @@ function ChatMessageBlock({
 
   return (
     <div className="flex gap-2.5 items-start">
-      <div className="w-6 h-6 rounded-md bg-slate-50 text-slate-950 grid place-items-center font-meta text-[10px] font-semibold shrink-0 mt-0.5">
+      <div className="w-6 h-6 rounded-md bg-ink text-paper grid place-items-center font-meta text-[10px] font-semibold shrink-0 mt-0.5">
         AI
       </div>
       <div className="min-w-0 flex-1">
         {message.content ? (
           <>
-            <div className="bg-[#182231] border border-[#273244] rounded-lg px-3 py-2">
+            <div className="bg-[var(--c-input)] border border-rule rounded-lg px-3 py-2">
               <div
                 className="chat-markdown chat-markdown-dark"
                 dangerouslySetInnerHTML={{ __html: renderMarkdown(message.content) }}
               />
               {message.streaming && (
-                <p className="font-meta text-[10.5px] text-slate-500 mt-1.5">● streaming…</p>
+                <p className="font-meta text-[10.5px] text-ink0 mt-1.5">● streaming…</p>
               )}
               {message.error && (
-                <p className="font-meta text-[10.5px] text-red-300 mt-1.5">! error</p>
+                <p className="font-meta text-[10.5px] text-danger mt-1.5">! error</p>
               )}
               {message.sources && message.sources.length > 0 && (
                 <ChatSources sources={message.sources} />
@@ -394,7 +394,7 @@ function ChatMessageBlock({
             )}
           </>
         ) : (
-          <p className="font-meta text-[11px] text-slate-500 py-1">◦ thinking…</p>
+          <p className="font-meta text-[11px] text-ink0 py-1">◦ thinking…</p>
         )}
       </div>
     </div>
@@ -403,8 +403,8 @@ function ChatMessageBlock({
 
 function ChatSources({ sources }: { sources: ChatSource[] }) {
   return (
-    <div className="mt-2.5 pt-2.5 border-t border-[#273244]">
-      <p className="font-meta text-[10px] text-slate-500 uppercase tracking-[0.08em] font-semibold mb-1.5">
+    <div className="mt-2.5 pt-2.5 border-t border-rule">
+      <p className="font-meta text-[10px] text-ink0 uppercase tracking-[0.08em] font-semibold mb-1.5">
         Sources
       </p>
       <ul className="space-y-1">
@@ -414,10 +414,10 @@ function ChatSources({ sources }: { sources: ChatSource[] }) {
               href={source.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="block text-[12.5px] text-slate-200 hover:text-[#6ab0ff] transition-colors leading-snug"
+              className="block text-[12.5px] text-ink-soft hover:text-accent transition-colors leading-snug"
             >
-              <span className="font-meta text-[10px] text-[#6ab0ff] mr-1.5">[{i + 1}]</span>
-              <span className="font-meta text-[10px] text-slate-500 mr-1.5 uppercase tracking-[0.04em]">
+              <span className="font-meta text-[10px] text-accent mr-1.5">[{i + 1}]</span>
+              <span className="font-meta text-[10px] text-ink0 mr-1.5 uppercase tracking-[0.04em]">
                 {source.company}
               </span>
               {source.title}
@@ -442,10 +442,10 @@ function ChatFollowUps({
         <button
           key={q}
           onClick={() => onSelect(q)}
-          className="text-left text-[12.5px] px-3 py-1.5 rounded-md border border-[#273244] bg-[#182231] hover:border-[#6ab0ff] hover:text-[#6ab0ff] text-slate-200 transition-colors flex items-center justify-between gap-3"
+          className="text-left text-[12.5px] px-3 py-1.5 rounded-md border border-rule bg-[var(--c-input)] hover:border-accent hover:text-accent text-ink-soft transition-colors flex items-center justify-between gap-3"
         >
           <span>{q}</span>
-          <span className="font-meta text-slate-500">→</span>
+          <span className="font-meta text-ink0">→</span>
         </button>
       ))}
     </div>
